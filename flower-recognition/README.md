@@ -1,6 +1,6 @@
 # Flower Recognition Using Convolutional Neural Network
 
-A TypeScript implementation of a CNN-based flower classification system using TensorFlow.js. This project demonstrates supervised image classification by training a deep learning model to identify 5 different types of flowers.
+A TypeScript implementation of a [CNN](https://en.wikipedia.org/wiki/Convolutional_neural_network)-based flower classification system using TensorFlow.js. This project demonstrates supervised image classification by training a deep learning model to identify 5 different types of flowers.
 
 ## Overview
 
