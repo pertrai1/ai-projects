@@ -1,0 +1,30 @@
+{
+  "name": "flower-recognition",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "verify": "tsx src/scripts/verify-dataset.ts",
+    "train": "tsx src/scripts/train.ts",
+    "predict": "tsx src/scripts/predict.ts",
+    "test": "tsx src/scripts/test.ts",
+    "diagnose": "tsx src/scripts/diagnose.ts",
+    "dev-test": "tsx src/scripts/dev-test.ts",
+    "dry-run": "tsc src/scripts/dry-run.ts",
+    "setup": "tsx src/scripts/setup.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@tensorflow/tfjs-node": "4.10.0",
+    "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
