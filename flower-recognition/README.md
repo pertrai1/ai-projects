@@ -509,11 +509,4 @@ This project is open source and available under the MIT License.
 - TensorFlow.js team for the amazing framework
 - Sharp library for fast image processing
 
-## Support
-
-For issues, questions, or contributions:
-- Open an issue on GitHub
-- Submit a pull request
-- Contact the maintainers
-
 ---
