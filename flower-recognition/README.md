@@ -415,19 +415,23 @@ npm run train
 - [ ] Add test-time augmentation
 - [ ] Ensemble multiple models
 
-### Deployment
-- [ ] Create REST API (Express.js)
-- [ ] Build web interface (React + TensorFlow.js in browser)
-- [ ] Mobile app (React Native)
-- [ ] Docker containerization
-- [ ] Cloud deployment (AWS, GCP, Azure)
-
 ### Features
 - [ ] Batch prediction support
 - [ ] Confidence threshold filtering
 - [ ] Visual attention maps (Grad-CAM)
 - [ ] Model versioning
 - [ ] A/B testing framework
+
+### Cloud Infrastructure & Scalability
+- [ ] Deploy to AWS SageMaker or Google Cloud AI Platform for model hosting
+- [ ] Use S3/Cloud Storage for dataset and user-uploaded images
+- [ ] Lambda/Cloud Functions for serverless prediction endpoints
+- [ ] DynamoDB/Firestore for classification history and user data. RDS/Cloud SQL for relational metadata (flower information, care guides)
+- [ ] CloudFront/Cloud CDN for faster image delivery
+- [ ] ECS/GKE for handling variable traffic
+- [ ] MLflow or SageMaker Model Registry for model version management
+- [ ] CloudWatch/Cloud Monitoring for model performance tracking
+- [ ] Natural language Q&A about identified flowers. Multi-modal analysis (combining image + text descriptions)
 
 ## Technical Details
 
