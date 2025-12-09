@@ -31,6 +31,37 @@ This project enables users to query the USDA PLANTS Database using natural langu
 - Simple prompt templates
 - Static PLANTS data testing
 
+Example terminal output when running `npx tsx test-nlqi.ts`:
+
+```bash
+📝 Query: "Which plants attract pollinators?"
+
+2025-12-09 17:15:35 [plants-nlqi] info: Processing query {"query":"Which plants attract pollinators?","topK":3}
+2025-12-09 17:15:35 [plants-nlqi] info: Searching for similar plants {"topK":3}
+2025-12-09 17:15:36 [plants-nlqi] info: Search completed {"resultsCount":3}
+2025-12-09 17:15:36 [plants-nlqi] info: Generating response {"query":"Which plants attract pollinators?","plantCount":3}
+2025-12-09 17:15:45 [plants-nlqi] info: Response generated {"duration":8827,"inputTokens":771,"outputTokens":330}
+2025-12-09 17:15:45 [plants-nlqi] info: Query processed successfully {"duration":9320,"resultsCount":3}
+⏱️  Search time: 9320ms
+📊 Results found: 3
+
+🌱 Top Plants:
+  1. Asclepias tuberosa (Butterfly Weed) - Score: 0.438
+  2. Rudbeckia maxima (Great Coneflower) - Score: 0.407
+  3. Rhododendron maximum (Great Rhododendron) - Score: 0.358
+
+💬 Answer:
+Native plants are absolutely fantastic for attracting pollinators! You'll be amazed at how many bees, butterflies, and other beneficial insects visit when you plant the right species.
+
+**Asclepias tuberosa** (Butterfly Weed) is one of my top recommendations - it's like a magnet for pollinators! This stunning perennial produces brilliant orange flower clusters from late spring through summer and is especially beloved by monarch butterflies, serving as both a nectar source and essential host plant for their caterpillars. It thrives in full sun with minimal water once established, making it perfect for low-maintenance gardens.
+
+**Rudbeckia maxima** (Great Coneflower) is another pollinator powerhouse that's hard to beat. These striking yellow flowers with their prominent dark centers bloom from late spring to early summer and attract an incredible variety of bees, butterflies, and other pollinators. They're extremely drought-tolerant and can handle both full sun and partial shade, plus birds love the seeds later in the season.
+
+For shadier spots, **Rhododendron maximum** (Great Rhododendron) offers spectacular clusters of white to pale pink blooms that pollinators adore. While it needs more moisture than the others, it's perfect for woodland gardens and creates incredible spring displays.
+
+These natives not only support pollinators but also provide four-season interest and require less maintenance than non-native alternatives once established. You'll love watching your garden come alive with buzzing activity!
+```
+
 ### Phase 2: Agent Layer
 - Query understanding agent
 - Hybrid search implementation

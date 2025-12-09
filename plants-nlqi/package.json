@@ -8,6 +8,7 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "cli": "npx tsx cli.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -17,7 +18,7 @@
     "setup:db": "tsx scripts/setup-database.ts",
     "ingest": "tsx scripts/ingest-plants-data.ts",
     "seed": "tsx scripts/seed-data.ts",
-    "embeddings": "tsx scripts/create-embeddings.ts"
+    "embeddings": "npx tsx scripts/create-embeddings.ts"
   },
   "keywords": [
     "plants",
