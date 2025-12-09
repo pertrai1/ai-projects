@@ -1,0 +1,268 @@
+[
+  {
+    "id": "QUAL",
+    "scientificName": "Quercus alba",
+    "commonNames": ["White Oak", "Eastern White Oak"],
+    "symbol": "QUAL",
+    "family": "Fagaceae",
+    "duration": "Perennial",
+    "growthHabit": ["Tree"],
+    "nativeStatus": [
+      { "state": "NC", "status": "Native" },
+      { "state": "VA", "status": "Native" },
+      { "state": "GA", "status": "Native" },
+      { "state": "TN", "status": "Native" }
+    ],
+    "distribution": {
+      "states": ["NC", "VA", "GA", "TN", "SC", "AL", "KY", "WV", "MD", "DE"],
+      "regions": ["Southeast", "Mid-Atlantic"]
+    },
+    "characteristics": {
+      "height": { "min": 50, "max": 80, "unit": "feet" },
+      "bloomPeriod": "Spring",
+      "flowerColor": ["Green", "Yellow"],
+      "sunRequirements": ["Full Sun", "Partial Shade"],
+      "waterNeeds": "Medium",
+      "soilTexture": ["Loam", "Clay"],
+      "phRange": { "min": 5.5, "max": 7.0 },
+      "hardinessZones": ["3b", "4a", "4b", "5a", "5b", "6a", "6b", "7a", "7b", "8a"],
+      "wildlifeValue": ["Birds", "Mammals"],
+      "fireResistance": "Medium"
+    },
+    "description": "The White Oak is a majestic deciduous tree native to eastern North America. It's an important timber species and provides excellent wildlife habitat. The tree produces acorns that are a critical food source for many animals."
+  },
+  {
+    "id": "RUMA2",
+    "scientificName": "Rudbeckia maxima",
+    "commonNames": ["Great Coneflower", "Giant Coneflower"],
+    "symbol": "RUMA2",
+    "family": "Asteraceae",
+    "duration": "Perennial",
+    "growthHabit": ["Forb/herb"],
+    "nativeStatus": [
+      { "state": "NC", "status": "Native" },
+      { "state": "GA", "status": "Native" },
+      { "state": "FL", "status": "Native" },
+      { "state": "AL", "status": "Native" },
+      { "state": "LA", "status": "Native" },
+      { "state": "TX", "status": "Native" }
+    ],
+    "distribution": {
+      "states": ["NC", "GA", "FL", "AL", "LA", "TX", "AR", "OK"],
+      "regions": ["Southeast", "South Central"]
+    },
+    "characteristics": {
+      "height": { "min": 3, "max": 6, "unit": "feet" },
+      "bloomPeriod": "Late Spring to Early Summer",
+      "fruitPeriod": "Summer to Fall",
+      "flowerColor": ["Yellow"],
+      "sunRequirements": ["Full Sun", "Partial Shade"],
+      "waterNeeds": "Low",
+      "soilTexture": ["Sand", "Loam", "Clay"],
+      "phRange": { "min": 5.0, "max": 7.5 },
+      "hardinessZones": ["5a", "5b", "6a", "6b", "7a", "7b", "8a", "8b", "9a"],
+      "wildlifeValue": ["Pollinators", "Butterflies", "Bees", "Birds"],
+      "fireResistance": "Low"
+    },
+    "description": "Great Coneflower is a striking native wildflower with large yellow petals and prominent dark brown central cones. It's highly drought-tolerant once established and provides exceptional value for pollinators."
+  },
+  {
+    "id": "ILOP",
+    "scientificName": "Ilex opaca",
+    "commonNames": ["American Holly"],
+    "symbol": "ILOP",
+    "family": "Aquifoliaceae",
+    "duration": "Perennial",
+    "growthHabit": ["Tree"],
+    "nativeStatus": [
+      { "state": "NC", "status": "Native" },
+      { "state": "VA", "status": "Native" },
+      { "state": "SC", "status": "Native" },
+      { "state": "GA", "status": "Native" },
+      { "state": "FL", "status": "Native" }
+    ],
+    "distribution": {
+      "states": ["NC", "VA", "SC", "GA", "FL", "AL", "MS", "LA", "TX", "MD", "DE"],
+      "regions": ["Southeast", "Mid-Atlantic", "Gulf Coast"]
+    },
+    "characteristics": {
+      "height": { "min": 15, "max": 40, "unit": "feet" },
+      "bloomPeriod": "Late Spring",
+      "fruitPeriod": "Fall to Winter",
+      "flowerColor": ["White"],
+      "sunRequirements": ["Full Sun", "Partial Shade"],
+      "waterNeeds": "Medium",
+      "soilTexture": ["Sand", "Loam"],
+      "phRange": { "min": 5.0, "max": 6.5 },
+      "hardinessZones": ["5b", "6a", "6b", "7a", "7b", "8a", "8b", "9a"],
+      "wildlifeValue": ["Birds"],
+      "fireResistance": "High"
+    },
+    "description": "American Holly is an evergreen tree known for its glossy, spiny leaves and bright red berries. It provides year-round interest and important winter food for birds. Male and female trees are needed for berry production."
+  },
+  {
+    "id": "ASTY",
+    "scientificName": "Asclepias tuberosa",
+    "commonNames": ["Butterfly Weed", "Orange Milkweed"],
+    "symbol": "ASTY",
+    "family": "Asclepiadaceae",
+    "duration": "Perennial",
+    "growthHabit": ["Forb/herb"],
+    "nativeStatus": [
+      { "state": "NC", "status": "Native" },
+      { "state": "VA", "status": "Native" },
+      { "state": "SC", "status": "Native" },
+      { "state": "GA", "status": "Native" },
+      { "state": "TN", "status": "Native" }
+    ],
+    "distribution": {
+      "states": ["NC", "VA", "SC", "GA", "TN", "AL", "FL", "KY", "WV", "MD"],
+      "regions": ["Southeast", "Mid-Atlantic", "Midwest"]
+    },
+    "characteristics": {
+      "height": { "min": 1, "max": 2.5, "unit": "feet" },
+      "bloomPeriod": "Late Spring to Summer",
+      "flowerColor": ["Orange", "Yellow"],
+      "sunRequirements": ["Full Sun"],
+      "waterNeeds": "Low",
+      "soilTexture": ["Sand", "Loam"],
+      "phRange": { "min": 5.5, "max": 7.5 },
+      "hardinessZones": ["4a", "4b", "5a", "5b", "6a", "6b", "7a", "7b", "8a", "8b", "9a"],
+      "wildlifeValue": ["Butterflies", "Pollinators", "Bees"],
+      "fireResistance": "Low"
+    },
+    "description": "Butterfly Weed is a showy native milkweed with brilliant orange flowers. It's essential for monarch butterflies, serving as both a nectar source and host plant for caterpillars. Extremely drought-tolerant once established."
+  },
+  {
+    "id": "CACA18",
+    "scientificName": "Carya carolinae-septentrionalis",
+    "commonNames": ["Southern Shagbark Hickory", "Carolina Hickory"],
+    "symbol": "CACA18",
+    "family": "Juglandaceae",
+    "duration": "Perennial",
+    "growthHabit": ["Tree"],
+    "nativeStatus": [
+      { "state": "NC", "status": "Native" },
+      { "state": "SC", "status": "Native" },
+      { "state": "GA", "status": "Native" },
+      { "state": "AL", "status": "Native" }
+    ],
+    "distribution": {
+      "states": ["NC", "SC", "GA", "AL", "TN", "VA"],
+      "regions": ["Southeast"]
+    },
+    "characteristics": {
+      "height": { "min": 60, "max": 80, "unit": "feet" },
+      "bloomPeriod": "Spring",
+      "flowerColor": ["Green", "Yellow"],
+      "sunRequirements": ["Full Sun"],
+      "waterNeeds": "Medium",
+      "soilTexture": ["Loam"],
+      "phRange": { "min": 6.0, "max": 7.5 },
+      "hardinessZones": ["5b", "6a", "6b", "7a", "7b", "8a"],
+      "wildlifeValue": ["Mammals", "Birds"],
+      "fireResistance": "Medium"
+    },
+    "description": "Southern Shagbark Hickory is a tall deciduous tree with distinctive shaggy bark. It produces edible nuts that are an important food source for wildlife. The wood is prized for its strength and is often used for tool handles."
+  },
+  {
+    "id": "CORA6",
+    "scientificName": "Coreopsis verticillata",
+    "commonNames": ["Threadleaf Coreopsis", "Whorled Coreopsis"],
+    "symbol": "CORA6",
+    "family": "Asteraceae",
+    "duration": "Perennial",
+    "growthHabit": ["Forb/herb"],
+    "nativeStatus": [
+      { "state": "NC", "status": "Native" },
+      { "state": "SC", "status": "Native" },
+      { "state": "GA", "status": "Native" },
+      { "state": "AL", "status": "Native" },
+      { "state": "VA", "status": "Native" }
+    ],
+    "distribution": {
+      "states": ["NC", "SC", "GA", "AL", "VA", "TN", "FL", "MD"],
+      "regions": ["Southeast", "Mid-Atlantic"]
+    },
+    "characteristics": {
+      "height": { "min": 1, "max": 3, "unit": "feet" },
+      "bloomPeriod": "Late Spring to Fall",
+      "flowerColor": ["Yellow"],
+      "sunRequirements": ["Full Sun"],
+      "waterNeeds": "Low",
+      "soilTexture": ["Sand", "Loam"],
+      "phRange": { "min": 5.5, "max": 7.0 },
+      "hardinessZones": ["4a", "4b", "5a", "5b", "6a", "6b", "7a", "7b", "8a", "8b", "9a"],
+      "wildlifeValue": ["Pollinators", "Butterflies", "Bees"],
+      "fireResistance": "Low"
+    },
+    "description": "Threadleaf Coreopsis is a long-blooming native wildflower with fine, thread-like foliage and bright yellow daisy-like flowers. It's extremely drought-tolerant and low-maintenance, making it ideal for naturalized areas."
+  },
+  {
+    "id": "RHMA4",
+    "scientificName": "Rhododendron maximum",
+    "commonNames": ["Great Rhododendron", "Rosebay Rhododendron"],
+    "symbol": "RHMA4",
+    "family": "Ericaceae",
+    "duration": "Perennial",
+    "growthHabit": ["Shrub"],
+    "nativeStatus": [
+      { "state": "NC", "status": "Native" },
+      { "state": "VA", "status": "Native" },
+      { "state": "TN", "status": "Native" },
+      { "state": "GA", "status": "Native" },
+      { "state": "SC", "status": "Native" }
+    ],
+    "distribution": {
+      "states": ["NC", "VA", "TN", "GA", "SC", "KY", "WV", "AL", "OH"],
+      "regions": ["Southeast", "Appalachian"]
+    },
+    "characteristics": {
+      "height": { "min": 10, "max": 20, "unit": "feet" },
+      "bloomPeriod": "Late Spring to Early Summer",
+      "flowerColor": ["White", "Pink"],
+      "sunRequirements": ["Partial Shade", "Full Shade"],
+      "waterNeeds": "High",
+      "soilTexture": ["Loam"],
+      "phRange": { "min": 4.5, "max": 6.0 },
+      "hardinessZones": ["4a", "4b", "5a", "5b", "6a", "6b", "7a"],
+      "wildlifeValue": ["Pollinators", "Butterflies"],
+      "toxicity": "All parts toxic if ingested",
+      "fireResistance": "Low"
+    },
+    "description": "Great Rhododendron is an evergreen shrub native to the Appalachian Mountains. It produces spectacular clusters of white to pale pink flowers and thrives in cool, moist, acidic soils. Forms dense thickets in mountain coves."
+  },
+  {
+    "id": "LITU",
+    "scientificName": "Liriodendron tulipifera",
+    "commonNames": ["Tulip Tree", "Tulip Poplar", "Yellow Poplar"],
+    "symbol": "LITU",
+    "family": "Magnoliaceae",
+    "duration": "Perennial",
+    "growthHabit": ["Tree"],
+    "nativeStatus": [
+      { "state": "NC", "status": "Native" },
+      { "state": "VA", "status": "Native" },
+      { "state": "SC", "status": "Native" },
+      { "state": "GA", "status": "Native" },
+      { "state": "TN", "status": "Native" }
+    ],
+    "distribution": {
+      "states": ["NC", "VA", "SC", "GA", "TN", "KY", "WV", "AL", "FL", "MS", "LA"],
+      "regions": ["Southeast", "Mid-Atlantic", "Appalachian"]
+    },
+    "characteristics": {
+      "height": { "min": 70, "max": 100, "unit": "feet" },
+      "bloomPeriod": "Late Spring",
+      "flowerColor": ["Yellow", "Orange", "Green"],
+      "sunRequirements": ["Full Sun"],
+      "waterNeeds": "Medium",
+      "soilTexture": ["Loam"],
+      "phRange": { "min": 5.5, "max": 7.5 },
+      "hardinessZones": ["5a", "5b", "6a", "6b", "7a", "7b", "8a", "8b"],
+      "wildlifeValue": ["Birds", "Pollinators", "Bees"],
+      "fireResistance": "Low"
+    },
+    "description": "Tulip Tree is one of the tallest eastern hardwoods, known for its distinctive tulip-shaped flowers and unique four-lobed leaves. It's a fast-growing tree that provides excellent lumber and is an important nectar source for bees."
+  }
+]
