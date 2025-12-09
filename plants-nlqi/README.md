@@ -62,6 +62,92 @@ For shadier spots, **Rhododendron maximum** (Great Rhododendron) offers spectacu
 These natives not only support pollinators but also provide four-season interest and require less maintenance than non-native alternatives once established. You'll love watching your garden come alive with buzzing activity!
 ```
 
+Example of the CLI version when running `npm run cli`:
+
+```bash
+
+╔════════════════════════════════════════════════════════════╗
+║         🌿 PLANTS Natural Language Query Interface         ║
+║              USDA PLANTS Database Explorer                 ║
+╚════════════════════════════════════════════════════════════╝
+
+Initializing system...
+2025-12-09 17:23:41 [plants-nlqi] info: Initializing PlantsNLQI
+2025-12-09 17:23:41 [plants-nlqi] info: Claude service initialized {"model":"claude-sonnet-4-20250514"}
+2025-12-09 17:23:41 [plants-nlqi] info: Embedding service initialized {"model":"voyage-3"}
+2025-12-09 17:23:41 [plants-nlqi] info: Vector search service initialized {"indexName":"plants-nlqi","namespace":"default"}
+2025-12-09 17:23:41 [plants-nlqi] info: PlantsNLQI initialized successfully
+2025-12-09 17:23:41 [plants-nlqi] info: Running health check
+2025-12-09 17:23:41 [plants-nlqi] info: Testing Claude API connection
+2025-12-09 17:23:45 [plants-nlqi] info: Connection test result {"success":true}
+2025-12-09 17:23:46 [plants-nlqi] info: Index status checked {"indexName":"plants-nlqi","ready":true}
+2025-12-09 17:23:46 [plants-nlqi] info: Health check complete {"claude":true,"pinecone":true,"overall":true}
+✅ System ready!
+
+
+📚 Example queries:
+  • "What native wildflowers are found in North Carolina?"
+  • "Show me drought-tolerant plants"
+  • "Which plants attract pollinators?"
+  • "Find shrubs that grow in shade"
+  • "What trees bloom in spring?"
+
+Type "exit" or "quit" to exit
+
+🌿 Query> What trees bloom in spring?
+
+🔍 Searching...
+2025-12-09 17:23:59 [plants-nlqi] info: Processing query {"query":"What trees bloom in spring?","topK":5}
+2025-12-09 17:23:59 [plants-nlqi] info: Searching for similar plants {"topK":5}
+2025-12-09 17:24:00 [plants-nlqi] info: Search completed {"resultsCount":5}
+2025-12-09 17:24:00 [plants-nlqi] info: Plants loaded from file {"count":8}
+2025-12-09 17:24:00 [plants-nlqi] info: Generating response {"query":"What trees bloom in spring?","plantCount":5}
+🌿 Query> 2025-12-09 17:24:09 [plants-nlqi] info: Response generated {"duration":9242,"inputTokens":1028,"outputTokens":294}
+2025-12-09 17:24:09 [plants-nlqi] info: Query processed successfully {"duration":10286,"resultsCount":5}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌱 Matching Plants:
+
+  1. Liriodendron tulipifera (Tulip Tree)
+     ████ 40.9% match
+     Tree • Perennial
+
+  2. Rhododendron maximum (Great Rhododendron)
+     ████ 38.4% match
+     Shrub • Perennial
+
+  3. Quercus alba (White Oak)
+     ███ 34.3% match
+     Tree • Perennial
+
+  4. Ilex opaca (American Holly)
+     ███ 31.8% match
+     Tree • Perennial
+
+  5. Carya carolinae-septentrionalis (Southern Shagbark Hickory)
+     ███ 30.9% match
+     Tree • Perennial
+
+💬 Answer:
+──────────────────────────────────────────────────────────────────────
+Spring is such a wonderful time for tree blooms! You have some fantastic native options that will bring both beauty and wildlife value to your landscape.
+
+The **Tulip Tree** (Liriodendron tulipifera) is absolutely stunning in late spring with its unique tulip-shaped flowers in yellow and orange. This fast-growing giant can become one of the tallest trees in eastern forests, and bees absolutely love the nectar-rich blooms. It thrives in full sun with moderate water needs.
+
+For something more understated but equally important, **White Oak** (Quercus alba) produces its spring flowers (called catkins) that may not be showy but are ecologically invaluable. This majestic tree will eventually reward you with acorns that feed countless birds and mammals - it's like having a wildlife cafeteria in your yard!
+
+If you're looking for something evergreen with spring interest, **American Holly** (Ilex opaca) blooms in late spring with small white flowers. While the blooms are modest, they're followed by those gorgeous red berries that birds rely on through winter. Just remember you'll need both male and female trees for berry production.
+
+These native spring bloomers will give you years of seasonal beauty while supporting local ecosystems - there's nothing quite like watching the wildlife activity around a mature native tree!
+──────────────────────────────────────────────────────────────────────
+
+⏱️  Completed in 10286ms (5 results)
+
+🌿 Query>
+👋 Goodbye!
+```
+
 ### Phase 2: Agent Layer
 - Query understanding agent
 - Hybrid search implementation
