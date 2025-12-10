@@ -38,17 +38,18 @@
     "@langchain/core": "^0.3.23",
     "@langchain/pinecone": "^0.1.3",
     "@pinecone-database/pinecone": "^5.0.1",
-    "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "voyageai": "^0.0.8",
+    "zod": "^3.24.1",
     "winston": "^3.17.0",
-    "zod": "^3.24.1"
+    "axios": "^1.7.9",
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
-    "@types/jest": "^29.5.14",
     "@types/node": "^22.10.2",
+    "@types/jest": "^29.5.14",
+    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^8.18.1",
     "@typescript-eslint/parser": "^8.18.1",
     "eslint": "^9.17.0",
