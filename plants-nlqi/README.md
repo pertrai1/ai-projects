@@ -20,8 +20,6 @@ This project enables users to query the USDA PLANTS Database using natural langu
 - **LLM**: Anthropic Claude (Sonnet 4)
 - **Vector Database**: Pinecone
 - **Embeddings**: Voyage AI
-- **Database**: PostgreSQL
-- **Framework**: Express.js
 
 ## Project Phases
 
@@ -295,20 +293,6 @@ Search Info:
 >
 ```
 
-### Phase 3: Advanced Features
-
-- Multi-agent architecture
-- Tools integration (maps, images)
-- Caching & optimization
-- Web interface
-
-### Phase 4: Production
-
-- Error handling & fallbacks
-- Rate limiting & cost optimization
-- Comprehensive testing
-- Deployment
-
 ## Prerequisites
 
 - Node.js >= 20.0.0
@@ -316,7 +300,6 @@ Search Info:
 - Anthropic API key
 - Pinecone account
 - Voyage AI API key
-- PostgreSQL
 
 ## Quick Start
 
