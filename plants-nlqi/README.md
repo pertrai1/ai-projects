@@ -25,7 +25,8 @@ This project enables users to query the USDA PLANTS Database using natural langu
 
 ## Project Phases
 
-### Phase 1: Basic RAG
+### Phase 1: [Basic RAG](/docs/PHASE-1.md)
+
 - Claude API integration
 - Basic vector search with Pinecone
 - Simple prompt templates
@@ -148,19 +149,22 @@ These native spring bloomers will give you years of seasonal beauty while suppor
 👋 Goodbye!
 ```
 
-### Phase 2: Agent Layer
+### Phase 2: [Agent Layer](docs/PHASE-2.md)
+
 - Query understanding agent
 - Hybrid search implementation
 - Response generation pipeline
 - Conversation memory
 
 ### Phase 3: Advanced Features
+
 - Multi-agent architecture
 - Tools integration (maps, images)
 - Caching & optimization
 - Web interface
 
 ### Phase 4: Production
+
 - Error handling & fallbacks
 - Rate limiting & cost optimization
 - Comprehensive testing
@@ -173,7 +177,7 @@ These native spring bloomers will give you years of seasonal beauty while suppor
 - Anthropic API key
 - Pinecone account
 - Voyage AI API key
-- PostgreSQL (optional for Phase 1)
+- PostgreSQL
 
 ## Quick Start
 
@@ -250,14 +254,6 @@ plants-nlqi/
 - [LangChain.js Documentation](https://js.langchain.com/)
 - [Pinecone Quickstart](https://docs.pinecone.io/)
 - [USDA PLANTS Database](https://plants.usda.gov/)
-
-## Current Status
-
-🚀 **Phase 1** - In Progress
-
-## Contributing
-
-This is a learning project. Feel free to experiment and extend!
 
 ## License
 
