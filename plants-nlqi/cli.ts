@@ -1,212 +1,290 @@
-#!/usr/bin/env node
 /**
- * Plants NLQI - Interactive CLI
- * Command-line interface for querying the USDA PLANTS database
+ * CLI with Conversation Mode
+ * Interactive command-line interface
  */
 
-import dotenv from 'dotenv';
 import * as readline from 'readline';
+import * as dotenv from 'dotenv';
 import { PlantsNLQI } from './src/core/plants-nlqi';
 
 dotenv.config();
 
-// ANSI color codes for pretty output
+// ANSI color codes
 const colors = {
   reset: '\x1b[0m',
   bright: '\x1b[1m',
-  dim: '\x1b[2m',
   green: '\x1b[32m',
   blue: '\x1b[34m',
-  yellow: '\x1b[33m',
   cyan: '\x1b[36m',
   magenta: '\x1b[35m',
+  yellow: '\x1b[33m',
+  gray: '\x1b[90m',
 };
 
+function colorize(text: string, color: keyof typeof colors): string {
+  return `${colors[color]}${text}${colors.reset}`;
+}
+
 function printBanner() {
-  console.log(colors.green + colors.bright);
-  console.log('╔════════════════════════════════════════════════════════════╗');
-  console.log('║         🌿 PLANTS Natural Language Query Interface         ║');
-  console.log('║              USDA PLANTS Database Explorer                 ║');
-  console.log('╚════════════════════════════════════════════════════════════╝');
-  console.log(colors.reset);
+  console.log('\n' + '═'.repeat(80));
+  console.log(colorize('PLANTS NLQI - Natural Language Query Interface', 'green'));
+  console.log(colorize('  Enhanced with Conversation Memory & Hybrid Search', 'cyan'));
+  console.log('═'.repeat(80) + '\n');
 }
 
 function printHelp() {
-  console.log(colors.cyan + '\n📚 Example queries:' + colors.reset);
-  console.log('  • "What native wildflowers are found in North Carolina?"');
-  console.log('  • "Show me drought-tolerant plants"');
-  console.log('  • "Which plants attract pollinators?"');
-  console.log('  • "Find shrubs that grow in shade"');
-  console.log('  • "What trees bloom in spring?"');
-  console.log(colors.dim + '\nType "exit" or "quit" to exit\n' + colors.reset);
+  console.log(colorize('\nAvailable Commands:', 'cyan'));
+  console.log('  ' + colorize('help', 'yellow') + '     - Show this help message');
+  console.log('  ' + colorize('new', 'yellow') + '      - Start a new conversation');
+  console.log('  ' + colorize('summary', 'yellow') + '  - Show conversation summary');
+  console.log('  ' + colorize('exit', 'yellow') + '     - Exit the program');
+  console.log('  ' + colorize('quit', 'yellow') + '     - Exit the program');
+
+  console.log(colorize('\nExample Queries:', 'cyan'));
+  console.log('  • What native wildflowers are found in North Carolina?');
+  console.log('  • Show me drought-tolerant plants');
+  console.log('  • Which of those attract butterflies? ' + colorize('(follow-up)', 'gray'));
+  console.log('  • Find trees that grow in shade and bloom in spring');
+  console.log('  • What about shrubs instead? ' + colorize('(follow-up)', 'gray'));
+  console.log();
 }
 
-async function initializeSystem(): Promise<PlantsNLQI | null> {
-  console.log(colors.dim + 'Initializing system...' + colors.reset);
-
-  // Check environment variables
-  if (!process.env.ANTHROPIC_API_KEY) {
-    console.error(colors.yellow + '⚠️  ANTHROPIC_API_KEY not found in .env' + colors.reset);
-    return null;
-  }
-  if (!process.env.VOYAGE_API_KEY) {
-    console.error(colors.yellow + '⚠️  VOYAGE_API_KEY not found in .env' + colors.reset);
-    return null;
-  }
-  if (!process.env.PINECONE_API_KEY) {
-    console.error(colors.yellow + '⚠️  PINECONE_API_KEY not found in .env' + colors.reset);
-    return null;
-  }
-  if (!process.env.PINECONE_INDEX_NAME) {
-    console.error(colors.yellow + '⚠️  PINECONE_INDEX_NAME not found in .env' + colors.reset);
-    return null;
-  }
-
-  try {
-    const nlqi = new PlantsNLQI({
-      anthropicApiKey: process.env.ANTHROPIC_API_KEY,
-      voyageApiKey: process.env.VOYAGE_API_KEY,
-      pineconeApiKey: process.env.PINECONE_API_KEY,
-      pineconeIndexName: process.env.PINECONE_INDEX_NAME,
-    });
-
-    // Run health check
-    const health = await nlqi.healthCheck();
-
-    if (!health.overall) {
-      console.error(colors.yellow + '\n❌ System health check failed:' + colors.reset);
-      console.error('  Claude:', health.claude ? '✅' : '❌');
-      console.error('  Pinecone:', health.pinecone ? '✅' : '❌');
-      console.error(
-        colors.dim + '\nCheck your API keys and ensure Pinecone index is created.\n' + colors.reset
-      );
-      return null;
-    }
-
-    console.log(colors.green + '✅ System ready!\n' + colors.reset);
-    return nlqi;
-  } catch (error) {
-    console.error(colors.yellow + '❌ Failed to initialize system:' + colors.reset, error);
-    return null;
-  }
+function printScoreBar(score: number): string {
+  const barLength = Math.round(score * 10);
+  return colorize('█'.repeat(barLength), 'cyan');
 }
 
-async function processQuery(nlqi: PlantsNLQI, query: string) {
+async function processQuery(nlqi: PlantsNLQI, query: string, conversationId: string) {
   const startTime = Date.now();
 
-  console.log(colors.dim + '\n🔍 Searching...' + colors.reset);
-
   try {
-    const result = await nlqi.query(query, 5);
+    console.log(colorize('\nSearching...', 'gray'));
+
+    const result = await nlqi.query(query, conversationId);
     const duration = Date.now() - startTime;
 
-    // Print results header
-    console.log(
-      colors.blue +
-        colors.bright +
-        '\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
-        colors.reset
-    );
-
-    // Print matching plants
-    console.log(colors.magenta + colors.bright + '🌱 Matching Plants:' + colors.reset);
-    result.plants.forEach((match, i) => {
-      const scoreBar = '█'.repeat(Math.round(match.score * 10));
-      console.log(
-        `\n  ${i + 1}. ${colors.bright}${match.plant.scientificName}${colors.reset} ` +
-          `${colors.dim}(${match.plant.commonNames[0]})${colors.reset}`
-      );
-      console.log(
-        `     ${colors.cyan}${scoreBar}${colors.reset} ${colors.dim}${(match.score * 100).toFixed(1)}% match${colors.reset}`
-      );
-      console.log(`     ${match.plant.growthHabit.join(', ')} • ${match.plant.duration}`);
-    });
-
-    // Print answer
-    console.log(colors.blue + colors.bright + '\n💬 Answer:' + colors.reset);
-    console.log(colors.dim + '─'.repeat(70) + colors.reset);
+    // Display results
+    console.log('\n' + colorize('Response:', 'blue'));
+    console.log('─'.repeat(80));
     console.log(result.answer);
-    console.log(colors.dim + '─'.repeat(70) + colors.reset);
+    console.log('─'.repeat(80));
 
-    // Print metadata
-    console.log(
-      colors.dim +
-        `\n⏱️  Completed in ${duration}ms (${result.metadata.totalResults} results)\n` +
-        colors.reset
-    );
+    if (result.plants.length > 0) {
+      console.log(colorize(`\n${result.plants.length} Matching Plants:`, 'green'));
+
+      result.plants.slice(0, 5).forEach((match, i) => {
+        const plant = match.plant;
+        const scorePercent = (match.score * 100).toFixed(1);
+
+        console.log(
+          `\n${i + 1}. ${colorize(plant.scientificName, 'magenta')} (${plant.commonNames[0]})`
+        );
+        console.log(`   ${printScoreBar(match.score)} ${scorePercent}%`);
+        console.log(`   ${plant.growthHabit.join(', ')} • ${plant.duration}`);
+
+        // Show characteristics
+        const chars: string[] = [];
+        if (plant.characteristics.waterNeeds) {
+          chars.push(`Water: ${plant.characteristics.waterNeeds}`);
+        }
+        if (plant.characteristics.sunRequirements) {
+          chars.push(`Sun: ${plant.characteristics.sunRequirements.join(', ')}`);
+        }
+        if (plant.characteristics.wildlifeValue && plant.characteristics.wildlifeValue.length > 0) {
+          chars.push(`Wildlife: ${plant.characteristics.wildlifeValue.slice(0, 2).join(', ')}`);
+        }
+        if (chars.length > 0) {
+          console.log(`   ${colorize(chars.join(' • '), 'gray')}`);
+        }
+      });
+
+      if (result.plants.length > 5) {
+        console.log(colorize(`\n   ... and ${result.plants.length - 5} more plants`, 'gray'));
+      }
+    }
+
+    // Display metadata
+    console.log(colorize(`\nSearch Info:`, 'cyan'));
+    console.log(`   Strategy: ${result.metadata.searchType}`);
+    console.log(`   Results: ${result.metadata.totalResults}`);
+    console.log(`   Time: ${duration}ms`);
+    console.log();
   } catch (error) {
-    console.error(colors.yellow + '\n❌ Error processing query:' + colors.reset, error);
+    console.error(colorize(`\n❌ Error: ${error}`, 'yellow'));
+    console.log();
   }
 }
 
-async function runInteractiveMode(nlqi: PlantsNLQI) {
+async function runInteractiveMode() {
+  printBanner();
+
+  // Validate environment
+  if (
+    !process.env.ANTHROPIC_API_KEY ||
+    !process.env.VOYAGE_API_KEY ||
+    !process.env.PINECONE_API_KEY
+  ) {
+    console.error(colorize('❌ Missing required API keys in .env file', 'yellow'));
+    console.error('   Required: ANTHROPIC_API_KEY, VOYAGE_API_KEY, PINECONE_API_KEY');
+    process.exit(1);
+  }
+
+  if (!process.env.PINECONE_INDEX_NAME) {
+    console.error(colorize('❌ PINECONE_INDEX_NAME not set in .env file', 'yellow'));
+    process.exit(1);
+  }
+
+  console.log(colorize('Initializing system...', 'gray'));
+
+  const nlqi = new PlantsNLQI({
+    anthropicApiKey: process.env.ANTHROPIC_API_KEY,
+    voyageApiKey: process.env.VOYAGE_API_KEY,
+    pineconeApiKey: process.env.PINECONE_API_KEY,
+    pineconeIndexName: process.env.PINECONE_INDEX_NAME,
+    enableConversations: true,
+  });
+
+  // Health check
+  console.log(colorize('Running health check...', 'gray'));
+  const health = await nlqi.healthCheck();
+
+  if (health.status !== 'healthy') {
+    console.error(colorize('System health check failed', 'yellow'));
+    console.error('   Services:', health.services);
+  } else {
+    console.log(colorize('All systems operational\n', 'green'));
+  }
+
+  // Start conversation
+  let conversationId = nlqi.startConversation();
+  console.log(colorize(`Conversation started (ID: ${conversationId.substring(0, 8)}...)`, 'cyan'));
+
+  printHelp();
+
+  // Create readline interface
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
-    prompt: colors.green + '🌿 Query> ' + colors.reset,
+    prompt: colorize('> ', 'green'),
   });
 
-  printHelp();
   rl.prompt();
 
-  rl.on('line', async (line: string) => {
-    const query = line.trim();
+  rl.on('line', async (line) => {
+    const input = line.trim();
 
-    if (!query) {
+    if (!input) {
       rl.prompt();
       return;
     }
 
-    if (query.toLowerCase() === 'exit' || query.toLowerCase() === 'quit') {
-      console.log(colors.green + '\n👋 Thanks for using Plants NLQI!\n' + colors.reset);
-      rl.close();
-      process.exit(0);
-    }
-
-    if (query.toLowerCase() === 'help') {
+    // Handle commands
+    if (input === 'help') {
       printHelp();
       rl.prompt();
       return;
     }
 
-    await processQuery(nlqi, query);
+    if (input === 'exit' || input === 'quit') {
+      console.log(colorize('\nGoodbye!\n', 'cyan'));
+      rl.close();
+      process.exit(0);
+    }
+
+    if (input === 'new') {
+      nlqi.endConversation(conversationId);
+      conversationId = nlqi.startConversation();
+      console.log(
+        colorize(`\nNew conversation started (ID: ${conversationId.substring(0, 8)}...)`, 'cyan')
+      );
+      console.log();
+      rl.prompt();
+      return;
+    }
+
+    if (input === 'summary') {
+      try {
+        const summary = nlqi.getConversationSummary(conversationId);
+        console.log(colorize('\nConversation Summary:', 'cyan'));
+        console.log(`   ${summary}\n`);
+      } catch (error) {
+        console.log(colorize('\nNo conversation history yet\n', 'gray'));
+      }
+      rl.prompt();
+      return;
+    }
+
+    // Process as query
+    await processQuery(nlqi, input, conversationId);
     rl.prompt();
   });
 
   rl.on('close', () => {
-    console.log(colors.green + '\n👋 Goodbye!\n' + colors.reset);
+    console.log(colorize('\nGoodbye!\n', 'cyan'));
     process.exit(0);
   });
 }
 
-async function main() {
-  printBanner();
-
-  const nlqi = await initializeSystem();
-
-  if (!nlqi) {
-    console.log(
-      colors.yellow +
-        '\n⚠️  Failed to initialize. Please check your configuration.\n' +
-        colors.reset
-    );
+async function runSingleQuery(query: string) {
+  // Validate environment
+  if (
+    !process.env.ANTHROPIC_API_KEY ||
+    !process.env.VOYAGE_API_KEY ||
+    !process.env.PINECONE_API_KEY
+  ) {
+    console.error('❌ Missing required API keys in .env file');
     process.exit(1);
   }
 
-  // Check if query was passed as argument
-  const args = process.argv.slice(2);
-  if (args.length > 0) {
-    // Single query mode
-    const query = args.join(' ');
-    await processQuery(nlqi, query);
-    process.exit(0);
-  } else {
-    // Interactive mode
-    await runInteractiveMode(nlqi);
+  if (!process.env.PINECONE_INDEX_NAME) {
+    console.error('❌ PINECONE_INDEX_NAME not set in .env file');
+    process.exit(1);
   }
+
+  const nlqi = new PlantsNLQI({
+    anthropicApiKey: process.env.ANTHROPIC_API_KEY,
+    voyageApiKey: process.env.VOYAGE_API_KEY,
+    pineconeApiKey: process.env.PINECONE_API_KEY,
+    pineconeIndexName: process.env.PINECONE_INDEX_NAME,
+    enableConversations: false,
+  });
+
+  console.log(colorize(`\nQuery: "${query}"\n`, 'cyan'));
+
+  const result = await nlqi.query(query);
+
+  console.log(colorize('Response:', 'blue'));
+  console.log('─'.repeat(80));
+  console.log(result.answer);
+  console.log('─'.repeat(80));
+
+  if (result.plants.length > 0) {
+    console.log(colorize(`\n${result.plants.length} Matching Plants:`, 'green'));
+    result.plants.slice(0, 5).forEach((match, i) => {
+      const plant = match.plant;
+      console.log(
+        `  ${i + 1}. ${plant.scientificName} (${plant.commonNames[0]}) - ${(match.score * 100).toFixed(1)}%`
+      );
+    });
+  }
+
+  console.log();
 }
 
-main().catch((error) => {
-  console.error(colors.yellow + '❌ Fatal error:' + colors.reset, error);
-  process.exit(1);
-});
+// Main
+const args = process.argv.slice(2);
+
+if (args.length > 0) {
+  // Single query mode
+  const query = args.join(' ');
+  runSingleQuery(query).catch((error) => {
+    console.error('❌ Error:', error);
+    process.exit(1);
+  });
+} else {
+  // Interactive mode
+  runInteractiveMode().catch((error) => {
+    console.error('❌ Error:', error);
+    process.exit(1);
+  });
+}

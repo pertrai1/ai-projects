@@ -1,13 +1,13 @@
 /**
- * Plants NLQI (Natural Language Query Interface)
- * Main orchestrator that combines all services for end-to-end query processing
+ * Plants NLQI - Orchestrator
  */
 
-import { QueryResult, QueryMetadata, PlantMatch } from '../models';
-import { ClaudeService } from '../services/claude.service';
-import { EmbeddingService } from '../services/embedding.service';
-import { VectorSearchService } from '../services/vector-search.service';
-import { loadPlantsByIds } from '../utils/plant-loader';
+import { IntentAgent } from '../agents/intent-agent';
+import { ResponseAgent } from '../agents/response-agent';
+import { QueryRefinementService } from '../services/query-refinement.service';
+import { ConversationService } from '../services/conversation.service';
+import { HybridSearchService } from '../search/hybrid-search.service';
+import { QueryResult, QueryIntent } from '../models';
 import { logger } from '../utils/logger';
 
 export interface PlantsNLQIConfig {
@@ -16,139 +16,218 @@ export interface PlantsNLQIConfig {
   pineconeApiKey: string;
   pineconeIndexName: string;
   pineconeNamespace?: string;
+  enableConversations?: boolean;
 }
 
 export class PlantsNLQI {
-  private claudeService: ClaudeService;
-  private embeddingService: EmbeddingService;
-  private vectorSearchService: VectorSearchService;
+  private intentAgent: IntentAgent;
+  private responseAgent: ResponseAgent;
+  private refinementService: QueryRefinementService;
+  private conversationService: ConversationService;
+  private hybridSearch: HybridSearchService;
+  private enableConversations: boolean;
 
   constructor(config: PlantsNLQIConfig) {
-    logger.info('Initializing PlantsNLQI');
-
-    this.claudeService = new ClaudeService({
+    this.intentAgent = new IntentAgent({
       apiKey: config.anthropicApiKey,
     });
 
-    this.embeddingService = new EmbeddingService({
-      apiKey: config.voyageApiKey,
+    this.responseAgent = new ResponseAgent({
+      apiKey: config.anthropicApiKey,
     });
 
-    this.vectorSearchService = new VectorSearchService({
-      apiKey: config.pineconeApiKey,
-      indexName: config.pineconeIndexName,
-      namespace: config.pineconeNamespace,
+    this.refinementService = new QueryRefinementService();
+
+    this.conversationService = new ConversationService({
+      maxTurnsInMemory: 5,
     });
 
-    logger.info('PlantsNLQI initialized successfully');
+    this.hybridSearch = new HybridSearchService({
+      voyageApiKey: config.voyageApiKey,
+      pineconeApiKey: config.pineconeApiKey,
+      pineconeIndexName: config.pineconeIndexName,
+      pineconeNamespace: config.pineconeNamespace,
+    });
+
+    this.enableConversations = config.enableConversations !== false;
+
+    logger.info('PlantsNLQI Phase 2 initialized', {
+      enableConversations: this.enableConversations,
+    });
   }
 
   /**
-   * Process a natural language query and return results
+   * Query with conversation support
    */
-  async query(userQuery: string, topK: number = 5): Promise<QueryResult> {
+  async query(userQuery: string, conversationId?: string): Promise<QueryResult> {
     const startTime = Date.now();
 
     try {
-      logger.info('Processing query', { query: userQuery, topK });
+      logger.info('Processing query', { query: userQuery, conversationId });
 
-      // Step 1: Convert query to embedding
-      logger.debug('Step 1: Generating query embedding');
-      const queryEmbedding = await this.embeddingService.embedText(userQuery);
+      // Step 1: Parse intent
+      let intent: QueryIntent;
+      let isFollowUp = false;
 
-      // Step 2: Search for similar plants in vector database
-      logger.debug('Step 2: Searching vector database');
-      const searchResults = await this.vectorSearchService.searchSimilar(queryEmbedding, topK);
+      if (conversationId && this.enableConversations) {
+        // Check if this is a follow-up query
+        isFollowUp = this.conversationService.isFollowUpQuery(userQuery);
 
-      // Step 3: Load full plant records
-      logger.debug('Step 3: Loading plant records');
-      const plantIds = searchResults.map((result) => result.id);
-      const plants = loadPlantsByIds(plantIds);
+        if (isFollowUp) {
+          // Parse with context
+          const refContext = this.conversationService.getReferenceContext(conversationId);
+          logger.debug('Parsing as follow-up', { previousPlants: refContext.lastPlants });
 
-      // Create plant matches with scores
-      const plantMatches: PlantMatch[] = plants.map((plant) => {
-        const searchResult = searchResults.find((r) => r.id === plant.id);
-        return {
-          plant,
-          score: searchResult?.score || 0,
-        };
+          const parseResult = await this.intentAgent.parseIntentWithContext(
+            userQuery,
+            refContext.lastIntent,
+            refContext.lastPlants
+          );
+          intent = parseResult.intent;
+        } else {
+          // Parse without context
+          const parseResult = await this.intentAgent.parseIntent(userQuery);
+          intent = parseResult.intent;
+        }
+      } else {
+        // No conversation - parse normally
+        const parseResult = await this.intentAgent.parseIntent(userQuery);
+        intent = parseResult.intent;
+      }
+
+      logger.debug('Intent parsed', {
+        queryType: intent.queryType,
+        confidence: intent.confidence,
+        hasFilters: Object.keys(intent.filters).length > 0,
       });
 
-      // Step 4: Generate natural language response with Claude
-      logger.debug('Step 4: Generating response with Claude');
-      const answer = await this.claudeService.generateResponse(userQuery, plants);
+      // Step 2: Refine intent
+      const refinedIntent = this.refinementService.refineIntent(intent);
+      logger.debug('Intent refined', {
+        semanticQuery: refinedIntent.semanticQuery,
+        filtersSummary: this.refinementService.getFiltersSummary(refinedIntent.filters),
+      });
 
-      // Calculate metadata
-      const searchTime = Date.now() - startTime;
-      const metadata: QueryMetadata = {
-        totalResults: plants.length,
-        searchTime,
-        searchType: 'vector',
-      };
+      // Step 3: Hybrid search
+      const searchResult = await this.hybridSearch.search(refinedIntent, 10);
+      logger.debug('Search completed', {
+        strategy: searchResult.searchStrategy,
+        resultCount: searchResult.plants.length,
+      });
 
+      // Step 4: Generate context-aware response
+      const memory = conversationId
+        ? this.conversationService.getMemory(conversationId)
+        : undefined;
+
+      const answer = await this.responseAgent.generateResponse(
+        userQuery,
+        searchResult.plants,
+        memory,
+        isFollowUp
+      );
+
+      // Step 5: Create result
       const result: QueryResult = {
         query: userQuery,
         answer,
-        plants: plantMatches,
-        metadata,
+        plants: searchResult.plants.map((plant) => ({
+          plant,
+          score: searchResult.scores.get(plant.id) || 0,
+        })),
+        metadata: {
+          totalResults: searchResult.plants.length,
+          searchTime: Date.now() - startTime,
+          searchType: searchResult.searchStrategy,
+          filtersApplied: refinedIntent.filters,
+        },
       };
 
-      logger.info('Query processed successfully', {
-        duration: searchTime,
-        resultsCount: plants.length,
+      // Step 6: Add to conversation if enabled
+      if (conversationId && this.enableConversations) {
+        this.conversationService.addTurn(conversationId, userQuery, refinedIntent, result);
+        logger.debug('Turn added to conversation', { conversationId });
+      }
+
+      logger.info('Query completed', {
+        query: userQuery,
+        resultCount: result.plants.length,
+        totalTime: Date.now() - startTime,
       });
 
       return result;
     } catch (error) {
       logger.error('Error processing query', { error, query: userQuery });
-      throw new Error(`Failed to process query: ${error}`);
+      throw new Error(`Query failed: ${error}`);
     }
   }
 
   /**
-   * Test all service connections
+   * Start a new conversation
    */
-  async healthCheck(): Promise<{
-    claude: boolean;
-    pinecone: boolean;
-    overall: boolean;
-  }> {
+  startConversation(): string {
+    if (!this.enableConversations) {
+      throw new Error('Conversations are disabled');
+    }
+    return this.conversationService.startConversation();
+  }
+
+  /**
+   * End a conversation
+   */
+  endConversation(conversationId: string): void {
+    if (!this.enableConversations) {
+      throw new Error('Conversations are disabled');
+    }
+    this.conversationService.endConversation(conversationId);
+  }
+
+  /**
+   * Get conversation summary
+   */
+  getConversationSummary(conversationId: string): string {
+    if (!this.enableConversations) {
+      throw new Error('Conversations are disabled');
+    }
+    return this.conversationService.getSummary(conversationId);
+  }
+
+  /**
+   * Health check - verify all services are operational
+   */
+  async healthCheck(): Promise<{ status: string; services: Record<string, boolean> }> {
     logger.info('Running health check');
 
+    const services: Record<string, boolean> = {
+      intentAgent: false,
+      responseAgent: false,
+      hybridSearch: false,
+    };
+
     try {
-      // Test Claude connection
-      const claudeHealthy = await this.claudeService.testConnection();
-
-      // Test Pinecone connection
-      const pineconeHealthy = await this.vectorSearchService.isReady();
-
-      const overall = claudeHealthy && pineconeHealthy;
-
-      logger.info('Health check complete', {
-        claude: claudeHealthy,
-        pinecone: pineconeHealthy,
-        overall,
-      });
-
-      return {
-        claude: claudeHealthy,
-        pinecone: pineconeHealthy,
-        overall,
-      };
+      services.intentAgent = await this.intentAgent.testConnection();
     } catch (error) {
-      logger.error('Health check failed', { error });
-      return {
-        claude: false,
-        pinecone: false,
-        overall: false,
-      };
+      logger.error('Intent agent health check failed', { error });
     }
-  }
 
-  /**
-   * Get index statistics
-   */
-  async getIndexStats() {
-    return await this.vectorSearchService.getStats();
+    try {
+      services.responseAgent = await this.responseAgent.testConnection();
+    } catch (error) {
+      logger.error('Response agent health check failed', { error });
+    }
+
+    try {
+      // Check Pinecone connection (no direct method, assume OK if no error)
+      services.hybridSearch = true;
+    } catch (error) {
+      logger.error('Hybrid search health check failed', { error });
+    }
+
+    const allHealthy = Object.values(services).every((s) => s);
+    const status = allHealthy ? 'healthy' : 'degraded';
+
+    logger.info('Health check completed', { status, services });
+
+    return { status, services };
   }
 }

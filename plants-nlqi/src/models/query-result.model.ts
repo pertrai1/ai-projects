@@ -22,7 +22,7 @@ export interface PlantMatch {
 export interface QueryMetadata {
   totalResults: number;
   searchTime: number; // in milliseconds
-  searchType: 'vector' | 'hybrid' | 'structured';
+  searchType: 'vector' | 'hybrid' | 'filtered';
   filtersApplied?: QueryFilters;
 }
 
