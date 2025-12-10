@@ -25,7 +25,7 @@ This project enables users to query the USDA PLANTS Database using natural langu
 
 ## Project Phases
 
-### Phase 1: [Basic RAG](/docs/PHASE-1.md)
+### Phase 1: [Basic RAG](plants-nlqi/docs/PHASE-1.md)
 
 - Claude API integration
 - Basic vector search with Pinecone
@@ -149,7 +149,7 @@ Query>
 Goodbye!
 ```
 
-### Phase 2: [Agent Layer](docs/PHASE-2.md)
+### Phase 2: [Agent Layer](plants-nlqi/docs/PHASE-2.md)
 
 - Query understanding agent
 - Hybrid search implementation
