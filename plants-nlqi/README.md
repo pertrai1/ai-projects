@@ -156,6 +156,145 @@ Goodbye!
 - Response generation pipeline
 - Conversation memory
 
+Example of the CLI when running `npm run cli`:
+
+```bash
+════════════════════════════════════════════════════════════════════════════════
+PLANTS NLQI - Natural Language Query Interface
+  Enhanced with Conversation Memory & Hybrid Search
+════════════════════════════════════════════════════════════════════════════════
+
+Initializing system...
+2025-12-10 15:26:37 [plants-nlqi] info: Intent agent initialized {"model":"claude-sonnet-4-20250514"}
+2025-12-10 15:26:37 [plants-nlqi] info: Response agent initialized {"model":"claude-sonnet-4-20250514"}
+2025-12-10 15:26:37 [plants-nlqi] info: Conversation service initialized {"maxTurnsInMemory":5}
+2025-12-10 15:26:37 [plants-nlqi] info: Embedding service initialized {"model":"voyage-3"}
+2025-12-10 15:26:37 [plants-nlqi] info: Vector search service initialized {"indexName":"plants-nlqi","namespace":"default"}
+2025-12-10 15:26:37 [plants-nlqi] info: Hybrid search service initialized
+2025-12-10 15:26:37 [plants-nlqi] info: PlantsNLQI Phase 2 initialized {"enableConversations":true}
+Running health check...
+2025-12-10 15:26:37 [plants-nlqi] info: Running health check
+2025-12-10 15:26:37 [plants-nlqi] info: Testing intent agent connection
+2025-12-10 15:26:39 [plants-nlqi] info: Connection test result {"success":true}
+2025-12-10 15:26:39 [plants-nlqi] info: Testing response agent connection
+2025-12-10 15:26:42 [plants-nlqi] info: Connection test result {"success":true}
+2025-12-10 15:26:42 [plants-nlqi] info: Health check completed {"status":"healthy","services":{"intentAgent":true,"responseAgent":true,"hybridSearch":true}}
+All systems operational
+
+2025-12-10 15:26:42 [plants-nlqi] info: Conversation started {"conversationId":"18c41011-15e0-4704-97d5-2c559db1c7a3"}
+Conversation started (ID: 18c41011...)
+
+Available Commands:
+  help     - Show this help message
+  new      - Start a new conversation
+  summary  - Show conversation summary
+  exit     - Exit the program
+  quit     - Exit the program
+
+Example Queries:
+  • What native wildflowers are found in North Carolina?
+  • Show me drought-tolerant plants
+  • Which of those attract butterflies? (follow-up)
+  • Find trees that grow in shade and bloom in spring
+  • What about shrubs instead? (follow-up)
+
+> Find trees that grow in shade and bloom in spring
+
+Searching...
+2025-12-10 15:27:01 [plants-nlqi] info: Processing query {"query":"Find trees that grow in shade and bloom in spring","conversationId":"18c41011-15e0-4704-97d5-2c559db1c7a3"}
+2025-12-10 15:27:01 [plants-nlqi] info: Parsing contextual intent {"query":"Find trees that grow in shade and bloom in spring"}
+2025-12-10 15:27:04 [plants-nlqi] info: Contextual intent parsed {"queryType":"recommendation","confidence":0.9,"duration":3489}
+2025-12-10 15:27:04 [plants-nlqi] info: Performing hybrid search {"queryType":"recommendation","hasFilters":true,"topK":10}
+2025-12-10 15:27:05 [plants-nlqi] info: Searching for similar plants {"topK":20}
+2025-12-10 15:27:06 [plants-nlqi] info: Search completed {"resultsCount":8}
+2025-12-10 15:27:06 [plants-nlqi] info: Plants loaded from file {"count":8}
+Metadata filters undefined
+2025-12-10 15:27:06 [plants-nlqi] info: Hybrid search completed {"resultsCount":0,"strategy":"hybrid","duration":2023}
+2025-12-10 15:27:06 [plants-nlqi] info: Generating context-aware response {"query":"Find trees that grow in shade and bloom in spring","plantCount":0,"hasMemory":true,"isFollowUp":true}
+2025-12-10 15:27:13 [plants-nlqi] info: Query completed {"query":"Find trees that grow in shade and bloom in spring","resultCount":0,"totalTime":12248}
+
+Response:
+────────────────────────────────────────────────────────────────────────────────
+I couldn't find any trees in our database that match both "shade-growing" and "spring-blooming" criteria.
+
+Here are some suggestions to help you find what you're looking for:
+
+**Try searching for:**
+- Just "spring blooming trees" (then check which tolerate shade)
+- "shade tolerant trees" (then look for bloom times)
+- Specific tree names like "dogwood," "redbud," or "serviceberry"
+
+**You might also search by:**
+- Your specific region or hardiness zone
+- Flower color preferences
+- Tree size (small, medium, large)
+
+Many beautiful trees do bloom in spring and tolerate partial shade - our search just might need different keywords to find them! Feel free to try a new search or browse by categories.
+────────────────────────────────────────────────────────────────────────────────
+
+Search Info:
+   Strategy: hybrid
+   Results: 0
+   Time: 12248ms
+
+> spring blooming trees
+
+Searching...
+2025-12-10 15:27:58 [plants-nlqi] info: Processing query {"query":"spring blooming trees","conversationId":"18c41011-15e0-4704-97d5-2c559db1c7a3"}
+2025-12-10 15:27:58 [plants-nlqi] info: Parsing intent {"query":"spring blooming trees"}
+2025-12-10 15:28:01 [plants-nlqi] info: Intent parsed successfully {"queryType":"recommendation","confidence":0.9,"duration":2868}
+2025-12-10 15:28:01 [plants-nlqi] info: Performing hybrid search {"queryType":"recommendation","hasFilters":true,"topK":10}
+2025-12-10 15:28:02 [plants-nlqi] info: Searching for similar plants {"topK":20}
+2025-12-10 15:28:02 [plants-nlqi] info: Search completed {"resultsCount":8}
+Metadata filters undefined
+2025-12-10 15:28:02 [plants-nlqi] info: Hybrid search completed {"resultsCount":4,"strategy":"hybrid","duration":874}
+2025-12-10 15:28:02 [plants-nlqi] info: Generating context-aware response {"query":"spring blooming trees","plantCount":4,"hasMemory":true,"isFollowUp":false}
+2025-12-10 15:28:13 [plants-nlqi] info: Context-aware response generated {"duration":10996,"inputTokens":935,"outputTokens":331}
+2025-12-10 15:28:13 [plants-nlqi] info: Query completed {"query":"spring blooming trees","resultCount":4,"totalTime":14742}
+
+Response:
+────────────────────────────────────────────────────────────────────────────────
+What great timing to think about spring blooming trees! There are some absolutely stunning native options that will give you beautiful flowers and provide incredible value to local wildlife.
+
+The **Tulip Tree** (*Liriodendron tulipifera*) is probably my top pick for spring drama. In late spring, it produces these gorgeous tulip-shaped flowers in yellow-green with orange centers - though you'll need to wait a few years for blooms if you plant a young tree, as they typically flower when they're taller. It's one of our tallest native hardwoods and grows quite fast, plus bees absolutely love the nectar-rich flowers.
+
+For earlier spring interest, **White Oak** (*Quercus alba*) is magnificent, though its blooms are more subtle - long, drooping catkins that emerge as the leaves unfurl. While not showy like tulip flowers, oaks are absolutely unmatched for wildlife value, supporting hundreds of caterpillar species that feed birds. It's truly a cornerstone species for any native landscape.
+
+**American Holly** (*Ilex opaca*) rounds out the group with small, fragrant white flowers in late spring. What makes holly special is that those spring blooms lead to bright red berries that provide critical winter food for birds - just remember you'll need both male and female trees for berry production.
+
+All of these are substantial trees that will give you decades of spring beauty while supporting your local ecosystem. Do any of these sound like they'd work well in your landscape?
+────────────────────────────────────────────────────────────────────────────────
+
+4 Matching Plants:
+
+1. Liriodendron tulipifera (Tulip Tree)
+   ███ 30.7%
+   Tree • Perennial
+   Water: Medium • Sun: Full Sun • Wildlife: Birds, Pollinators
+
+2. Carya carolinae-septentrionalis (Southern Shagbark Hickory)
+   ██ 24.0%
+   Tree • Perennial
+   Water: Medium • Sun: Full Sun • Wildlife: Mammals, Birds
+
+3. Ilex opaca (American Holly)
+   ██ 23.7%
+   Tree • Perennial
+   Water: Medium • Sun: Full Sun, Partial Shade • Wildlife: Birds
+
+4. Quercus alba (White Oak)
+   ██ 22.7%
+   Tree • Perennial
+   Water: Medium • Sun: Full Sun, Partial Shade • Wildlife: Birds, Mammals
+
+Search Info:
+   Strategy: hybrid
+   Results: 4
+   Time: 14742ms
+
+>
+```
+
 ### Phase 3: Advanced Features
 
 - Multi-agent architecture
