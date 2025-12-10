@@ -66,7 +66,7 @@ export class PlantsNLQI {
       const plants = loadPlantsByIds(plantIds);
 
       // Create plant matches with scores
-      const plantMatches: PlantMatch[] = plants.map((plant, index) => {
+      const plantMatches: PlantMatch[] = plants.map((plant) => {
         const searchResult = searchResults.find((r) => r.id === plant.id);
         return {
           plant,

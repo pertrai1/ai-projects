@@ -4,6 +4,7 @@
  */
 
 import { PlantRecord } from './plant.model';
+import { QueryFilters } from './intent.model';
 
 export interface QueryResult {
   query: string;
@@ -23,17 +24,6 @@ export interface QueryMetadata {
   searchTime: number; // in milliseconds
   searchType: 'vector' | 'hybrid' | 'structured';
   filtersApplied?: QueryFilters;
-}
-
-export interface QueryFilters {
-  states?: string[];
-  nativeStatus?: 'native' | 'introduced' | 'both';
-  bloomPeriod?: string;
-  growthHabit?: string[];
-  sunRequirements?: string[];
-  waterNeeds?: string;
-  hardinessZones?: string[];
-  wildlifeValue?: string[];
 }
 
 /**
