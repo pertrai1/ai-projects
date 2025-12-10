@@ -35,7 +35,7 @@ This project enables users to query the USDA PLANTS Database using natural langu
 Example terminal output when running `npx tsx test-nlqi.ts`:
 
 ```bash
-📝 Query: "Which plants attract pollinators?"
+Query: "Which plants attract pollinators?"
 
 2025-12-09 17:15:35 [plants-nlqi] info: Processing query {"query":"Which plants attract pollinators?","topK":3}
 2025-12-09 17:15:35 [plants-nlqi] info: Searching for similar plants {"topK":3}
@@ -43,15 +43,15 @@ Example terminal output when running `npx tsx test-nlqi.ts`:
 2025-12-09 17:15:36 [plants-nlqi] info: Generating response {"query":"Which plants attract pollinators?","plantCount":3}
 2025-12-09 17:15:45 [plants-nlqi] info: Response generated {"duration":8827,"inputTokens":771,"outputTokens":330}
 2025-12-09 17:15:45 [plants-nlqi] info: Query processed successfully {"duration":9320,"resultsCount":3}
-⏱️  Search time: 9320ms
-📊 Results found: 3
+Search time: 9320ms
+Results found: 3
 
-🌱 Top Plants:
+Top Plants:
   1. Asclepias tuberosa (Butterfly Weed) - Score: 0.438
   2. Rudbeckia maxima (Great Coneflower) - Score: 0.407
   3. Rhododendron maximum (Great Rhododendron) - Score: 0.358
 
-💬 Answer:
+Answer:
 Native plants are absolutely fantastic for attracting pollinators! You'll be amazed at how many bees, butterflies, and other beneficial insects visit when you plant the right species.
 
 **Asclepias tuberosa** (Butterfly Weed) is one of my top recommendations - it's like a magnet for pollinators! This stunning perennial produces brilliant orange flower clusters from late spring through summer and is especially beloved by monarch butterflies, serving as both a nectar source and essential host plant for their caterpillars. It thrives in full sun with minimal water once established, making it perfect for low-maintenance gardens.
@@ -68,7 +68,7 @@ Example of the CLI version when running `npm run cli`:
 ```bash
 
 ╔════════════════════════════════════════════════════════════╗
-║         🌿 PLANTS Natural Language Query Interface         ║
+║         PLANTS Natural Language Query Interface            ║
 ║              USDA PLANTS Database Explorer                 ║
 ╚════════════════════════════════════════════════════════════╝
 
@@ -83,10 +83,10 @@ Initializing system...
 2025-12-09 17:23:45 [plants-nlqi] info: Connection test result {"success":true}
 2025-12-09 17:23:46 [plants-nlqi] info: Index status checked {"indexName":"plants-nlqi","ready":true}
 2025-12-09 17:23:46 [plants-nlqi] info: Health check complete {"claude":true,"pinecone":true,"overall":true}
-✅ System ready!
+System ready!
 
 
-📚 Example queries:
+Example queries:
   • "What native wildflowers are found in North Carolina?"
   • "Show me drought-tolerant plants"
   • "Which plants attract pollinators?"
@@ -95,20 +95,20 @@ Initializing system...
 
 Type "exit" or "quit" to exit
 
-🌿 Query> What trees bloom in spring?
+Query> What trees bloom in spring?
 
-🔍 Searching...
+Searching...
 2025-12-09 17:23:59 [plants-nlqi] info: Processing query {"query":"What trees bloom in spring?","topK":5}
 2025-12-09 17:23:59 [plants-nlqi] info: Searching for similar plants {"topK":5}
 2025-12-09 17:24:00 [plants-nlqi] info: Search completed {"resultsCount":5}
 2025-12-09 17:24:00 [plants-nlqi] info: Plants loaded from file {"count":8}
 2025-12-09 17:24:00 [plants-nlqi] info: Generating response {"query":"What trees bloom in spring?","plantCount":5}
-🌿 Query> 2025-12-09 17:24:09 [plants-nlqi] info: Response generated {"duration":9242,"inputTokens":1028,"outputTokens":294}
+Query> 2025-12-09 17:24:09 [plants-nlqi] info: Response generated {"duration":9242,"inputTokens":1028,"outputTokens":294}
 2025-12-09 17:24:09 [plants-nlqi] info: Query processed successfully {"duration":10286,"resultsCount":5}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-🌱 Matching Plants:
+Matching Plants:
 
   1. Liriodendron tulipifera (Tulip Tree)
      ████ 40.9% match
@@ -130,7 +130,7 @@ Type "exit" or "quit" to exit
      ███ 30.9% match
      Tree • Perennial
 
-💬 Answer:
+Answer:
 ──────────────────────────────────────────────────────────────────────
 Spring is such a wonderful time for tree blooms! You have some fantastic native options that will bring both beauty and wildlife value to your landscape.
 
@@ -143,10 +143,10 @@ If you're looking for something evergreen with spring interest, **American Holly
 These native spring bloomers will give you years of seasonal beauty while supporting local ecosystems - there's nothing quite like watching the wildlife activity around a mature native tree!
 ──────────────────────────────────────────────────────────────────────
 
-⏱️  Completed in 10286ms (5 results)
+ Completed in 10286ms (5 results)
 
-🌿 Query>
-👋 Goodbye!
+Query>
+Goodbye!
 ```
 
 ### Phase 2: [Agent Layer](docs/PHASE-2.md)

@@ -9,7 +9,7 @@ import { PlantsNLQI } from './src/core/plants-nlqi';
 dotenv.config();
 
 async function main() {
-  console.log('🌿 Testing Plants NLQI\n');
+  console.log('Testing Plants NLQI\n');
 
   // Initialize the system
   const nlqi = new PlantsNLQI({
@@ -29,7 +29,7 @@ async function main() {
     return;
   }
 
-  console.log('✅ System healthy!\n');
+  console.log('System healthy!\n');
 
   // Test queries
   const queries = [
@@ -40,25 +40,25 @@ async function main() {
 
   for (const query of queries) {
     console.log('─'.repeat(80));
-    console.log(`\n📝 Query: "${query}"\n`);
+    console.log(`\nQuery: "${query}"\n`);
 
     const result = await nlqi.query(query, 3);
 
-    console.log(`⏱️  Search time: ${result.metadata.searchTime}ms`);
-    console.log(`📊 Results found: ${result.metadata.totalResults}\n`);
+    console.log(`Search time: ${result.metadata.searchTime}ms`);
+    console.log(`Results found: ${result.metadata.totalResults}\n`);
 
-    console.log('🌱 Top Plants:');
+    console.log('Top Plants:');
     result.plants.forEach((match, i) => {
       console.log(
         `  ${i + 1}. ${match.plant.scientificName} (${match.plant.commonNames[0]}) - Score: ${match.score.toFixed(3)}`
       );
     });
 
-    console.log(`\n💬 Answer:\n${result.answer}\n`);
+    console.log(`\nAnswer:\n${result.answer}\n`);
   }
 
   console.log('─'.repeat(80));
-  console.log('\n✅ All tests completed!');
+  console.log('\nAll tests completed!');
 }
 
 main().catch((error) => {
