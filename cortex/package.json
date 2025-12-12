@@ -1,0 +1,38 @@
+{
+  "name": "agi",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "agi": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsx watch --env-file=.env src/index.ts",
+    "start": "tsx --env-file=.env src/index.ts",
+    "eval": "npx lmnr eval",
+    "eval:file-tools": "npx lmnr eval evals/file-tools.eval.ts",
+    "eval:shell-tools": "npx lmnr eval evals/shell-tools.eval.ts",
+    "eval:agent": "npx lmnr eval evals/agent-multiturn.eval.ts"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.3.7",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.7",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^2.0.72",
+    "@lmnr-ai/lmnr": "^0.7.9",
+    "@types/shelljs": "^0.8.17",
+    "ai": "^5.0.102",
+    "ink": "^6.5.1",
+    "ink-spinner": "^5.0.0",
+    "react": "^19.2.0",
+    "shelljs": "^0.10.0",
+    "zod": "^4.1.13"
+  }
+}

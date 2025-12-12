@@ -1,0 +1,119 @@
+[
+  {
+    "data": {
+      "prompt": "Run npm install to install the dependencies",
+      "tools": ["runCommand"]
+    },
+    "target": {
+      "expectedTools": ["runCommand"],
+      "category": "golden"
+    },
+    "metadata": {
+      "description": "Package installation request - should use runCommand"
+    }
+  },
+  {
+    "data": {
+      "prompt": "Execute the test suite with npm test",
+      "tools": ["runCommand"]
+    },
+    "target": {
+      "expectedTools": ["runCommand"],
+      "category": "golden"
+    },
+    "metadata": {
+      "description": "Test execution request - should use runCommand"
+    }
+  },
+  {
+    "data": {
+      "prompt": "Check the git status of this repository",
+      "tools": ["runCommand"]
+    },
+    "target": {
+      "expectedTools": ["runCommand"],
+      "category": "golden"
+    },
+    "metadata": {
+      "description": "Git status request - should use runCommand"
+    }
+  },
+  {
+    "data": {
+      "prompt": "Build the project using the build script",
+      "tools": ["runCommand"]
+    },
+    "target": {
+      "expectedTools": ["runCommand"],
+      "category": "golden"
+    },
+    "metadata": {
+      "description": "Build request - should use runCommand"
+    }
+  },
+  {
+    "data": {
+      "prompt": "Can you start the development server?",
+      "tools": ["runCommand"]
+    },
+    "target": {
+      "expectedTools": ["runCommand"],
+      "category": "secondary"
+    },
+    "metadata": {
+      "description": "Dev server request - likely uses runCommand"
+    }
+  },
+  {
+    "data": {
+      "prompt": "Help me set up the project",
+      "tools": ["runCommand"]
+    },
+    "target": {
+      "expectedTools": ["runCommand"],
+      "category": "secondary"
+    },
+    "metadata": {
+      "description": "Setup request - might use runCommand"
+    }
+  },
+  {
+    "data": {
+      "prompt": "What is TypeScript used for?",
+      "tools": ["runCommand"]
+    },
+    "target": {
+      "forbiddenTools": ["runCommand"],
+      "category": "negative"
+    },
+    "metadata": {
+      "description": "General knowledge question - should NOT use shell"
+    }
+  },
+  {
+    "data": {
+      "prompt": "Explain how async/await works in JavaScript",
+      "tools": ["runCommand"]
+    },
+    "target": {
+      "forbiddenTools": ["runCommand"],
+      "category": "negative"
+    },
+    "metadata": {
+      "description": "Explanation request - should NOT use shell"
+    }
+  },
+  {
+    "data": {
+      "prompt": "What's the difference between let and const?",
+      "tools": ["runCommand"]
+    },
+    "target": {
+      "forbiddenTools": ["runCommand"],
+      "category": "negative"
+    },
+    "metadata": {
+      "description": "Language question - should NOT use shell"
+    }
+  }
+]
