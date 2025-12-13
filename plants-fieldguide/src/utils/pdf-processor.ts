@@ -1,5 +1,5 @@
 import fs from "fs/promises";
-import { PDFParse } from "pdf-parse";
+import PDFParser from "pdf2json";
 import { v4 as uuidv4 } from "uuid";
 import type { DocumentChunk, ProcessingOptions } from "../types/document.js";
 
@@ -12,36 +12,47 @@ export class PDFProcessor {
     numPages: number;
     pages: Array<{ pageNumber: number; text: string }>;
   }> {
-    const dataBuffer = await fs.readFile(pdfPath);
-    const parser = new PDFParse({ data: dataBuffer });
-    const result = await parser.getText();
-    const data = {
-      text: result.text,
-      numpages: result.total,
-    };
+    return new Promise((resolve, reject) => {
+      const pdfParser = new PDFParser(null, 1);
 
-    // Extract page-by-page text
-    const pages: Array<{ pageNumber: number; text: string }> = [];
-
-    // pdf-parse doesn't give page-by-page by default,
-    // need to split by page breaks or process differently
-    // For now, split the text into roughly equal pages
-    const textPerPage = Math.ceil(data.text.length / data.numpages);
-
-    for (let i = 0; i < data.numpages; i++) {
-      const start = i * textPerPage;
-      const end = Math.min((i + 1) * textPerPage, data.text.length);
-      pages.push({
-        pageNumber: i + 1,
-        text: data.text.substring(start, end),
+      pdfParser.on("pdfParser_dataError", (errData: any) => {
+        reject(new Error(errData.parserError));
       });
-    }
 
-    return {
-      text: data.text,
-      numPages: data.numpages,
-      pages,
-    };
+      pdfParser.on("pdfParser_dataReady", (pdfData: any) => {
+        // Extract text from all pages
+        let fullText = "";
+        const pages: Array<{ pageNumber: number; text: string }> = [];
+
+        pdfData.Pages.forEach((page: any, index: number) => {
+          let pageText = "";
+          page.Texts.forEach((text: any) => {
+            try {
+              const decoded = decodeURIComponent(text.R[0].T);
+              pageText += decoded + " ";
+            } catch (e) {
+              // If decoding fails, use the raw text
+              pageText += text.R[0].T + " ";
+            }
+          });
+
+          pages.push({
+            pageNumber: index + 1,
+            text: pageText.trim(),
+          });
+
+          fullText += pageText + "\n";
+        });
+
+        resolve({
+          text: fullText.trim(),
+          numPages: pdfData.Pages.length,
+          pages,
+        });
+      });
+
+      pdfParser.loadPDF(pdfPath);
+    });
   }
 
   /**

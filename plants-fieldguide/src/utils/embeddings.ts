@@ -23,26 +23,51 @@ export class EmbeddingsGenerator {
   }
 
   /**
-   * Generate embeddings for multiple texts in batch
+   * Generate embeddings for multiple texts in batch with progress callback
    */
-  async generateEmbeddings(texts: string[]): Promise<number[][]> {
-    // OpenAI allows up to 2048 inputs per request for embeddings
+  async generateEmbeddings(
+    texts: string[],
+    onProgress?: (current: number, total: number) => void,
+  ): Promise<number[][]> {
     const batchSize = 100;
     const embeddings: number[][] = [];
+    const totalBatches = Math.ceil(texts.length / batchSize);
+
+    console.log(
+      `Generating embeddings for ${texts.length} chunks in ${totalBatches} batches...`,
+    );
 
     for (let i = 0; i < texts.length; i += batchSize) {
       const batch = texts.slice(i, i + batchSize);
+      const batchNum = Math.floor(i / batchSize) + 1;
 
-      const response = await this.openai.embeddings.create({
-        model: this.model,
-        input: batch,
-      });
+      console.log(
+        `Processing batch ${batchNum}/${totalBatches} (${batch.length} items)...`,
+      );
 
-      embeddings.push(...response.data.map((d) => d.embedding));
+      try {
+        const response = await this.openai.embeddings.create({
+          model: this.model,
+          input: batch,
+        });
 
-      // Simple rate limiting
-      if (i + batchSize < texts.length) {
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        embeddings.push(...response.data.map((d) => d.embedding));
+
+        if (onProgress) {
+          onProgress(embeddings.length, texts.length);
+        }
+
+        console.log(
+          `Batch ${batchNum}/${totalBatches} complete (${embeddings.length}/${texts.length} total)`,
+        );
+
+        // Rate limiting - only sleep if not the last batch
+        if (i + batchSize < texts.length) {
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+      } catch (error) {
+        console.error(`Error in batch ${batchNum}:`, error);
+        throw error;
       }
     }
 
@@ -58,11 +83,26 @@ export class EmbeddingsGenerator {
   }
 }
 
+// Lazy singleton to ensure environment variables are loaded first
 let _embeddingsGenerator: EmbeddingsGenerator | null = null;
 
-export function getEmbeddingsGenerator(): EmbeddingsGenerator {
-  if (!_embeddingsGenerator) {
-    _embeddingsGenerator = new EmbeddingsGenerator();
-  }
-  return _embeddingsGenerator;
-}
+export const embeddingsGenerator = {
+  get generateEmbedding() {
+    if (!_embeddingsGenerator) {
+      _embeddingsGenerator = new EmbeddingsGenerator();
+    }
+    return _embeddingsGenerator.generateEmbedding.bind(_embeddingsGenerator);
+  },
+  get generateEmbeddings() {
+    if (!_embeddingsGenerator) {
+      _embeddingsGenerator = new EmbeddingsGenerator();
+    }
+    return _embeddingsGenerator.generateEmbeddings.bind(_embeddingsGenerator);
+  },
+  get getDimension() {
+    if (!_embeddingsGenerator) {
+      _embeddingsGenerator = new EmbeddingsGenerator();
+    }
+    return _embeddingsGenerator.getDimension.bind(_embeddingsGenerator);
+  },
+};

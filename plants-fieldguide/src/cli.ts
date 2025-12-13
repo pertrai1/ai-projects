@@ -1,12 +1,14 @@
 #!/usr/bin/env node
+import { config } from "dotenv";
+
+config();
+
 import { Command } from "commander";
 import chalk from "chalk";
-import { config } from "dotenv";
 import { askCommand } from "./commands/ask";
 import { specsCommand } from "./commands/specs";
 import { indexCommand } from "./commands/index";
-
-config();
+import { debugCommand } from "./commands/debug";
 
 const program = new Command();
 
@@ -53,6 +55,18 @@ program
       chunkSize: parseInt(options.chunkSize),
       chunkOverlap: parseInt(options.chunkOverlap),
     });
+  });
+
+program
+  .command("debug")
+  .description("Debug PDF processing and show estimates")
+  .option(
+    "-f, --file <path>",
+    "Path to PDF file",
+    "./PLANTS_Help_Document_2022.pdf",
+  )
+  .action(async (options) => {
+    await debugCommand(options.file);
   });
 
 program
