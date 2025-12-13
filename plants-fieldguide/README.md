@@ -125,14 +125,25 @@ npm run cli -- index --verbose
 Query the indexed documentation:
 
 ```bash
-# Ask a question
-npm run cli -- ask "How do I export data?"
+# Make sure you've indexed the documentation first
+npm run cli -- index
 
-# Use verbose mode for detailed output
-npm run cli -- ask "What are the search features?" --verbose
+# Ask questions using the document-retriever agent
+npm run cli -- ask "What are wetland indicators?" --agent document-retriever
 
-# Specify which agent to use
-npm run cli -- ask "How does filtering work?" --agent question-analyzer
+# Try different question types
+npm run cli -- ask "How do I search for plants by state?" --agent document-retriever
+npm run cli -- ask "What does the symbol FACW mean?" --agent document-retriever
+npm run cli -- ask "Explain the difference between native and introduced plants" --agent document-retriever
+
+# Use verbose mode to see detailed output
+npm run cli -- ask "What is ethnobotany?" --agent document-retriever --verbose
+
+# Use the greeter agent for a friendly introduction
+npm run cli -- ask "Hello!" --agent greeter
+
+# Direct search mode (no AI, just vector search results)
+npm run cli -- ask "taxonomy" --direct
 ```
 
 ### Debug PDF Processing

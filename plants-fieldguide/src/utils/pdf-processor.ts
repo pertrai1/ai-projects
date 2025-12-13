@@ -13,7 +13,7 @@ export class PDFProcessor {
     pages: Array<{ pageNumber: number; text: string }>;
   }> {
     return new Promise((resolve, reject) => {
-      const pdfParser = new PDFParser(null, 1);
+      const pdfParser = new PDFParser(null, true);
 
       pdfParser.on("pdfParser_dataError", (errData: any) => {
         reject(new Error(errData.parserError));
@@ -29,7 +29,11 @@ export class PDFProcessor {
           page.Texts.forEach((text: any) => {
             try {
               const decoded = decodeURIComponent(text.R[0].T);
-              pageText += decoded + " ";
+              // Only add space if the decoded text doesn't already end with whitespace
+              pageText += decoded;
+              if (!decoded.match(/\s$/)) {
+                pageText += " ";
+              }
             } catch (e) {
               // If decoding fails, use the raw text
               pageText += text.R[0].T + " ";
@@ -127,29 +131,48 @@ export class PDFProcessor {
       // Detect sections first
       const sections = this.detectSections(text);
 
-      for (const section of sections) {
-        const sectionText = text.substring(
-          section.startIndex,
-          section.endIndex || text.length,
-        );
+      // If we found sections, chunk by section
+      if (sections.length > 0) {
+        for (const section of sections) {
+          const sectionText = text.substring(
+            section.startIndex,
+            section.endIndex || text.length,
+          );
 
-        // Chunk each section separately
-        const sectionChunks = this.chunkText(
-          sectionText,
-          chunkSize,
-          chunkOverlap,
-        );
+          // Chunk each section separately
+          const sectionChunks = this.chunkText(
+            sectionText,
+            chunkSize,
+            chunkOverlap,
+          );
 
-        sectionChunks.forEach((content, index) => {
+          sectionChunks.forEach((content, index) => {
+            chunks.push({
+              id: uuidv4(),
+              content,
+              metadata: {
+                source: sourcePath,
+                page: 0, // update this later with actual page numbers
+                section: section.title,
+                chunkIndex: index,
+                totalChunks: sectionChunks.length,
+              },
+            });
+          });
+        }
+      } else {
+        // No sections found, fall back to simple chunking
+        const textChunks = this.chunkText(text, chunkSize, chunkOverlap);
+
+        textChunks.forEach((content, index) => {
           chunks.push({
             id: uuidv4(),
             content,
             metadata: {
               source: sourcePath,
-              page: 0, // update this later with actual page numbers
-              section: section.title,
+              page: 0,
               chunkIndex: index,
-              totalChunks: sectionChunks.length,
+              totalChunks: textChunks.length,
             },
           });
         });
@@ -211,14 +234,19 @@ export class PDFProcessor {
         chunks.push(chunkText);
       }
 
-      // Move start position, ensuring we always make progress
-      const nextStart = Math.max(start + 1, end - overlap);
+      // If we've reached the end, stop
+      if (end >= text.length) {
+        break;
+      }
 
-      // Prevent infinite loop: if we're not making progress, jump ahead
-      if (nextStart <= start) {
-        start = end;
-      } else {
-        start = nextStart;
+      // Move start position with overlap
+      const prevStart = start;
+      start = end - overlap;
+
+      // Ensure we're making progress (moving forward)
+      if (start <= prevStart) {
+        // If not making progress, skip ahead by chunkSize - overlap
+        start = prevStart + (chunkSize - overlap);
       }
     }
 

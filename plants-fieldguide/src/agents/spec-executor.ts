@@ -13,6 +13,7 @@ export interface ExecutionResult {
     outputTokens: number;
   };
   model: string;
+  toolsUsed?: string[];
 }
 
 export class SpecExecutor {

@@ -22,7 +22,15 @@ program
   .description("Ask a question about PLANTS documentation")
   .argument("<question>", "Your question")
   .option("-v, --verbose", "Show detailed output")
-  .option("-a, --agent <name>", "Specify which agent to use", "greeter")
+  .option("-a, --agent <name>", "Use a specific agent")
+  .option(
+    "-w, --workflow <name>",
+    "Use a specific workflow (default: question-answering)",
+  )
+  .option(
+    "-d, --direct",
+    "Show direct search results without AI interpretation",
+  )
   .action(async (question: string, options) => {
     await askCommand(question, options);
   });

@@ -1,0 +1,30 @@
+version: "1.0"
+kind: Workflow
+metadata:
+  name: question-answering
+  description: Complete workflow for answering questions about PLANTS help documentation
+
+steps:
+  - id: analyze
+    agent: question-analyzer
+    input:
+      question: $input.question
+
+  - id: retrieve
+    agent: document-retriever
+    input:
+      question: $input.question
+      analysis: $steps.analyze.output
+
+  - id: answer
+    agent: answer-generator
+    input:
+      question: $input.question
+      context: $steps.retrieve.output
+
+output:
+  answer: $steps.answer.output.answer
+  queryType: $steps.analyze.output.queryType
+  confidence: $steps.answer.output.confidence
+  suggestions: $steps.answer.output.suggestions
+  citations: $steps.retrieve.output.citations

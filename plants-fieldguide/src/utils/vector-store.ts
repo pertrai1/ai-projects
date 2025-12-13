@@ -6,7 +6,7 @@ import path from "path";
 import type { DocumentChunk, SearchResult } from "../types/document.js";
 
 export class VectorStore {
-  private index: HierarchicalNSW | null = null;
+  private index: InstanceType<typeof HierarchicalNSW> | null = null;
   private chunks: DocumentChunk[] = [];
   private dimension: number;
   private storePath: string;
@@ -60,7 +60,7 @@ export class VectorStore {
 
     const result = this.index.searchKnn(queryEmbedding, k);
 
-    return result.neighbors.map((idx, rank) => ({
+    return result.neighbors.map((idx: number, rank: number) => ({
       chunk: this.chunks[idx],
       score: 1 - result.distances[rank], // Convert distance to similarity
       rank,

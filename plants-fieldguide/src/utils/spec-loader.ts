@@ -29,8 +29,9 @@ export class SpecLoader {
     const cacheKey = `${kind}/${name}`;
 
     // Check cache first
-    if (this.cache.has(cacheKey)) {
-      return this.cache.get(cacheKey);
+    const cached = this.cache.get(cacheKey);
+    if (cached) {
+      return cached;
     }
 
     // Load from file
