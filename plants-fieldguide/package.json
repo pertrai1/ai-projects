@@ -1,0 +1,42 @@
+{
+  "name": "plants-fieldguide",
+  "version": "0.1.0",
+  "description": "AI-powered assistant for USDA PLANTS Help documentation",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "fieldguide": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/cli.ts",
+    "cli": "tsx src/cli.ts",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "plants",
+    "usda",
+    "documentation",
+    "ai",
+    "cli"
+  ],
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.0",
+    "commander": "^11.0.0",
+    "chalk": "^5.3.0",
+    "ora": "^8.0.0",
+    "inquirer": "^9.2.0",
+    "zod": "^3.22.0",
+    "yaml": "^2.3.0",
+    "dotenv": "^16.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/inquirer": "^9.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  }
+}
