@@ -2,6 +2,8 @@
 import { Command } from "commander";
 import chalk from "chalk";
 import { config } from "dotenv";
+import { askCommand } from "./commands/ask.js";
+import { specsCommand } from "./commands/specs.js";
 
 config();
 
@@ -17,17 +19,9 @@ program
   .description("Ask a question about PLANTS documentation")
   .argument("<question>", "Your question")
   .option("-v, --verbose", "Show detailed output")
+  .option("-a --agent <name>", "Specify which agent to use", "greeter")
   .action(async (question: string, options) => {
-    console.log(chalk.blue("FieldGuide:"), "Processing your question...");
-    console.log(chalk.gray("Question:"), question);
-
-    if (options.verbose) {
-      console.log(chalk.dim("Verbose mode enabled"));
-    }
-
-    // TODO: Implement agent workflow
-    console.log(chalk.yellow("\nAgent system not yet implemented"));
-    console.log(chalk.dim("Coming in Phase 1a: Spec Loader\n"));
+    await askCommand(question, options);
   });
 
 program
@@ -61,10 +55,7 @@ program
   .command("specs")
   .description("List available agent specification")
   .action(async () => {
-    console.log(chalk.blue("FieldGuide:"), "Available specifications...\n");
-
-    // TODO: List specs from specs/ directory
-    console.log(chalk.yellow("Spec listing not yet implemented"));
+    await specsCommand();
   });
 
 program.parse();

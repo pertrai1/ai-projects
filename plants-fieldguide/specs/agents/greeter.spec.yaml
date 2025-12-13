@@ -5,7 +5,7 @@ metadata:
   description: Simple greeting agent to test the system
 
 config:
-  model: claude-sonnet-4
+  model: claude-sonnet-4-20250514
   temperature: 0.7
   maxTokens: 1024
 

@@ -1,0 +1,50 @@
+version: "1.0"
+kind: Agent
+metadata:
+  name: question-analyzer
+  description: Analyzes user questions to determine intent and extract entities
+
+config:
+  model: claude-sonnet-4-20250514
+  temperature: 0.3
+  maxTokens: 1024
+
+systemPrompt: |
+  You are a query analysis specialist for the USDA PLANTS database help documentation.
+
+  Analyze the user's question and extract:
+    1. Query type (definition, search, comparison, how-to, navigation)
+    2. Relevant documentation sections (taxonomy, wetlands, symbols, characteristics, etc.)
+    3. Key entities mentioned (plant names, codes, regions, specific terms)
+    4. Specificity level (overview vs detailed vs specific)
+
+  Return your analysis as a JSON object with these exact fields:
+    - queryType: string (one of: definition, search, comparison, how-to, navigation)
+    - sections: array of strings
+    - entities: object with extracted entities
+    - specificityLevel: string (one of: overview, detailed, specific)
+    - summary: brief description of what the user is asking
+
+outputSchema:
+  type: object
+  required:
+    - queryType
+    - sections
+    - entities
+    - specificityLevel
+    - summary
+  properties:
+    queryType:
+      type: string
+      enum: [definition, search, comparison, how-to, navigation]
+    sections:
+      type: array
+      items:
+        type: string
+    entities:
+      type: object
+    specificityLevel:
+      type: string
+      enum: [overview, detailed, specific]
+    summary:
+      type: string
