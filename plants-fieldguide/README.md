@@ -19,34 +19,40 @@ This project demonstrates several concepts for building RAG systems:
 |-------|------------|-------|
 | Runtime | Node.js | ES2022 modules |
 | Language | TypeScript | Strict mode |
-| LLM | Anthropic Claude | `@anthropic-ai/sdk` |
-| Embeddings | OpenAI / Transformers.js | `@xenova/transformers` for local embeddings |
-| Vector Store | HNSWLib | `hnswlib-node` for fast similarity search |
+| LLM | Anthropic Claude Sonnet 4.5 | `@anthropic-ai/sdk` v0.32.0 |
+| Embeddings | OpenAI | `openai` v6.10.0 for embeddings API |
+| Vector Store | HNSWLib | `hnswlib-node` v3.0.0 for fast similarity search |
 | PDF Processing | pdf2json | Text extraction from PDF documents |
 | CLI Framework | Commander.js | Command-line interface |
 | Terminal UI | Ora + Chalk | Spinners and colored output |
+| Config | YAML | Agent specs and workflows |
+| Schema Validation | Zod | Type-safe schema validation |
 
 ## Project Structure
 
 ```
 src/
-├── cli.ts              # CLI entry point with command definitions
-├── index.ts            # Package exports
+├── cli.ts                  # CLI entry point with command definitions
+├── index.ts                # Package exports
 ├── types/
-│   ├── document.ts     # Document chunk and metadata types
-│   └── spec.ts         # Agent specification types
+│   ├── document.ts         # Document chunk and metadata types
+│   └── spec.ts             # Agent specification types
 ├── agents/
-│   └── spec-executor.ts # Agent executor for running YAML specs
+│   ├── spec-executor.ts    # Agent executor for running YAML specs
+│   └── workflow-executor.ts # Workflow executor for multi-agent workflows
 ├── commands/
-│   ├── index.ts        # Index PDF documents
-│   ├── ask.ts          # Ask questions about documentation
-│   ├── debug.ts        # Debug PDF processing
-│   └── specs.ts        # List available agent specs
+│   ├── index.ts            # Index PDF documents
+│   ├── ask.ts              # Ask questions about documentation
+│   ├── debug.ts            # Debug PDF processing
+│   └── specs.ts            # List available agent specs
+├── tools/
+│   ├── index.ts            # Tool exports
+│   └── vector-search-tool.ts # Vector similarity search tool
 └── utils/
-    ├── pdf-processor.ts   # PDF text extraction and chunking
-    ├── embeddings.ts      # Embedding generation
-    ├── vector-store.ts    # HNSW vector index management
-    └── spec-loader.ts     # Load agent specs from YAML
+    ├── pdf-processor.ts    # PDF text extraction and chunking
+    ├── embeddings.ts       # Embedding generation
+    ├── vector-store.ts     # HNSW vector index management
+    └── spec-loader.ts      # Load agent specs from YAML
 
 specs/
 ├── agents/             # Agent specification files (YAML)
