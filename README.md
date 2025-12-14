@@ -60,3 +60,25 @@ An autonomous AI agent CLI that intelligently executes tasks through natural lan
 **Use Cases**: Code refactoring and analysis, workflow automation, technical research, data analysis, development task assistance
 
 ---
+
+### [Plants FieldGuide](./plants-fieldguide)
+An AI-powered CLI assistant for the USDA PLANTS Help documentation using intelligent query routing, adaptive retrieval strategies, and multi-agent orchestration.
+
+**Technology**: Anthropic Claude (Sonnet 4.5), OpenAI Embeddings, HNSWLib Vector Store, TypeScript, Commander.js, YAML Agent Specs
+
+**Description**: Plants FieldGuide demonstrates advanced RAG (Retrieval Augmented Generation) concepts through a sophisticated query system for USDA PLANTS documentation. The project implements intent classification to route queries to specialized agents, adaptive retrieval that dynamically optimizes search parameters, multi-source retrieval with result fusion (RRF algorithm), and conversational memory for multi-turn interactions. Built with spec-driven agent design using YAML specifications, the system intelligently processes PDFs, generates vector embeddings, and orchestrates specialized agents for definitions, procedures, and comparisons.
+
+**Key Features**:
+- Intent classification routing queries to specialized agents
+- Adaptive retrieval with dynamic search parameter optimization
+- Multi-source retrieval combining vector, keyword, and filtered searches
+- Result fusion using Reciprocal Rank Fusion (RRF) algorithm
+- Response synthesis from multiple sources with confidence scoring
+- Conversational memory for multi-turn context tracking
+- YAML-based agent specifications for modular AI behavior
+- PDF processing with section detection and intelligent chunking
+- HNSW vector indexes for efficient similarity search
+
+**Use Cases**: Technical documentation assistance, plant database research, educational tools for botany, USDA database navigation, conversational knowledge retrieval
+
+---
