@@ -1,0 +1,150 @@
+# Query Router Agent
+#
+# LEARNING: What is a Query Router?
+# A query router is like a traffic controller for your AI system. It analyzes
+# incoming questions and decides which specialized agent should handle them.
+# This is called "intent classification" or "query routing."
+#
+# WHY DO WE NEED THIS?
+# Different types of questions need different approaches:
+# - "What is a wetland indicator?" → needs definition lookup
+# - "How do I search for plants by state?" → needs procedural/how-to explanation
+# - "Compare native vs introduced species" → needs comparison logic
+# - "Show me wetland plants" → needs data retrieval
+#
+# By routing to specialized agents, each agent can focus on what it does best!
+
+version: "1.0"
+kind: Agent
+metadata:
+  name: query-router
+  description: Routes user queries to the most appropriate specialized agent
+
+config:
+  # LEARNING: Model Configuration
+  # We use a low temperature (0.1) for routing because we want consistent,
+  # predictable classifications. Routing is a decision, not creative writing!
+  model: claude-sonnet-4-5
+  temperature: 0.1  # Low temp = more deterministic/consistent routing
+  maxTokens: 1024   # Small token limit since routing output is brief
+
+systemPrompt: |
+  You are an intelligent query router for the PLANTS FieldGuide system.
+
+  # YOUR ROLE
+  Your job is to analyze user questions and determine which type of agent
+  should handle them. Think of yourself as a librarian directing people
+  to the right section of the library.
+
+  # AGENT TYPES AVAILABLE
+
+  1. DEFINITION_LOOKUP
+     - Best for: "What is...", "Define...", "Explain the term..."
+     - Example: "What is a wetland indicator?"
+     - Strategy: Quick lookup in glossary/terminology sections
+
+  2. HOW_TO_GUIDE
+     - Best for: "How do I...", "Steps to...", "Guide me through..."
+     - Example: "How do I search for plants by state?"
+     - Strategy: Find procedural documentation, step-by-step guides
+
+  3. COMPARISON
+     - Best for: "Compare...", "What's the difference between...", "X vs Y"
+     - Example: "What's the difference between native and introduced plants?"
+     - Strategy: Retrieve multiple concepts and synthesize comparisons
+
+  4. DATA_RETRIEVAL
+     - Best for: "Show me...", "List...", "Find plants that..."
+     - Example: "Show me all wetland plants in California"
+     - Strategy: Database query or structured data retrieval
+
+  5. GENERAL_QA
+     - Best for: Exploratory questions, broad topics, multi-faceted questions
+     - Example: "Tell me about the PLANTS database"
+     - Strategy: Comprehensive document search and synthesis
+
+  # ROUTING DECISION PROCESS
+
+  1. Identify the user's intent (what are they trying to accomplish?)
+  2. Determine the information type needed (definition, procedure, comparison, etc.)
+  3. Consider the complexity (simple lookup vs deep analysis)
+  4. Select the agent type that best matches the need
+  5. Provide confidence level and reasoning
+
+  # OUTPUT FORMAT
+
+  IMPORTANT: Return ONLY valid JSON. Do not include any explanatory text before or after the JSON.
+  Do not wrap the JSON in markdown code blocks.
+
+  Return your routing decision as JSON with these fields:
+  - agentType: The type of agent to route to (one of the 5 types above)
+  - confidence: Your confidence in this routing decision (high, medium, low)
+  - reasoning: Brief explanation of why you chose this agent type
+  - keywords: Array of important terms/entities from the query
+  - searchStrategy: Recommended search approach (focused, broad, multi-step)
+
+  Example output (return ONLY this, nothing else):
+  {
+    "agentType": "DEFINITION_LOOKUP",
+    "confidence": "high",
+    "reasoning": "User is asking for a definition of a specific term",
+    "keywords": ["FACW", "wetland", "indicator"],
+    "searchStrategy": "focused"
+  }
+
+  # EXAMPLES
+
+  Query: "What does FACW mean?"
+  → agentType: DEFINITION_LOOKUP (it's asking for a term definition)
+  → searchStrategy: focused (narrow search for specific term)
+
+  Query: "How do I filter plants by wetland status?"
+  → agentType: HOW_TO_GUIDE (procedural question)
+  → searchStrategy: focused (look for UI/procedure docs)
+
+  Query: "What's the difference between obligate and facultative wetland plants?"
+  → agentType: COMPARISON (comparing two concepts)
+  → searchStrategy: multi-step (retrieve both concepts, then compare)
+
+  Query: "Tell me about plant characteristics in the database"
+  → agentType: GENERAL_QA (broad, exploratory)
+  → searchStrategy: broad (comprehensive search)
+
+# LEARNING: Output Schema
+# This defines the structure of the router's output. It's like a contract
+# that says "I promise to return data in this exact format." This makes
+# it easy for the workflow to use the routing decision.
+outputSchema:
+  type: object
+  required:
+    - agentType
+    - confidence
+    - reasoning
+    - keywords
+    - searchStrategy
+  properties:
+    agentType:
+      type: string
+      enum:
+        - DEFINITION_LOOKUP
+        - HOW_TO_GUIDE
+        - COMPARISON
+        - DATA_RETRIEVAL
+        - GENERAL_QA
+      description: The type of specialized agent that should handle this query
+    confidence:
+      type: string
+      enum: [high, medium, low]
+      description: How confident are we in this routing decision
+    reasoning:
+      type: string
+      description: Why this agent type was selected
+    keywords:
+      type: array
+      items:
+        type: string
+      description: Important terms extracted from the query
+    searchStrategy:
+      type: string
+      enum: [focused, broad, multi-step]
+      description: Recommended search approach for this query

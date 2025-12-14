@@ -1,0 +1,76 @@
+# Smart Routing Workflow
+#
+# LEARNING: Intelligent Workflow Orchestration
+# This workflow demonstrates a powerful pattern: DYNAMIC ROUTING
+#
+# Traditional workflow (Phase 1):
+#   Question → Analyze → Retrieve → Answer
+#   (Same path for ALL questions)
+#
+# Smart routing workflow (Phase 2):
+#   Question → Route → [Pick specialized agent] → Answer
+#   (Different paths based on question type)
+#
+# WHY IS THIS BETTER?
+# 1. Efficiency: Definition questions don't need heavy retrieval
+# 2. Quality: Each agent is optimized for its task
+# 3. Cost: Use the right tool for the job (faster = cheaper)
+# 4. Scalability: Easy to add new specialized agents
+#
+# WORKFLOW STEPS EXPLAINED:
+#
+# Step 1: ROUTE
+#   - Uses query-router agent to classify the question
+#   - Output: agentType (which specialized agent to use)
+#
+# Step 2: EXECUTE SPECIALIZED AGENT
+#   - NOTE: In this version, we'll handle routing in the command layer
+#   - This workflow demonstrates the concept; in production you'd use
+#     conditional execution or dynamic agent selection
+#   - For learning purposes, we'll keep it simple and route in TypeScript
+
+version: "1.0"
+kind: Workflow
+metadata:
+  name: smart-routing
+  description: Intelligently routes queries to specialized agents based on intent
+
+# LEARNING: Workflow Steps
+# Each step has:
+# - id: unique identifier for this step
+# - agent: which agent spec to run
+# - input: data to pass to the agent (can reference previous steps with $)
+# - condition: (optional) when to run this step
+
+steps:
+  # STEP 1: Analyze the query and determine routing
+  - id: route
+    agent: query-router
+    input:
+      question: $input.question
+    # No condition - always run routing first
+
+  # STEP 2: Execute the appropriate specialized agent
+  # NOTE: This is a simplified version. In a real dynamic routing system,
+  # you'd use conditional steps or a router that dynamically selects agents.
+  # For now, we'll demonstrate with a fallback to GENERAL_QA
+  - id: answer
+    agent: document-retriever  # Fallback to general retriever
+    input:
+      question: $input.question
+      # Pass the routing decision to help the agent understand context
+      routingContext: $steps.route.output
+
+# LEARNING: Workflow Output
+# The output defines what data this workflow returns.
+# We use $ syntax to reference data from steps:
+# - $steps.route.output.agentType → the routing decision
+# - $steps.answer.output.answer → the final answer
+output:
+  answer: $steps.answer.output.answer
+  routedTo: $steps.route.output.agentType  # Show which agent type was selected
+  routingConfidence: $steps.route.output.confidence
+  reasoning: $steps.route.output.reasoning
+  citations: $steps.answer.output.citations
+  searchStrategy: $steps.route.output.searchStrategy
+  keywords: $steps.route.output.keywords

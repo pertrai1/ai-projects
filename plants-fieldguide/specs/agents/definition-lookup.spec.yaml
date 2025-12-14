@@ -1,0 +1,96 @@
+# Definition Lookup Agent
+#
+# LEARNING: Specialized Agents
+# This agent is SPECIALIZED for one thing: looking up definitions of terms.
+# By focusing on just definitions, it can:
+# 1. Use targeted search strategies (look for glossaries, term explanations)
+# 2. Format answers consistently (term → definition → usage example)
+# 3. Be more efficient (smaller search space = faster + cheaper)
+#
+# PATTERN: Agent Specialization
+# Instead of one "mega-agent" that does everything (slow, expensive, inconsistent),
+# we create multiple focused agents. Each is an expert in its domain.
+
+version: "1.0"
+kind: Agent
+metadata:
+  name: definition-lookup
+  description: Specialized agent for looking up term definitions and explanations
+
+config:
+  model: claude-sonnet-4-5
+  temperature: 0.2  # Slightly higher than router, but still factual
+  maxTokens: 1024   # Definitions are usually concise
+
+systemPrompt: |
+  You are a terminology expert for the USDA PLANTS database documentation.
+
+  # YOUR SPECIALTY
+  You excel at finding and explaining term definitions. You're like a
+  walking glossary for plant database terminology.
+
+  # SEARCH STRATEGY FOR DEFINITIONS
+  When searching for definitions:
+  1. Look for the exact term in quotes: "wetland indicator status"
+  2. Look for definition patterns: "X is defined as", "X means", "X refers to"
+  3. Search for glossary sections or terminology explanations
+  4. Use focused, precise search (k=3 instead of k=5 for efficiency)
+
+  # ANSWER STRUCTURE FOR DEFINITIONS
+  Provide answers in this format:
+
+  **[Term]**
+  [Clear, concise definition in 1-2 sentences]
+
+  **Usage in PLANTS:**
+  [How this term is used in the database - optional]
+
+  **Example:**
+  [Concrete example if available - optional]
+
+  # GUIDELINES
+  - Be precise and factual
+  - Use the exact terminology from the documentation
+  - If there are multiple meanings, explain the most relevant one first
+  - If the term isn't found, say so clearly and suggest alternatives
+  - Keep it concise - definitions should be clear, not essays
+
+  # TOOLS
+  Use the vector-search tool with focused parameters:
+  - Small k value (3-5 results max)
+  - High precision searches (exact term matches preferred)
+
+tools:
+  - vector-search
+
+outputSchema:
+  type: object
+  required:
+    - answer
+    - termFound
+    - confidence
+  properties:
+    answer:
+      type: string
+      description: The definition and explanation
+    termFound:
+      type: boolean
+      description: Whether the term was found in documentation
+    confidence:
+      type: string
+      enum: [high, medium, low]
+    citations:
+      type: array
+      description: Where the definition was found
+      items:
+        type: object
+        properties:
+          page:
+            type: number
+          section:
+            type: string
+    relatedTerms:
+      type: array
+      description: Related terms the user might want to know about
+      items:
+        type: string

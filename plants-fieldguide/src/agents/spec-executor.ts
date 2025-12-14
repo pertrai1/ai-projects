@@ -74,9 +74,31 @@ export class SpecExecutor {
     let output: any;
     if (spec.outputSchema) {
       try {
-        output = JSON.parse(textContent.text);
+        // LEARNING: JSON Parsing with Error Handling
+        // Claude sometimes wraps JSON in markdown code blocks like ```json
+        // We need to extract just the JSON part
+        let jsonText = textContent.text.trim();
+
+        // Remove markdown code block markers if present
+        if (jsonText.startsWith("```")) {
+          // Extract content between ```json and ```
+          const match = jsonText.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
+          if (match) {
+            jsonText = match[1].trim();
+          }
+        }
+
+        output = JSON.parse(jsonText);
+
+        if (verbose) {
+          console.log("Parsed JSON output successfully");
+        }
       } catch (error) {
-        // If parsing fails, return raw text
+        // If parsing fails, show helpful error and return raw text
+        if (verbose) {
+          console.error("Failed to parse JSON output:", error);
+          console.error("Raw response:", textContent.text.substring(0, 500));
+        }
         output = { text: textContent.text };
       }
     } else {

@@ -5,7 +5,10 @@ config();
 
 import { Command } from "commander";
 import chalk from "chalk";
-import { askCommand } from "./commands/ask";
+import { askSmartCommand } from "./commands/ask-smart";
+import { searchAdaptiveCommand } from "./commands/search-adaptive";
+import { askSynthesizedCommand } from "./commands/ask-synthesized";
+import { chatCommand } from "./commands/chat";
 import { specsCommand } from "./commands/specs";
 import { indexCommand } from "./commands/index";
 import { debugCommand } from "./commands/debug";
@@ -17,33 +20,66 @@ program
   .description("AI assistant for USDA PLANTS documentation")
   .version("0.1.0");
 
+// Main ask command - uses intelligent routing
 program
   .command("ask")
   .description("Ask a question about PLANTS documentation")
   .argument("<question>", "Your question")
-  .option("-v, --verbose", "Show detailed output")
-  .option("-a, --agent <name>", "Use a specific agent")
-  .option(
-    "-w, --workflow <name>",
-    "Use a specific workflow (default: question-answering)",
-  )
-  .option(
-    "-d, --direct",
-    "Show direct search results without AI interpretation",
-  )
+  .option("-v, --verbose", "Show detailed routing information")
+  .option("-r, --show-routing", "Show routing decision only (educational mode)")
   .action(async (question: string, options) => {
-    await askCommand(question, options);
+    await askSmartCommand(question, options);
   });
 
+// Adaptive Search Command - dynamically adjust based on query characteristics.
+// - See what retrieval strategy would be chosen
+// - Compare adaptive vs traditional fixed k=5 search
+// - Understand impact of k, query expansion, and filters
+program
+  .command("search-adaptive")
+  .description("Demonstrate adaptive retrieval strategies (Phase 2 Step 2)")
+  .argument("<query>", "Search query")
+  .option("-v, --verbose", "Show detailed strategy information")
+  .option("-s, --show-strategy", "Show strategy only (educational mode)")
+  .option("-c, --compare", "Compare adaptive vs fixed search")
+  .action(async (query: string, options) => {
+    await searchAdaptiveCommand(query, options);
+  });
+
+// Ask Synthesized Command
+// Combines:
+// - Query routing
+// - Adaptive retrieval
+// - Multi-source retrieval
+// - Response synthesis
+program
+  .command("ask-synthesized")
+  .description("Ask using complete Phase 2 pipeline (Steps 1-3)")
+  .argument("<question>", "Your question")
+  .option("-v, --verbose", "Show detailed pipeline information")
+  .option("-s, --show-sources", "Show which retrieval sources contributed")
+  .option(
+    "-f, --fusion-method <method>",
+    "Fusion method: RRF, score-based, or simple",
+    "RRF",
+  )
+  .action(async (question: string, options) => {
+    await askSynthesizedCommand(question, options);
+  });
+
+// Interactive Chat Command
+// Multi-turn conversational interface with memory!
+// - Remembers previous questions and answers
+// - Understands follow-up questions
+// - Tracks conversation context (topics, entities)
+// - Session statistics and management
 program
   .command("chat")
-  .description("Start an interactive chat session")
-  .action(async () => {
-    console.log(chalk.blue("FieldGuide Chat"));
-    console.log(chalk.gray("Type your questions. Ctrl+C to exit.\n"));
-
-    console.log(chalk.yellow("Interactive chat not yet implemented"));
-    console.log(chalk.dim("Coming in Phase 2\n"));
+  .description("Start interactive chat session (Phase 2 Step 4)")
+  .option("-v, --verbose", "Show detailed pipeline information")
+  .option("-c, --show-context", "Show conversation context after each answer")
+  .action(async (options) => {
+    await chatCommand(options);
   });
 
 program

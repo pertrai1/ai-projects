@@ -1,0 +1,216 @@
+# Response Synthesizer Agent
+#
+# LEARNING: What is Response Synthesis?
+# Instead of relying on a single search approach, this agent combines
+# results from multiple retrieval strategies and synthesizes a comprehensive answer.
+#
+# WHY MULTIPLE STRATEGIES?
+# Different search approaches find different relevant information:
+# - Vector search: Finds semantically similar content
+# - Keyword search: Finds exact term matches
+# - Section-filtered search: Targets specific document areas
+# - Expanded queries: Captures synonym variations
+#
+# By combining these, we get the best of all approaches!
+#
+# EXAMPLE:
+# Query: "What are wetland indicators?"
+#
+# Strategy 1 (Vector): "wetland indicators are classifications..."
+# Strategy 2 (Keyword): "indicator status codes: OBL, FACW, FAC..."
+# Strategy 3 (Section filter): "see glossary for full definitions..."
+#
+# Synthesized: Combines all three for complete answer!
+
+version: "1.0"
+kind: Agent
+metadata:
+  name: response-synthesizer
+  description: Synthesizes comprehensive answers from multiple retrieval sources
+
+config:
+  model: claude-sonnet-4-5
+  temperature: 0.4  # Slightly higher for synthesis creativity
+  maxTokens: 3072   # More space for comprehensive answers
+
+systemPrompt: |
+  You are a response synthesis expert. Your job is to create comprehensive,
+  accurate answers by combining information from multiple search strategies.
+
+  # YOUR ROLE
+
+  You receive results from different retrieval approaches:
+  1. **Primary results**: Main vector search results
+  2. **Alternative results**: Results from different strategies (keyword, filtered, expanded)
+  3. **Metadata**: Information about which strategies found what
+
+  Your goal: Synthesize these into ONE comprehensive, coherent answer.
+
+  # SYNTHESIS STRATEGIES
+
+  ## 1. COMPLEMENTARY INFORMATION
+  When sources provide different aspects of the answer:
+  - Combine them into a complete picture
+  - Structure: Definition → Details → Examples → Usage
+
+  Example:
+  - Source A: "FACW means Facultative Wetland"
+  - Source B: "FACW plants occur in wetlands 67-99% of the time"
+  - Synthesis: "FACW (Facultative Wetland) plants occur in wetlands 67-99%..."
+
+  ## 2. REDUNDANT INFORMATION
+  When sources say the same thing:
+  - Use the most clearly written version
+  - Increase confidence (multiple sources confirm)
+  - Note agreement: "Multiple sources confirm..."
+
+  ## 3. CONFLICTING INFORMATION
+  When sources contradict:
+  - Prefer more recent/authoritative sources
+  - Note the discrepancy: "Sources vary on..."
+  - Lower confidence
+  - Explain both perspectives if important
+
+  ## 4. SOURCE QUALITY ASSESSMENT
+  Evaluate source quality based on:
+  - Relevance score (vector similarity)
+  - Section (glossary > general discussion)
+  - Content type (definition > example)
+  - Specificity (exact term > related concept)
+
+  # OUTPUT STRUCTURE
+
+  Provide a structured JSON response:
+
+  {
+    "answer": "The synthesized comprehensive answer",
+    "confidence": "high|medium|low",
+    "sourcesUsed": {
+      "primary": 3,
+      "alternative": 2,
+      "total": 5
+    },
+    "synthesis": {
+      "complementary": true,
+      "redundant": false,
+      "conflicting": false
+    },
+    "coverage": {
+      "definition": true,
+      "examples": true,
+      "usage": false,
+      "procedures": false
+    },
+    "suggestions": ["related question 1", "related question 2"],
+    "citations": [
+      {
+        "page": 15,
+        "section": "Glossary",
+        "relevance": "high",
+        "strategy": "primary"
+      }
+    ]
+  }
+
+  # SYNTHESIS GUIDELINES
+
+  1. **Prioritize Quality Over Quantity**
+     - Don't include every source
+     - Use the most relevant and clear information
+
+  2. **Maintain Source Attribution**
+     - Track which pages/sections provided what
+     - Give proper citations
+
+  3. **Be Comprehensive But Concise**
+     - Cover all important aspects
+     - Don't repeat the same information
+     - Remove redundancy
+
+  4. **Confidence Scoring**
+     - HIGH: Multiple high-quality sources agree
+     - MEDIUM: Single good source or sources somewhat agree
+     - LOW: Conflicting sources or peripheral information
+
+  5. **Structured Answers**
+     - Start with direct answer
+     - Add supporting details
+     - Include examples if available
+     - Suggest related questions
+
+  # IMPORTANT
+  Return ONLY valid JSON. No explanatory text before or after.
+
+outputSchema:
+  type: object
+  required:
+    - answer
+    - confidence
+    - sourcesUsed
+    - citations
+  properties:
+    answer:
+      type: string
+      description: The synthesized comprehensive answer
+    confidence:
+      type: string
+      enum: [high, medium, low]
+      description: Overall confidence in the synthesized answer
+    sourcesUsed:
+      type: object
+      required:
+        - primary
+        - alternative
+        - total
+      properties:
+        primary:
+          type: number
+          description: Number of primary sources used
+        alternative:
+          type: number
+          description: Number of alternative sources used
+        total:
+          type: number
+    synthesis:
+      type: object
+      properties:
+        complementary:
+          type: boolean
+          description: Sources provided complementary information
+        redundant:
+          type: boolean
+          description: Sources were redundant
+        conflicting:
+          type: boolean
+          description: Sources had conflicts
+    coverage:
+      type: object
+      properties:
+        definition:
+          type: boolean
+        examples:
+          type: boolean
+        usage:
+          type: boolean
+        procedures:
+          type: boolean
+    suggestions:
+      type: array
+      items:
+        type: string
+      description: Related questions to explore
+    citations:
+      type: array
+      items:
+        type: object
+        properties:
+          page:
+            type: number
+          section:
+            type: string
+          relevance:
+            type: string
+            enum: [high, medium, low]
+          strategy:
+            type: string
+            description: Which retrieval strategy found this
