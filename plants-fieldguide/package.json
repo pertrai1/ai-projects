@@ -13,7 +13,11 @@
     "dev": "tsx watch src/cli.ts",
     "cli": "tsx src/cli.ts",
     "test": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "eval:quick": "tsx evaluations/run-quick.ts",
+    "eval:routing": "braintrust eval evaluations/query-router.eval.ts",
+    "eval:rag": "braintrust eval evaluations/document-retriever.eval.ts",
+    "eval:all": "braintrust eval evaluations/query-router.eval.ts && braintrust eval evaluations/document-retriever.eval.ts"
   },
   "keywords": [
     "plants",
@@ -43,6 +47,8 @@
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.0.0",
     "@types/pdf-parse": "^1.1.5",
+    "autoevals": "^0.0.131",
+    "braintrust": "^1.0.2",
     "tsx": "^4.0.0",
     "typescript": "^5.3.0",
     "vitest": "^4.0.15"
