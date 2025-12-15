@@ -22,6 +22,12 @@ This project demonstrates advanced concepts for building intelligent RAG systems
 - **Confidence Scoring** - Evidence-based confidence assessment
 - **Conversational Memory** - Multi-turn conversations with context tracking
 
+### Phase 3: Quality Assurance
+- **Automated Evaluations** - Braintrust-powered eval framework
+- **Routing Accuracy Testing** - Validate query classification
+- **RAG Quality Metrics** - Answer accuracy, citation quality, hallucination detection
+- **Regression Testing** - Track performance over time
+
 ## Tech Stack
 
 | Layer | Technology | Notes |
@@ -36,6 +42,7 @@ This project demonstrates advanced concepts for building intelligent RAG systems
 | Terminal UI | Ora + Chalk | Spinners and colored output |
 | Config | YAML | Agent specs and workflows |
 | Schema Validation | Zod | Type-safe schema validation |
+| Evaluation | Braintrust + AutoEvals | LLM quality testing and metrics |
 
 ## Project Structure
 
@@ -78,6 +85,15 @@ specs/
     ├── question-answering.spec.yaml   # Phase 1 workflow
     └── smart-routing.spec.yaml        # Phase 2 workflow
 
+evaluations/
+├── datasets/
+│   ├── routing-test-cases.ts          # 30+ routing test cases
+│   └── rag-test-cases.ts              # 10+ RAG test cases
+├── query-router.eval.ts               # Routing evaluation suites
+├── document-retriever.eval.ts         # RAG evaluation suites
+├── run-quick.ts                       # Quick evaluation runner
+├── README.md                          # Evaluation documentation
+
 docs/                                   # Learning documentation
 data/                                   # Generated embeddings
 ```
@@ -96,11 +112,13 @@ Before running FieldGuide, you need to configure API keys:
 2. Get your API keys:
    - **Anthropic API Key**: https://console.anthropic.com/
    - **OpenAI API Key**: https://platform.openai.com/api-keys (for embeddings)
+   - **Braintrust API Key**: https://braintrust.dev (for evaluation tracking)
 
 3. Add the keys to your `.env` file:
    ```bash
    ANTHROPIC_API_KEY=your_key_here
    OPENAI_API_KEY=your_openai_key_here
+   BRAINTRUST_API_KEY=your_braintrust_key_here
    ```
 
 **Installation:**
@@ -292,6 +310,41 @@ npm run cli -- debug --file ./PLANTS_Help_Document_2022.pdf
 npm run cli -- specs
 ```
 
+### Evaluations
+
+Run automated quality tests on your agents:
+
+```bash
+# Quick evaluation
+npm run eval:quick
+
+# Full routing evaluation
+npm run eval:routing
+
+# Full RAG evaluation
+npm run eval:rag
+
+# Run all evaluations
+npm run eval:all
+```
+
+**Evaluation Metrics:**
+
+**Routing Tests:**
+- `agent_type_accuracy` - Correct agent selection (target: ≥90%)
+- `confidence_accuracy` - Appropriate confidence levels
+- `search_strategy_accuracy` - Correct search strategy selection
+- `overall_quality` - Weighted combination (target: ≥85%)
+
+**RAG Tests:**
+- `must_include` - Required facts present in answer (target: ≥85%)
+- `must_not_include` - No hallucinations (target: 100%)
+- `citation_check` - Sources properly cited
+- `answer_length` - Appropriate answer length
+- `overall_quality` - Weighted combination (target: ≥80%)
+
+See `evaluations/README.md` for detailed documentation.
+
 ## Quick Start Examples
 
 ```bash
@@ -400,7 +453,9 @@ npm run build        # Compile TypeScript to dist/
 
 **Testing:**
 ```bash
-npm test            # Run test suite (vitest)
+npm test             # Run test suite (vitest)
+npm run eval:quick   # Quick quality evaluation
+npm run eval:all     # Full evaluation suite
 ```
 
 ## Conventions
@@ -420,11 +475,17 @@ npm test            # Run test suite (vitest)
 - Strict type checking enabled
 - Explicit return types for public APIs
 
-## Documentation (in `docs/`)
+## Documentation
+
+### Guides (in `docs/`)
 - `ROUTING-GUIDE.md` - Query Routing
 - `ADAPTIVE-RETRIEVAL.md` - Adaptive Retrieval
 - `RESPONSE-SYNTHESIS.md` - Response Synthesis
 - `CONVERSATIONAL-MEMORY.md` - Conversational Memory
+
+### Evaluation Documentation (in `evaluations/`)
+- `README.md` - Complete evaluation guide
+- `SETUP.md` - Setup instructions
 
 ## License
 
