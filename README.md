@@ -82,3 +82,25 @@ An AI-powered CLI assistant for the USDA PLANTS Help documentation using intelli
 **Use Cases**: Technical documentation assistance, plant database research, educational tools for botany, USDA database navigation, conversational knowledge retrieval
 
 ---
+
+### [A11y Remediation Assistant](./a11y-remediation-assistant)
+An AI-powered accessibility remediation assistant that bridges the gap between identifying WCAG/Section 508 violations and safely fixing them with audit-ready evidence.
+
+**Technology**: TBD
+
+**Description**: A11y Remediation Assistant (ARA) operates as a layer above traditional accessibility scanning tools (axe-core, Lighthouse), acting as a senior accessibility engineer who explains issues in plain language, proposes context-aware fixes, validates outcomes with deterministic tools, and produces audit-ready artifacts. Unlike detection tools, ARA focuses on remediation assistance while maintaining strict boundaries between AI reasoning and deterministic verification—AI explains and proposes, but never certifies compliance.
+
+**Key Features**:
+- Jargon-to-English translation explaining violations in plain language with user impact context
+- Context-aware code repair analyzing component structure, frameworks, and interaction patterns
+- Multi-strategy fix proposals ranked by effort and impact (semantic HTML prioritized over ARIA patches)
+- Deterministic validation loop re-running scanners to verify fixes and detect regressions
+- Human-in-the-loop flags for subjective criteria requiring manual validation (alt text, reading order)
+- Priority classification system based on user impact (Critical, High, Medium, Low)
+- Audit trace generation mapping fixes to WCAG/Section 508 criteria with compliance evidence
+- Regression test generation to prevent future accessibility violations
+- Multi-agent architecture with specialized agents (Analyzer, Strategist, Coder, Validator, Educator)
+
+**Use Cases**: Web accessibility compliance, WCAG remediation, inclusive design implementation, accessibility auditing, Section 508 compliance documentation
+
+---
