@@ -18,7 +18,7 @@ export class LLMClient {
       apiKey: config.apiKey,
     });
 
-    this.defaultModel = config.model || "claude-sonnet-4-5-20241022";
+    this.defaultModel = config.model || "claude-sonnet-4-20250514";
     this.defaultTemperature = config.temperature || 0.3;
     this.defaultMaxTokens = config.maxTokens || 2048;
   }

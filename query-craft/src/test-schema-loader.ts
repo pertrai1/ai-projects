@@ -15,7 +15,7 @@ async function testSchemaLoader() {
   console.log("Relationships:", result.relationships.length);
 
   if (result.validationStatus === "valid") {
-    console.log("\n✅ Schema loaded successfully!\n");
+    console.log("\nSchema loaded successfully!\n");
 
     // Show formatted schema (what will be sent to LLM)
     console.log("Formatted Schema for LLM:");
@@ -32,7 +32,7 @@ async function testSchemaLoader() {
   console.log("Validation Status:", invalidResult.validationStatus);
 
   if (invalidResult.validationStatus === "invalid") {
-    console.log("✅ Correctly rejected invalid schema\n");
+    console.log("Correctly rejected invalid schema\n");
   }
 }
 
