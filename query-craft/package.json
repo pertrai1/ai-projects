@@ -1,0 +1,49 @@
+{
+  "name": "query-craft",
+  "version": "0.1.0",
+  "description": "Natural language to SQL query generator",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "querycraft": "dist/index.js"
+  },
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "eval": "tsx evals/run-evals.ts",
+    "lint": "eslint src --ext .ts",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "nl2sql",
+    "natural-language",
+    "sql",
+    "query-generation",
+    "ai",
+    "claude"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.30.0",
+    "commander": "^12.0.0",
+    "dotenv": "^16.4.5",
+    "yaml": "^2.3.4",
+    "zod": "^3.22.4",
+    "chalk": "^5.3.0",
+    "ora": "^8.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "braintrust": "^0.0.130",
+    "autoevals": "^0.0.70",
+    "eslint": "^8.56.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
