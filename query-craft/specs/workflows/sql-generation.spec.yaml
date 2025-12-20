@@ -1,0 +1,68 @@
+version: "1.0"
+kind: Workflow
+metadata:
+  name: sql-generation
+  description: |
+    Complete workflow for converting natural language questions
+    into SQL queries with validation.
+
+    This workflow demonstrates a common NL2SQL pattern:
+      1. Load schema context (what tables/columns exist?)
+      2. Generate SQL from natural language + schema
+      3. Validate the SQL is syntactically correct
+      4. Return query with confidence score
+
+    GUARDRAILS INTEGRATED:
+      - Schema validation before query generation
+      - SQL safety validation after generation
+      - Confidence thresholds for auto-execution
+      - Error handling and user feedback
+
+steps:
+  - id: load-schema
+    agent: schema-loader
+    input:
+      database: $input.database
+    guardrails:
+      - check: validationStatus == "valid"
+        onFail: abort
+        message: "Schema validation failed - cannot proceed"
+
+  - id: generate
+    agent: query-generator
+    input:
+      question: $input.question
+      schema: $steps.load-schema.output.schema
+
+  - id: validate
+    agent: sql-validator
+    input:
+      query: $steps.generate.output.query
+      schema: $steps.load-schema.output.schema
+    guardrails:
+      - check: safetyValid == true
+        onFail: abort
+        message: "Query failed safety validation - execution blocked"
+      - check: isValid == true
+        onFail: warn
+        message: "Query has validation errors"
+
+ouput:
+  query: $steps.generate.output.query
+  explanation: $steps.generate.output.explanation
+  confidence: $steps.generate.output.confidence
+  isValid: $steps.validate.output.isValid
+  validationErrors: $steps.validate.output.errors
+  schemaUsed: $steps.load-schema.output.schemaName
+
+# GUARDRAILS: Execution policy
+executionPolicy:
+  autoExecute:
+    enabled: false
+    conditions:
+      - confidence == "high"
+      - isValid == true
+      - safetyValid == true
+  requireApproval:
+    - confidence == "low"
+    - isValid == false

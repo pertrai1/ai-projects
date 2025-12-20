@@ -1,0 +1,126 @@
+{
+  "name": "ecommerce",
+  "description": "Simple e-commerce database with users, products, and orders",
+  "version": "1.0",
+  "tables": [
+    {
+      "name": "users",
+      "description": "Customer accounts",
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "description": "Unique user identifier"
+        },
+        {
+          "name": "name",
+          "type": "varchar(255)",
+          "nullable": false,
+          "description": "User's full name"
+        },
+        {
+          "name": "email",
+          "type": "varchar(255)",
+          "nullable": false,
+          "unique": true,
+          "description": "User's email address"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": "CURRENT_TIMESTAMP",
+          "description": "Account creation date"
+        }
+      ],
+      "indexes": [{ "columns": ["email"], "unique": true }]
+    },
+    {
+      "name": "products",
+      "description": "Product catalog",
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "description": "Unique product identifier"
+        },
+        {
+          "name": "name",
+          "type": "varchar(255)",
+          "nullable": false,
+          "description": "Product name"
+        },
+        {
+          "name": "price",
+          "type": "decimal(10,2)",
+          "nullable": false,
+          "description": "Product price in USD"
+        },
+        {
+          "name": "category",
+          "type": "varchar(100)",
+          "description": "Product category"
+        },
+        {
+          "name": "stock",
+          "type": "integer",
+          "default": 0,
+          "description": "Available inventory"
+        }
+      ]
+    },
+    {
+      "name": "orders",
+      "description": "Customer orders",
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "description": "Unique order identifier"
+        },
+        {
+          "name": "user_id",
+          "type": "integer",
+          "nullable": false,
+          "foreignKey": {
+            "table": "users",
+            "column": "id"
+          },
+          "description": "Reference to user who placed the order"
+        },
+        {
+          "name": "total",
+          "type": "decimal(10,2)",
+          "nullable": false,
+          "description": "Total order amount"
+        },
+        {
+          "name": "status",
+          "type": "varchar(50)",
+          "default": "pending",
+          "description": "Order status: pending, shipped, delivered, cancelled"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp",
+          "default": "CURRENT_TIMESTAMP",
+          "description": "Order creation date"
+        }
+      ],
+      "indexes": [{ "columns": ["user_id"] }, { "columns": ["created_at"] }]
+    }
+  ],
+  "relationships": [
+    {
+      "name": "user_orders",
+      "fromTable": "orders",
+      "fromColumn": "user_id",
+      "toTable": "users",
+      "toColumn": "id",
+      "type": "many-to-one",
+      "description": "Each order belongs to one user"
+    }
+  ]
+}

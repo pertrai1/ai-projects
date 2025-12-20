@@ -1,0 +1,69 @@
+version: "1.0"
+kind: Agent
+metadata:
+  name: schema-loader
+  description: |
+    Loads database schema definitions and prepares them for SQL generation.
+
+    This agent handles schema retrieval and formatting. It's a
+    "deterministic" agent - no LLM needed, just file I/O and validation.
+
+    GUARDRAILS:
+      - Validates schema files exist and are well-formed JSON
+      - Ensures required fields (tables, columns, types) are present
+      - Prevents loading of schemas with unsafe configurations
+
+config:
+  type: deterministic
+
+input:
+  database:
+    type: string
+    description: Name of the database schema to load (e.g., "plants")
+    required: true
+
+outputSchema:
+  type: object
+  required:
+    - schemaName
+    - schema
+    - tables
+    - relationships
+  properties:
+    schemaName:
+      type: string
+      description: Name of the loaded schema
+    schema:
+      type: object
+      description: Complete schema definition with all metadata
+    tables:
+      type: array
+      items:
+        type: string
+      description: List of table names in the schema
+    relationships:
+      type: array
+      items:
+        type: object
+        properties:
+          fromTable:
+            type: string
+          toTable:
+            type: string
+          type:
+            type: string
+            enum: [one-to-one, one-to-many, many-to-many]
+            description: Whether the schema passed validation
+
+validation:
+  rules:
+    - name: schema-file-exists
+      description: Schema file must exist in data/schemas directory
+    - name: valid-json
+      description: Schema must be valid JSON
+    - name: required-fields
+      description: Schema must have 'tables' array with table definitions
+    - name: column-types
+      description: All columns must have valid SQL types
+    - name: no-mutations
+      description: Schema should not include stored procedures or triggers
