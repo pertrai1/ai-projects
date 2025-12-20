@@ -12,6 +12,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "eval": "tsx evals/run-evals.ts",
+    "test:schema": "tsx src/test-schema-loader.ts",
     "lint": "eslint src --ext .ts",
     "type-check": "tsc --noEmit"
   },
