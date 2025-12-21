@@ -14,6 +14,7 @@
     "eval": "tsx evals/run-evals.ts",
     "test:schema": "tsx src/test-schema-loader.ts",
     "test:generator": "tsx src/test-query-generator.ts",
+    "test:validator": "tsx src/test-sql-validator.ts",
     "lint": "eslint src --ext .ts",
     "type-check": "tsc --noEmit"
   },
