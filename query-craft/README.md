@@ -4,13 +4,13 @@ A natural language to SQL query generator with built-in validation, safety guard
 
 ## Features
 
-**Natural Language to SQL** - Convert plain English questions into PostgreSQL queries
-**Security Guardrails** - Built-in validation prevents SQL injection and dangerous operations
-**Schema-Aware** - Understands database structure and relationships
-**Confidence Scoring** - Indicates reliability of generated queries
-**Multi-Step Validation** - Syntax, schema, and safety checks
-**Evaluation Framework** - Automated testing with Braintrust
-**CLI & Interactive Mode** - Easy-to-use command-line interface
+- **Natural Language to SQL** - Convert plain English questions into PostgreSQL queries
+- **Security Guardrails** - Built-in validation prevents SQL injection and dangerous operations  
+- **Schema-Aware** - Understands database structure and relationships  
+- **Confidence Scoring** - Indicates reliability of generated queries  
+- **Multi-Step Validation** - Syntax, schema, and safety checks  
+- **Evaluation Framework** - Automated testing with Braintrust
+- **CLI & Interactive Mode** - Easy-to-use command-line interface
 
 ---
 
@@ -108,13 +108,11 @@ querycraft> exit
 Question: Show me all customers who placed orders last week
 
 Generated SQL:
-```sql
 SELECT DISTINCT u.id, u.name, u.email
 FROM users u
 INNER JOIN orders o ON u.id = o.user_id
 WHERE o.created_at >= CURRENT_DATE - INTERVAL '7 days'
 ORDER BY u.name;
-```
 
 Explanation: This query joins users and orders tables to find customers
 who have placed orders in the last 7 days.
