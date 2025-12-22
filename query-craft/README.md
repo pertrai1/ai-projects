@@ -60,9 +60,9 @@ A natural language to SQL query generator with built-in validation, safety guard
    ```
 
 4. **Create sample database**
-  ```bash
-  npm run create:db
-  ```
+   ```bash
+    npm run create:db
+    ```
 
 5. **Build the project**
    ```bash
