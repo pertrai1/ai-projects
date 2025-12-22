@@ -59,12 +59,17 @@ A natural language to SQL query generator with built-in validation, safety guard
    ANTHROPIC_API_KEY=your_api_key_here
    ```
 
-4. **Build the project**
+4. **Create sample database**
+  ```bash
+  npm run create:db
+  ```
+
+5. **Build the project**
    ```bash
    npm run build
    ```
 
-5. **Install globally (optional)**
+6. **Install globally (optional)**
    ```bash
    npm link
    ```

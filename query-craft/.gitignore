@@ -27,3 +27,12 @@ Thumbs.db
 
 # Eval results
 evals/results/
+
+# SQLite databases
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+data/databases/*.db
+!data/databases/.gitkeep
