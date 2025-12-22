@@ -2,6 +2,17 @@
 
 A collection of machine learning and artificial intelligence projects demonstrating various AI techniques and applications.
 
+## Table of Contents
+
+- [Flower Recognition](#flower-recognition) - CNN-based flower classification with TensorFlow.js
+- [PLANTS Natural Language Query Interface](#plants-natural-language-query-interface) - RAG-based natural language interface for USDA PLANTS Database
+- [Cortex](#cortex) - Autonomous AI agent CLI with tool chaining and task execution
+- [Plants FieldGuide](#plants-fieldguide) - Advanced RAG system with intent routing and adaptive retrieval
+- [QueryCraft](#querycraft) - Natural language to SQL with security guardrails and validation
+- [A11y Remediation Assistant](#a11y-remediation-assistant) - AI-powered accessibility remediation with audit trails
+
+---
+
 ## Projects
 
 ### [Flower Recognition](./flower-recognition)
