@@ -1,7 +1,7 @@
-import { SqlValidator } from "./agents/sql-validator.js";
-import { SchemaLoader } from "./agents/schema-loader.js";
-import { LLMClient } from "./utils/llm-client.js";
-import { SpecLoader } from "./tools/spec-loader.js";
+import { SqlValidator } from "../agents/sql-validator.js";
+import { SchemaLoader } from "../agents/schema-loader.js";
+import { LLMClient } from "../utils/llm-client.js";
+import { SpecLoader } from "../tools/spec-loader.js";
 import { config } from "dotenv";
 
 config();

@@ -9,12 +9,15 @@
   },
   "scripts": {
     "dev": "tsx src/index.ts",
-    "build": "tsc",
+    "build": "tsc && chmod +x dist/index.js",
     "start": "node dist/index.js",
+    "link": "npm run build && npm link",
     "eval": "tsx evals/run-evals.ts",
-    "test:schema": "tsx src/test-schema-loader.ts",
-    "test:generator": "tsx src/test-query-generator.ts",
-    "test:validator": "tsx src/test-sql-validator.ts",
+    "test:schema": "tsx src/tests/schema-loader.ts",
+    "test:generator": "tsx src/tests/query-generator.ts",
+    "test:validator": "tsx src/tests/sql-validator.ts",
+    "test:workflow": "tsx src/tests/workflow.ts",
+    "test:all": "npm run test:schema && npm run test:generator && npm run test:validator && npm run test:workflow",
     "lint": "eslint src --ext .ts",
     "type-check": "tsc --noEmit"
   },
@@ -22,9 +25,7 @@
     "nl2sql",
     "natural-language",
     "sql",
-    "query-generation",
-    "ai",
-    "claude"
+    "query-generation"
   ],
   "license": "MIT",
   "dependencies": {

@@ -1,4 +1,4 @@
-import { SchemaLoader } from "./agents/schema-loader.js";
+import { SchemaLoader } from "../agents/schema-loader.js";
 
 async function testSchemaLoader() {
   console.log("Testing Schema Loader...\n");
