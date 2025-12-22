@@ -1,24 +1,32 @@
 import type {
+  QueryExecutorOutput,
   SqlGenerationInput,
   SqlGenerationOutput,
 } from "../types/index.js";
 import { SchemaLoader } from "../agents/schema-loader.js";
 import { QueryGenerator } from "../agents/query-generator.js";
 import { SqlValidator } from "../agents/sql-validator.js";
+import { QueryExecutor } from "../agents/query-executor.js";
 
 export class SqlGenerationWorkflow {
   private schemaLoader: SchemaLoader;
   private queryGenerator: QueryGenerator;
   private sqlValidator: SqlValidator;
+  private queryExecutor: QueryExecutor;
+  private executeQueries: boolean;
 
   constructor(
     schemaLoader: SchemaLoader,
     queryGenerator: QueryGenerator,
     sqlValidator: SqlValidator,
+    queryExecutor: QueryExecutor,
+    options: { executeQueries?: boolean } = {},
   ) {
     this.schemaLoader = schemaLoader;
     this.queryGenerator = queryGenerator;
     this.sqlValidator = sqlValidator;
+    this.queryExecutor = queryExecutor;
+    this.executeQueries = options.executeQueries ?? true;
   }
 
   /**
@@ -28,11 +36,12 @@ export class SqlGenerationWorkflow {
    * 1. Load and validate database schema
    * 2. Generate SQL query from natural language
    * 3. Validate the generated SQL
+   * 4. Execute the query (if validation passes)
    *
    * Guardrails:
    * - Abort if schema validation fails
    * - Abort if safety validation fails
-   * - Warn if query has validation errors
+   * - Only execute if all validation passes
    */
   async execute(input: SqlGenerationInput): Promise<SqlGenerationOutput> {
     console.log(`\n${"=".repeat(60)}`);
@@ -115,6 +124,39 @@ export class SqlGenerationWorkflow {
     // Determine if query can be executed
     const canExecute = validatorResult.isValid && validatorResult.safetyValid;
 
+    // STEP 4: Execute Query
+    let executionResult: QueryExecutorOutput | undefined;
+
+    if (this.executeQueries && canExecute) {
+      console.log("Step 4: Executing query...");
+
+      executionResult = await this.queryExecutor.execute({
+        query: generatorResult.query,
+        validationResult: {
+          isValid: validatorResult.isValid,
+          safetyValid: validatorResult.safetyValid,
+        },
+        database: input.database,
+      });
+
+      if (executionResult.success) {
+        console.log("Query executed successfully");
+        console.log(`Execution time: ${executionResult.executionTime}ms`);
+        console.log(`Rows returned: ${executionResult.rowCount}`);
+        if (executionResult.truncated) {
+          console.log(
+            `Results truncated to ${executionResult.data?.length} rows`,
+          );
+        }
+      } else {
+        console.error("Query execution failed");
+        console.error(`Error: ${executionResult.error}`);
+      }
+      console.log("");
+    } else if (this.executeQueries && !canExecute) {
+      console.log("Step 4: Skipping execution (validation failed)\n");
+    }
+
     // Build final output
     const output: SqlGenerationOutput = {
       query: generatorResult.query,
@@ -172,6 +214,41 @@ export class SqlGenerationWorkflow {
     output += `  ${result.safetyChecks ? "✓" : "✗"} Safety Checks:  ${result.safetyChecks}\n`;
     output += `  ${result.canExecute ? "✓" : "✗"} Can Execute:    ${result.canExecute}\n`;
     output += `  ✓ Schema Used:    ${result.schemaUsed}\n`;
+
+    if (result.executionResult) {
+      output += "\n─────────────────────────────────────────────────────────\n";
+      output += "Execution Results:\n";
+
+      if (result.executionResult.success) {
+        output += `  ✓ Success:        true\n`;
+        output += `  ✓ Execution Time: ${result.executionResult.executionTime}ms\n`;
+        output += `  ✓ Rows Returned:  ${result.executionResult.rowCount}\n`;
+
+        if (result.executionResult.truncated) {
+          output += `  Truncated:     Results limited to ${result.executionResult.data?.length} rows\n`;
+        }
+
+        // Show sample data (first 5 rows)
+        if (
+          result.executionResult.data &&
+          result.executionResult.data.length > 0
+        ) {
+          output += "\n  Sample Data:\n";
+          const sampleRows = result.executionResult.data.slice(0, 5);
+          output +=
+            "  " +
+            JSON.stringify(sampleRows, null, 2).split("\n").join("\n  ") +
+            "\n";
+
+          if (result.executionResult.rowCount > 5) {
+            output += `  ... and ${result.executionResult.rowCount - 5} more rows\n`;
+          }
+        }
+      } else {
+        output += `  ✗ Success:        false\n`;
+        output += `  ✗ Error:          ${result.executionResult.error}\n`;
+      }
+    }
 
     if (result.errors.length > 0) {
       output += "\n❌ Errors:\n";

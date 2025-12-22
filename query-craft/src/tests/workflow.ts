@@ -1,3 +1,5 @@
+import { QueryExecutor } from "../agents/query-executor.js";
+
 import { SqlGenerationWorkflow } from "../workflows/sql-generation.js";
 import { SchemaLoader } from "../agents/schema-loader.js";
 import { QueryGenerator } from "../agents/query-generator.js";
@@ -25,12 +27,18 @@ async function testWorkflow() {
   const schemaLoader = new SchemaLoader("./data/schemas");
   const queryGenerator = new QueryGenerator(llmClient, specLoader);
   const sqlValidator = new SqlValidator(llmClient, specLoader);
+  const queryExecutor = new QueryExecutor({
+    dbPath: "./data/databases",
+    maxResultRows: 10,
+  });
 
   // Create workflow
   const workflow = new SqlGenerationWorkflow(
     schemaLoader,
     queryGenerator,
     sqlValidator,
+    queryExecutor,
+    { executeQueries: true },
   );
 
   // Test cases
@@ -89,10 +97,10 @@ async function testWorkflow() {
     console.log(
       `Actual Result: ${result.canExecute ? "Can Execute" : "Cannot Execute"}`,
     );
-    console.log(`${testPassed ? "✅ TEST PASSED" : "❌ TEST FAILED"}\n`);
+    console.log(`${testPassed ? "TEST PASSED" : "❌ TEST FAILED"}\n`);
   }
 
-  console.log("\n✅ All workflow tests completed!\n");
+  console.log("\nAll workflow tests completed!\n");
 }
 
 testWorkflow().catch(console.error);

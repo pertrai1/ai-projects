@@ -10,6 +10,7 @@ import { QueryGenerator } from "./agents/query-generator.js";
 import { SqlValidator } from "./agents/sql-validator.js";
 import { LLMClient } from "./utils/llm-client.js";
 import { SpecLoader } from "./tools/spec-loader.js";
+import { QueryExecutor } from "./agents/query-executor.js";
 
 config();
 
@@ -30,6 +31,7 @@ program
   .option("-d, --database <name>", "Database schema to use", "ecommerce")
   .option("-v, --verbose", "Show detailed workflow steps", false)
   .option("--no-validate", "Skip validation step", false)
+  .option("--no-execute", "Skip query execution", false)
   .action(async (question: string, options) => {
     try {
       // Check for API key
@@ -53,11 +55,16 @@ program
       const schemaLoader = new SchemaLoader("./data/schemas");
       const queryGenerator = new QueryGenerator(llmClient, specLoader);
       const sqlValidator = new SqlValidator(llmClient, specLoader);
+      const queryExecutor = new QueryExecutor({
+        dbPath: "./data/databases",
+      });
 
       const workflow = new SqlGenerationWorkflow(
         schemaLoader,
         queryGenerator,
         sqlValidator,
+        queryExecutor,
+        { executeQueries: options.execute },
       );
 
       spinner.succeed("QueryCraft initialized");
@@ -98,7 +105,7 @@ program
   .action(async () => {
     const schemaLoader = new SchemaLoader("./data/schemas");
 
-    console.log(chalk.bold("\n📊 Available Database Schemas:\n"));
+    console.log(chalk.bold("\nAvailable Database Schemas:\n"));
 
     // Try loading known schemas
     const schemas = ["ecommerce"];
@@ -158,7 +165,7 @@ program
   .description("Start interactive query mode")
   .option("-d, --database <name>", "Database schema to use", "ecommerce")
   .action(async (options) => {
-    console.log(chalk.bold.cyan("\n🔮 QueryCraft Interactive Mode\n"));
+    console.log(chalk.bold.cyan("\nQueryCraft Interactive Mode\n"));
     console.log(chalk.gray("Type your questions in natural language."));
     console.log(chalk.gray('Type "exit" or "quit" to leave.\n'));
 
@@ -179,11 +186,16 @@ program
     const schemaLoader = new SchemaLoader("./data/schemas");
     const queryGenerator = new QueryGenerator(llmClient, specLoader);
     const sqlValidator = new SqlValidator(llmClient, specLoader);
+    const queryExecutor = new QueryExecutor({
+      dbPath: "./data/databases";
+    });
 
     const workflow = new SqlGenerationWorkflow(
       schemaLoader,
       queryGenerator,
       sqlValidator,
+      queryExecutor,
+      { executeQueries: true }
     );
 
     console.log(chalk.gray(`Using database: ${options.database}\n`));
@@ -220,7 +232,7 @@ program
       }
 
       if (question === "exit" || question === "quit") {
-        console.log(chalk.gray("\nGoodbye! 👋\n"));
+        console.log(chalk.gray("\nGoodbye!\n"));
         process.exit(0);
       }
 

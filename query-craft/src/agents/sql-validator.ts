@@ -106,6 +106,15 @@ export class SqlValidator {
     errors: string[];
   } {
     const errors: string[] = [];
+
+    if (!query || typeof query !== "string") {
+      errors.push("VALIDATION ERROR: Query is null or not a string");
+      return {
+        passed: false,
+        errors,
+      };
+    }
+
     const queryUpper = query.toUpperCase();
 
     // Check 1: Must be SELECT only

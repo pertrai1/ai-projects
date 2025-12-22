@@ -107,6 +107,7 @@ export interface SqlGenerationOutput {
   warnings?: string[];
   canExecute: boolean;
   schemaUsed: string;
+  executionResult?: QueryExecutorOutput;
 }
 
 /**

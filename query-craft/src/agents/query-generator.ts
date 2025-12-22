@@ -59,8 +59,14 @@ export class QueryGenerator {
         },
       );
 
+      console.log("DEBUG: LLM Response:", JSON.stringify(response, null, 2));
+
       // Validate response structure
       this.validateResponse(response);
+
+      if (!response.query || typeof response.query !== "string") {
+        throw new Error("LLM returned null or invalid query string");
+      }
 
       return response;
     } catch (error) {
