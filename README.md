@@ -83,6 +83,28 @@ An AI-powered CLI assistant for the USDA PLANTS Help documentation using intelli
 
 ---
 
+### [QueryCraft](./query-craft)
+A natural language to SQL query generator with built-in validation, security guardrails, and evaluation framework using spec-driven development.
+
+**Technology**: Anthropic Claude (Sonnet 4), TypeScript, Commander.js, Braintrust, Zod, YAML Agent Specs
+
+**Description**: QueryCraft demonstrates spec-driven, multi-agent architecture for converting natural language questions into safe, validated SQL queries. The system implements a three-agent pipeline: a deterministic schema loader that validates database structure, an LLM-powered query generator using Claude Sonnet 4, and a hybrid validator combining deterministic safety checks with semantic validation. All agents are defined in YAML specifications before implementation, enabling executable documentation and clear separation of concerns. The project showcases production patterns including multi-layer security guardrails, confidence scoring, and automated evaluation frameworks.
+
+**Key Features**:
+- Natural language to PostgreSQL query generation with confidence scoring
+- Multi-layer security guardrails preventing SQL injection and dangerous operations
+- Deterministic safety validation blocking mutations, system table access, and file operations
+- Schema-aware validation ensuring correct tables, columns, and JOIN conditions
+- YAML-based agent specifications for modular, testable AI behavior
+- Automated evaluation framework using Braintrust with LLM-as-Judge metrics
+- Interactive CLI and single-shot query modes with detailed workflow visibility
+- Spec-driven development workflow separating prompt engineering from code
+- Progressive complexity analysis and query optimization suggestions
+
+**Use Cases**: Database query assistance, SQL learning tools, natural language database interfaces, safe query generation for analytics, educational SQL resources
+
+---
+
 ### [A11y Remediation Assistant](./a11y-remediation-assistant)
 An AI-powered accessibility remediation assistant that bridges the gap between identifying WCAG/Section 508 violations and safely fixing them with audit-ready evidence.
 
