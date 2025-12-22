@@ -59,7 +59,19 @@ export class QueryGenerator {
         },
       );
 
-      console.log("DEBUG: LLM Response:", JSON.stringify(response, null, 2));
+      if (!response.query || response.query === null) {
+        return {
+          query: "",
+          explanation:
+            response.explanation ||
+            "Could not generate a query for this question",
+          confidence: "low",
+          tablesUsed: response.tablesUsed || [],
+          assumptions: response.assumptions || [
+            "Unable to map question to available schema",
+          ],
+        };
+      }
 
       // Validate response structure
       this.validateResponse(response);

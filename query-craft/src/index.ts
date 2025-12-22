@@ -11,6 +11,7 @@ import { SqlValidator } from "./agents/sql-validator.js";
 import { LLMClient } from "./utils/llm-client.js";
 import { SpecLoader } from "./tools/spec-loader.js";
 import { QueryExecutor } from "./agents/query-executor.js";
+import { ResultFormatter } from "./utils/result-formatter.js";
 
 config();
 
@@ -32,6 +33,8 @@ program
   .option("-v, --verbose", "Show detailed workflow steps", false)
   .option("--no-validate", "Skip validation step", false)
   .option("--no-execute", "Skip query execution", false)
+  .option("-f, --format <type>", "Output format: table, json, csv", "table")
+  .option("-l, --limit <number>", "Max rows to display", "10")
   .action(async (question: string, options) => {
     try {
       // Check for API key
@@ -80,6 +83,30 @@ program
         question,
         database: options.database,
       });
+
+      if (result.executionResult?.success && result.executionResult.data) {
+        switch (options.format) {
+          case "json":
+            console.log("\nResults (JSON):");
+            console.log(
+              ResultFormatter.formatAsJSON(result.executionResult.data),
+            );
+            break;
+          case "csv":
+            console.log("\nResults (CSV):");
+            console.log(
+              ResultFormatter.formatAsCSV(
+                result.executionResult.data,
+                result.executionResult.columns || [],
+              ),
+            );
+            break;
+          case "table":
+          default:
+            // Already formatted in executeAndFormat
+            break;
+        }
+      }
 
       // Display results
       if (!options.verbose) {
@@ -187,7 +214,7 @@ program
     const queryGenerator = new QueryGenerator(llmClient, specLoader);
     const sqlValidator = new SqlValidator(llmClient, specLoader);
     const queryExecutor = new QueryExecutor({
-      dbPath: "./data/databases";
+      dbPath: "./data/databases",
     });
 
     const workflow = new SqlGenerationWorkflow(
@@ -195,7 +222,7 @@ program
       queryGenerator,
       sqlValidator,
       queryExecutor,
-      { executeQueries: true }
+      { executeQueries: true },
     );
 
     console.log(chalk.gray(`Using database: ${options.database}\n`));

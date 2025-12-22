@@ -7,6 +7,7 @@ import { SchemaLoader } from "../agents/schema-loader.js";
 import { QueryGenerator } from "../agents/query-generator.js";
 import { SqlValidator } from "../agents/sql-validator.js";
 import { QueryExecutor } from "../agents/query-executor.js";
+import { ResultFormatter } from "../utils/result-formatter.js";
 
 export class SqlGenerationWorkflow {
   private schemaLoader: SchemaLoader;
@@ -217,36 +218,30 @@ export class SqlGenerationWorkflow {
 
     if (result.executionResult) {
       output += "\n─────────────────────────────────────────────────────────\n";
-      output += "Execution Results:\n";
+      output += "Execution Results:\n\n";
 
       if (result.executionResult.success) {
-        output += `  ✓ Success:        true\n`;
-        output += `  ✓ Execution Time: ${result.executionResult.executionTime}ms\n`;
-        output += `  ✓ Rows Returned:  ${result.executionResult.rowCount}\n`;
+        output += ResultFormatter.formatExecutionSummary(
+          result.executionResult,
+        );
 
-        if (result.executionResult.truncated) {
-          output += `  Truncated:     Results limited to ${result.executionResult.data?.length} rows\n`;
-        }
-
-        // Show sample data (first 5 rows)
+        // Show data as table
         if (
           result.executionResult.data &&
           result.executionResult.data.length > 0
         ) {
-          output += "\n  Sample Data:\n";
-          const sampleRows = result.executionResult.data.slice(0, 5);
-          output +=
-            "  " +
-            JSON.stringify(sampleRows, null, 2).split("\n").join("\n  ") +
-            "\n";
-
-          if (result.executionResult.rowCount > 5) {
-            output += `  ... and ${result.executionResult.rowCount - 5} more rows\n`;
-          }
+          output += "\nResults:\n";
+          output += ResultFormatter.formatAsTable(
+            result.executionResult.data,
+            result.executionResult.columns || [],
+            { maxRows: 10 },
+          );
+        } else {
+          output += "\nNo rows returned.\n";
         }
       } else {
-        output += `  ✗ Success:        false\n`;
-        output += `  ✗ Error:          ${result.executionResult.error}\n`;
+        output += `✗ Execution failed\n`;
+        output += `✗ Error: ${result.executionResult.error}\n`;
       }
     }
 
