@@ -176,3 +176,22 @@ export interface EvalResult {
   };
   passed: boolean;
 }
+
+export interface QueryExecutorInput {
+  query: string;
+  validationResult: {
+    isValid: boolean;
+    safetyValid: boolean;
+  };
+  database: string;
+}
+
+export interface QueryExecutorOutput {
+  success: boolean;
+  executionTime: number;
+  rowCount: number;
+  data?: any[];
+  columns?: Array<{ name: string; type: string }>;
+  error?: string;
+  truncated: boolean;
+}

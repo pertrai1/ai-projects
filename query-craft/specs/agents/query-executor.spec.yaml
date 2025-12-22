@@ -1,0 +1,83 @@
+version: "1.0"
+kind: Agent
+metadata:
+  name: query-executor
+  description: |
+    Safely executes validated SQL queries against a database.
+
+    GUARDRAILS:
+    - Only executes queries that passed validation
+    - Uses read-only database connections
+    - Enforces query timeouts
+    - Limits result set size
+    - Never executes mutations
+
+config:
+  type: deterministic
+  maxResultRows: 100
+  queryTimeout: 5000 # 5 seconds
+  connectionMode: readonly
+
+input:
+  query:
+    type: string
+    description: The SQL query to execute
+    required: true
+  validationResult:
+    type: object
+    description: Validation result from sql-validator
+    required: true
+  database:
+    type: string
+    description: Database to execute against
+    required: true
+
+outputSchema:
+  type: object
+  required:
+    - success
+    - executionTime
+    - rowCount
+  properties:
+    success:
+      type: boolean
+      description: Whether query executed successfully
+    executionTime:
+      type: number
+      description: Execution time in milliseconds
+    rowCount:
+      type: number
+      description: Number of rows returned
+    data:
+      type: array
+      description: Query results (limited to maxResultRows)
+      items:
+        type: object
+    columns:
+      type: array
+      description: Column names and types
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+          type:
+            type: string
+    error:
+      type: string
+      description: Error message if execution failed
+    truncated:
+      type: boolean
+      description: Whether results were truncated
+
+validation:
+  rules:
+    - name: validation-passed
+      description: Query must have passed validation
+      check: validationResult.isValid == true && validationResult.safetyValid == true
+    - name: readonly-mode
+      description: Database connection must be read-only
+    - name: timeout-enforced
+      description: Query must complete within timeout
+    - name: result-limit
+      description: Results must be limited to prevent memory issues
