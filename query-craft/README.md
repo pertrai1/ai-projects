@@ -7,6 +7,8 @@ _How to Prompt LLMs for Text-to-SQL_, arXiv:2305.11853. Research paper can be fo
 
 ![QueryCraft Example](screenshot.png)
 
+![Example Usage](example-usage.gif)
+
 ## Features
 
 - **Natural Language to SQL** - Convert plain English questions into PostgreSQL queries
