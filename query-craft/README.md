@@ -2,13 +2,16 @@
 
 A natural language to SQL query generator with built-in validation, safety guardrails, and evaluation framework. Built with Claude AI and TypeScript following spec-driven development principles.
 
+This project follows findings from Chang & Fosler-Lussier (2023),
+_How to Prompt LLMs for Text-to-SQL_, arXiv:2305.11853. Research paper can be found in `docs/references/`.
+
 ## Features
 
 - **Natural Language to SQL** - Convert plain English questions into PostgreSQL queries
-- **Security Guardrails** - Built-in validation prevents SQL injection and dangerous operations  
-- **Schema-Aware** - Understands database structure and relationships  
-- **Confidence Scoring** - Indicates reliability of generated queries  
-- **Multi-Step Validation** - Syntax, schema, and safety checks  
+- **Security Guardrails** - Built-in validation prevents SQL injection and dangerous operations
+- **Schema-Aware** - Understands database structure and relationships
+- **Confidence Scoring** - Indicates reliability of generated queries
+- **Multi-Step Validation** - Syntax, schema, and safety checks
 - **Evaluation Framework** - Automated testing with Braintrust
 - **CLI & Interactive Mode** - Easy-to-use command-line interface
 
@@ -39,32 +42,38 @@ A natural language to SQL query generator with built-in validation, safety guard
 ### Setup
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/pertrai1/ai-projects.git
    cd ai-projects/query-craft
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Configure environment**
+
    ```bash
    cp .env.example .env
    ```
 
    Edit `.env` and add your API key:
+
    ```
    ANTHROPIC_API_KEY=your_api_key_here
    ```
 
 4. **Create sample database**
+
    ```bash
     npm run create:db
-    ```
+   ```
 
 5. **Build the project**
+
    ```bash
    npm run build
    ```
@@ -141,6 +150,7 @@ Query is safe to execute!
 ### Commands
 
 #### `generate`
+
 Generate SQL query from natural language
 
 ```bash
@@ -153,6 +163,7 @@ Options:
 ```
 
 **Examples:**
+
 ```bash
 querycraft generate "Show all users"
 querycraft generate "Find expensive products" -d ecommerce
@@ -160,6 +171,7 @@ querycraft generate "Top customers" --verbose
 ```
 
 #### `schemas`
+
 List available database schemas
 
 ```bash
@@ -167,6 +179,7 @@ querycraft schemas
 ```
 
 #### `schema`
+
 Show detailed schema information
 
 ```bash
@@ -177,6 +190,7 @@ querycraft schema ecommerce
 ```
 
 #### `interactive` (alias: `i`)
+
 Start interactive REPL mode
 
 ```bash
@@ -209,18 +223,21 @@ Final Result (with confidence & safety scores)
 ### Key Components
 
 1. **Schema Loader** (Deterministic Agent)
+
    - Loads database schema definitions
    - Validates schema structure
    - Formats schema for LLM context
    - No LLM calls - pure validation logic
 
 2. **Query Generator** (LLM Agent)
+
    - Converts natural language to SQL
    - Uses Claude Sonnet 4 for reasoning
    - Provides confidence scores
    - Explains query logic
 
 3. **SQL Validator** (Hybrid Agent)
+
    - Deterministic safety checks (fast, no LLM)
    - LLM-based semantic validation
    - Blocks dangerous operations
@@ -280,12 +297,14 @@ query-craft/
 QueryCraft uses **spec-driven development** - all agents are defined in YAML specs before implementation.
 
 **Benefits:**
+
 - Specs are executable documentation
 - Easy to iterate on prompts without code changes
 - Clear contracts for testing
 - Separation of concerns
 
 **Example Agent Spec:**
+
 ```yaml
 version: "1.0"
 kind: Agent
@@ -366,6 +385,7 @@ npm run test:workflow
 ```
 
 This runs multiple test cases:
+
 - Simple SELECT queries
 - Complex JOIN queries
 - SQL injection attempts
@@ -381,14 +401,17 @@ QueryCraft includes an evaluation framework using **Braintrust** for automated t
 ### Evaluation Metrics
 
 1. **Query Correctness** (LLM-as-Judge)
+
    - Does generated SQL semantically match expected query?
    - Score: 1.0 (correct), 0.5 (partial), 0.0 (wrong)
 
 2. **Table Accuracy** (Exact Match)
+
    - Are the correct tables used?
    - Score: % of correct tables
 
 3. **Safety Validation** (Binary)
+
    - Does validator correctly identify safe vs unsafe queries?
    - Score: 1.0 (correct), 0.0 (missed)
 
@@ -419,21 +442,25 @@ QueryCraft implements **multi-layer security guardrails**:
 **Fast, LLM-free validation** that blocks:
 
 **Mutation Operations**
+
 ```sql
 INSERT, UPDATE, DELETE, DROP, TRUNCATE, ALTER, CREATE
 ```
 
 **System Table Access**
+
 ```sql
 pg_user, pg_shadow, information_schema, pg_catalog
 ```
 
 **File Operations**
+
 ```sql
 pg_read_file, pg_write_file, COPY, LOAD_FILE
 ```
 
 **SQL Injection Patterns**
+
 ```sql
 '; DROP TABLE users; --
 UNION SELECT * FROM pg_user
@@ -531,6 +558,7 @@ This project demonstrates:
 ## Roadmap
 
 ### Phase 1: Foundation
+
 - [x] Basic NL2SQL generation
 - [x] Schema validation
 - [x] SQL validation with guardrails
@@ -538,13 +566,15 @@ This project demonstrates:
 - [x] Evaluation framework
 
 ### Phase 2: Enhancement (Future)
-- [ ] Query execution (safe sandbox)
-- [ ] Result formatting and visualization
+
+- [x] Query execution (safe sandbox)
+- [x] Result formatting and visualization
 - [ ] Query refinement through dialogue
 - [ ] Multi-turn conversation memory
 - [ ] Schema documentation RAG
 
 ### Phase 3: Advanced (Future)
+
 - [ ] Multi-strategy query generation
 - [ ] Template-based + LLM hybrid approach
 - [ ] Result fusion (RRF algorithm)
@@ -552,6 +582,7 @@ This project demonstrates:
 - [ ] Support for more SQL dialects
 
 ### Phase 4: Production (Future)
+
 - [ ] OpenAI-style guardrails (input/output rails)
 - [ ] API server mode
 - [ ] Web UI
@@ -581,6 +612,7 @@ MIT
 ## Acknowledgments
 
 Inspired by:
+
 - **Plants FieldGuide** - Advanced RAG patterns
 - **Cortex** - Agent architecture
 - **OpenSpec** - Spec-driven development

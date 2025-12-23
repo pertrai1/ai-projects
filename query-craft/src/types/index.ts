@@ -196,3 +196,22 @@ export interface QueryExecutorOutput {
   error?: string;
   truncated: boolean;
 }
+
+// Query Refiner
+export interface QueryRefinerInput {
+  originalQuestion: string;
+  currentQuery: string;
+  feedback: string;
+  previousResults?: {
+    data: any[];
+    rowCount: number;
+  };
+  schema: DatabaseSchema;
+}
+
+export interface QueryRefinerOutput {
+  refinedQuery: string;
+  changes: string;
+  reasoning: string;
+  confidence: "high" | "medium" | "low";
+}
