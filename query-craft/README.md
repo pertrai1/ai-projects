@@ -5,8 +5,6 @@ A natural language to SQL query generator with built-in validation, safety guard
 This project follows findings from Chang & Fosler-Lussier (2023),
 _How to Prompt LLMs for Text-to-SQL_, arXiv:2305.11853. Research paper can be found in `docs/references/`.
 
-![QueryCraft Example](screenshot.png)
-
 ![Example Usage](example-usage.gif)
 
 ## Features
