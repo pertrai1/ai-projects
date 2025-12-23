@@ -372,7 +372,7 @@ outputSchema:
 
 ### OpenSpec Workflow
 
-QueryCraft uses **OpenSpec** for spec-driven development workflows. OpenSpec provides structured change management with proposals, specifications, and automated validation.
+QueryCraft uses **OpenSpec** for spec-driven development workflows. [OpenSpec](https://openspec.dev) provides structured change management with proposals, specifications, and automated validation.
 
 #### Quick Reference
 
