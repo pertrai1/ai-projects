@@ -73,11 +73,13 @@ export class InteractiveRefinementWorkflow {
         });
       } else {
         // Execute refinement workflow
+        const context = this.dialogManager.getContext();
         const refinementContext: RefinementContext = {
           originalQuestion,
           currentQuery: lastQuery,
           currentResult: lastResult,
           feedback: userInput,
+          database: context.database,
         };
 
         result = await this.sqlRefinementWorkflow.refine(refinementContext);

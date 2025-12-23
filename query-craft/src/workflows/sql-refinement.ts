@@ -1,19 +1,27 @@
 import type { SqlGenerationOutput } from "../types/index.js";
 import { SqlGenerationWorkflow } from "./sql-generation.js";
 import { QueryRefiner } from "../agents/query-refiner.js";
+import { SchemaLoader } from "../agents/schema-loader.js";
 
 export interface RefinementContext {
   originalQuestion: string;
   currentQuery: string;
   currentResult: SqlGenerationOutput;
   feedback: string;
+  database: string;
 }
 
 export class SqlRefinementWorkflow {
   private queryRefiner: QueryRefiner;
+  private schemaLoader: SchemaLoader;
 
-  constructor(_sqlWorkflow: SqlGenerationWorkflow, queryRefiner: QueryRefiner) {
+  constructor(
+    _sqlWorkflow: SqlGenerationWorkflow,
+    queryRefiner: QueryRefiner,
+    schemaLoader: SchemaLoader,
+  ) {
     this.queryRefiner = queryRefiner;
+    this.schemaLoader = schemaLoader;
   }
 
   /**
@@ -28,8 +36,19 @@ export class SqlRefinementWorkflow {
     console.log("Current Query:", context.currentQuery);
     console.log("");
 
-    // Step 1: Get refined query from refiner agent
-    console.log("Step 1: Refining query based on feedback...");
+    // Step 1: Load schema
+    console.log("Step 1: Loading schema...");
+    const schemaResult = await this.schemaLoader.execute({
+      database: context.database,
+    });
+
+    if (schemaResult.validationStatus !== "valid") {
+      console.error("❌ Schema validation failed - returning original query");
+      return context.currentResult;
+    }
+
+    // Step 2: Get refined query from refiner agent
+    console.log("Step 2: Refining query based on feedback...");
 
     const refinement = await this.queryRefiner.execute({
       originalQuestion: context.originalQuestion,
@@ -41,15 +60,15 @@ export class SqlRefinementWorkflow {
             rowCount: context.currentResult.executionResult.rowCount,
           }
         : undefined,
-      schema: context.currentResult.schemaUsed as any, // We'll need the actual schema object
+      schema: schemaResult.schema,
     });
 
     console.log("Query refined");
     console.log(`   Changes: ${refinement.changes}`);
     console.log(`   Confidence: ${refinement.confidence}\n`);
 
-    // Step 2: Execute the refined query through the normal workflow
-    console.log("Step 2: Validating and executing refined query...");
+    // Step 3: Execute the refined query through the normal workflow
+    console.log("Step 3: Validating and executing refined query...");
 
     // We need to manually create the workflow steps since we already have the query
     console.log(`\n${"=".repeat(60)}`);

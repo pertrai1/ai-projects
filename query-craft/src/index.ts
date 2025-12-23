@@ -236,6 +236,7 @@ program
     const refinementWorkflow = new SqlRefinementWorkflow(
       sqlWorkflow,
       queryRefiner,
+      schemaLoader,
     );
 
     const dialogManager = new DialogManager(options.database);
