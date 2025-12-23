@@ -215,3 +215,44 @@ export interface QueryRefinerOutput {
   reasoning: string;
   confidence: "high" | "medium" | "low";
 }
+
+/**
+ * Dialog Manager Types
+ */
+
+export type IntentType = "new_query" | "refinement";
+
+export interface ConversationTurn {
+  id: string;
+  timestamp: Date;
+  userInput: string;
+  intent: IntentType;
+  result?: SqlGenerationOutput;
+}
+
+export interface ConversationState {
+  sessionId: string;
+  database: string;
+  turns: ConversationTurn[];
+  currentQuery?: string;
+  currentResult?: SqlGenerationOutput;
+}
+
+export interface ConversationContext {
+  sessionId: string;
+  database: string;
+  turnCount: number;
+  lastQuery?: string;
+  lastResult?: SqlGenerationOutput;
+  recentTurns: ConversationTurn[];
+}
+
+export interface DialogManagerInput {
+  userInput: string;
+  database: string;
+}
+
+export interface DialogManagerOutput {
+  intent: IntentType;
+  context: ConversationContext;
+}

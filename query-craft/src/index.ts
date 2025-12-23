@@ -5,9 +5,13 @@ import { config } from "dotenv";
 import chalk from "chalk";
 import ora from "ora";
 import { SqlGenerationWorkflow } from "./workflows/sql-generation.js";
+import { SqlRefinementWorkflow } from "./workflows/sql-refinement.js";
+import { InteractiveRefinementWorkflow } from "./workflows/interactive-refinement.js";
 import { SchemaLoader } from "./agents/schema-loader.js";
 import { QueryGenerator } from "./agents/query-generator.js";
 import { SqlValidator } from "./agents/sql-validator.js";
+import { QueryRefiner } from "./agents/query-refiner.js";
+import { DialogManager } from "./agents/dialog-manager.js";
 import { LLMClient } from "./utils/llm-client.js";
 import { SpecLoader } from "./tools/spec-loader.js";
 import { QueryExecutor } from "./agents/query-executor.js";
@@ -189,12 +193,15 @@ program
 program
   .command("interactive")
   .alias("i")
-  .description("Start interactive query mode")
+  .description("Start interactive query mode with conversational refinement")
   .option("-d, --database <name>", "Database schema to use", "ecommerce")
   .action(async (options) => {
     console.log(chalk.bold.cyan("\nQueryCraft Interactive Mode\n"));
     console.log(chalk.gray("Type your questions in natural language."));
-    console.log(chalk.gray('Type "exit" or "quit" to leave.\n'));
+    console.log(
+      chalk.gray("Refine queries by providing feedback: 'only last month', 'sort by name', etc."),
+    );
+    console.log(chalk.gray('Commands: /new, /history, /clear, /help, exit/quit\n'));
 
     // Check for API key
     if (!process.env.ANTHROPIC_API_KEY) {
@@ -212,17 +219,31 @@ program
     const specLoader = new SpecLoader("./specs");
     const schemaLoader = new SchemaLoader("./data/schemas");
     const queryGenerator = new QueryGenerator(llmClient, specLoader);
+    const queryRefiner = new QueryRefiner(llmClient, specLoader);
     const sqlValidator = new SqlValidator(llmClient, specLoader);
     const queryExecutor = new QueryExecutor({
       dbPath: "./data/databases",
     });
 
-    const workflow = new SqlGenerationWorkflow(
+    const sqlWorkflow = new SqlGenerationWorkflow(
       schemaLoader,
       queryGenerator,
       sqlValidator,
       queryExecutor,
       { executeQueries: true },
+    );
+
+    const refinementWorkflow = new SqlRefinementWorkflow(
+      sqlWorkflow,
+      queryRefiner,
+    );
+
+    const dialogManager = new DialogManager(options.database);
+
+    const interactiveWorkflow = new InteractiveRefinementWorkflow(
+      dialogManager,
+      sqlWorkflow,
+      refinementWorkflow,
     );
 
     console.log(chalk.gray(`Using database: ${options.database}\n`));
@@ -251,25 +272,31 @@ program
     rl.prompt();
 
     rl.on("line", async (line) => {
-      const question = line.trim();
+      const input = line.trim();
 
-      if (!question) {
+      if (!input) {
         rl.prompt();
         return;
       }
 
-      if (question === "exit" || question === "quit") {
+      if (input === "exit" || input === "quit") {
         console.log(chalk.gray("\nGoodbye!\n"));
         process.exit(0);
       }
 
-      try {
-        const result = await workflow.execute({
-          question,
-          database: options.database,
-        });
+      // Handle commands
+      if (input.startsWith("/")) {
+        handleCommand(input, interactiveWorkflow, rl);
+        return;
+      }
 
-        displayCompactResult(question, result);
+      try {
+        const turnResult = await interactiveWorkflow.handleTurn(input);
+
+        // Update prompt with turn number
+        rl.setPrompt(chalk.cyan(`querycraft [${turnResult.turnNumber}]> `));
+
+        displayInteractiveResult(input, turnResult);
       } catch (error) {
         console.error(chalk.red(`\n❌ Error: ${error}\n`));
       }
@@ -277,6 +304,196 @@ program
       rl.prompt();
     });
   });
+
+/**
+ * Handle interactive commands
+ */
+function handleCommand(
+  command: string,
+  workflow: InteractiveRefinementWorkflow,
+  rl: any,
+) {
+  const cmd = command.toLowerCase();
+
+  switch (cmd) {
+    case "/new":
+      workflow.resetConversation();
+      console.log(chalk.green("\n✓ Conversation reset. Starting new query.\n"));
+      rl.setPrompt(chalk.cyan("querycraft> "));
+      rl.prompt();
+      break;
+
+    case "/clear":
+      workflow.resetConversation();
+      console.log(chalk.green("\n✓ Conversation cleared.\n"));
+      rl.setPrompt(chalk.cyan("querycraft> "));
+      rl.prompt();
+      break;
+
+    case "/history":
+      const history = workflow.getHistory();
+      if (history.length === 0) {
+        console.log(chalk.gray("\nNo conversation history yet.\n"));
+      } else {
+        console.log(chalk.bold.cyan("\nConversation History:\n"));
+        history.forEach((turn, idx) => {
+          const intentIcon = turn.intent === "new_query" ? "🆕" : "✨";
+          console.log(
+            chalk.bold(`${idx + 1}. ${intentIcon} ${turn.intent === "new_query" ? "New Query" : "Refinement"}`),
+          );
+          console.log(chalk.white(`   Input: ${turn.userInput}`));
+          if (turn.result?.query) {
+            console.log(chalk.gray(`   Query: ${turn.result.query.substring(0, 60)}...`));
+          }
+          console.log("");
+        });
+      }
+      rl.prompt();
+      break;
+
+    case "/help":
+      console.log(chalk.bold.cyan("\nAvailable Commands:\n"));
+      console.log(chalk.white("  /new      - Start a new query (reset conversation)"));
+      console.log(chalk.white("  /history  - Show conversation history"));
+      console.log(chalk.white("  /clear    - Clear conversation history"));
+      console.log(chalk.white("  /help     - Show this help message"));
+      console.log(chalk.white("  exit/quit - Exit interactive mode\n"));
+      console.log(chalk.bold.cyan("Refinement Tips:\n"));
+      console.log(
+        chalk.gray("  • Use short phrases to refine: 'only last month', 'sort by name'"),
+      );
+      console.log(
+        chalk.gray("  • Add filters: 'also show email', 'exclude canceled orders'"),
+      );
+      console.log(
+        chalk.gray("  • Modify results: 'limit to 10', 'group by category'\n"),
+      );
+      rl.prompt();
+      break;
+
+    default:
+      console.log(
+        chalk.red(`\nUnknown command: ${command}`),
+      );
+      console.log(chalk.gray("Type /help for available commands\n"));
+      rl.prompt();
+      break;
+  }
+}
+
+/**
+ * Display interactive result with conversation context
+ */
+function displayInteractiveResult(
+  userInput: string,
+  turnResult: any,
+) {
+  const intentIcon = turnResult.intent === "new_query" ? "🆕" : "✨";
+  const intentLabel =
+    turnResult.intent === "new_query" ? "New Query" : "Refined Query";
+
+  console.log(
+    "\n" +
+      chalk.bold("┌─────────────────────────────────────────────────────────┐"),
+  );
+  console.log(
+    chalk.bold(
+      `│  ${intentIcon} ${intentLabel.padEnd(48)} │`,
+    ),
+  );
+  console.log(
+    chalk.bold("└─────────────────────────────────────────────────────────┘\n"),
+  );
+
+  const result = turnResult.result;
+
+  if (turnResult.intent === "refinement") {
+    console.log(chalk.bold("Refining based on: ") + chalk.white(userInput) + "\n");
+  } else {
+    console.log(chalk.bold("Question: ") + chalk.white(userInput) + "\n");
+  }
+
+  console.log(chalk.bold("Generated SQL:"));
+  console.log(chalk.gray("```sql"));
+  console.log(chalk.cyan(result.query));
+  console.log(chalk.gray("```\n"));
+
+  console.log(
+    chalk.bold("Explanation: ") + chalk.white(result.explanation) + "\n",
+  );
+
+  console.log(
+    chalk.bold("─────────────────────────────────────────────────────────"),
+  );
+  console.log(chalk.bold("Validation Status:"));
+  console.log(
+    `  ${result.confidence === "high" ? "✓" : result.confidence === "medium" ? "○" : "✗"} Confidence:     ${getConfidenceColor(result.confidence)}`,
+  );
+  console.log(
+    `  ${result.isValid ? chalk.green("✓") : chalk.red("✗")} Valid:          ${result.isValid ? chalk.green("true") : chalk.red("false")}`,
+  );
+  console.log(
+    `  ${result.safetyChecks ? chalk.green("✓") : chalk.red("✗")} Safety Checks:  ${result.safetyChecks ? chalk.green("true") : chalk.red("false")}`,
+  );
+  console.log(
+    `  ${result.canExecute ? chalk.green("✓") : chalk.red("✗")} Can Execute:    ${result.canExecute ? chalk.green("true") : chalk.red("false")}`,
+  );
+
+  // Show execution results if available
+  if (result.executionResult && result.executionResult.success) {
+    console.log(
+      chalk.bold("\n─────────────────────────────────────────────────────────"),
+    );
+    console.log(chalk.bold("Execution Results:\n"));
+    console.log(
+      chalk.gray(
+        `  Execution time: ${result.executionResult.executionTime}ms`,
+      ),
+    );
+    console.log(
+      chalk.gray(`  Rows returned: ${result.executionResult.rowCount}`),
+    );
+
+    if (
+      result.executionResult.data &&
+      result.executionResult.data.length > 0
+    ) {
+      console.log("\n" + chalk.bold("Results:"));
+      console.log(
+        ResultFormatter.formatAsTable(
+          result.executionResult.data,
+          result.executionResult.columns || [],
+          { maxRows: 10 },
+        ),
+      );
+    } else {
+      console.log(chalk.gray("\n  No rows returned."));
+    }
+  }
+
+  if (result.errors && result.errors.length > 0) {
+    console.log("\n" + chalk.red.bold("❌ Errors:"));
+    result.errors.forEach((err: string) => {
+      console.log(chalk.red(`  • ${err}`));
+    });
+  }
+
+  if (result.warnings && result.warnings.length > 0) {
+    console.log("\n" + chalk.yellow.bold("Warnings:"));
+    result.warnings.forEach((warn: string) => {
+      console.log(chalk.yellow(`  • ${warn}`));
+    });
+  }
+
+  console.log(
+    chalk.bold("─────────────────────────────────────────────────────────"),
+  );
+  console.log(
+    chalk.gray(
+      `\nTurn ${turnResult.turnNumber} | Type /help for commands\n`,
+    ),
+  );
+}
 
 /**
  * Display compact result (default mode)

@@ -10,11 +10,9 @@ export interface RefinementContext {
 }
 
 export class SqlRefinementWorkflow {
-  private sqlWorkflow: SqlGenerationWorkflow;
   private queryRefiner: QueryRefiner;
 
-  constructor(sqlWorkflow: SqlGenerationWorkflow, queryRefiner: QueryRefiner) {
-    this.sqlWorkflow = sqlWorkflow;
+  constructor(_sqlWorkflow: SqlGenerationWorkflow, queryRefiner: QueryRefiner) {
     this.queryRefiner = queryRefiner;
   }
 

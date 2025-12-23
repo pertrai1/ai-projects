@@ -1,0 +1,145 @@
+version: "1.0"
+kind: Agent
+metadata:
+  name: dialog-manager
+  description: |
+    Manages conversation state and intent detection for interactive query refinement.
+
+    This agent:
+      - Tracks conversation history across multiple turns
+      - Detects user intent (new query vs refinement)
+      - Provides conversation context to workflows
+      - Handles conversation lifecycle (start, turn, end)
+
+config:
+  type: deterministic
+  model: none
+  temperature: 0
+  maxTokens: 0
+
+# Dialog Manager uses rule-based classification (no LLM)
+# Intent detection is fast (< 1ms) and deterministic
+
+intentDetectionStrategy: |
+  Rule-based classification for speed and reliability:
+
+  REFINEMENT INDICATORS:
+    - Keywords: "only", "also", "add", "remove", "change", "instead", "but",
+      "actually", "sort by", "limit to", "filter", "exclude", "too many",
+      "too few", "wrong", "missing", "order by", "group by", "without"
+    - Short input (< 5 words) following successful query
+    - Modifying phrases: "show me X too", "and also"
+
+  NEW QUERY INDICATORS:
+    - Question words: "show", "find", "get", "list", "what", "which",
+      "who", "how many", "count", "select", "give me"
+    - Complete question structure
+    - Explicit reset: "/new", "new query", "start over"
+
+  DECISION RULES:
+    1. First turn: always new_query
+    2. Explicit reset command: new_query
+    3. No previous query: new_query
+    4. Has refinement keywords only: refinement
+    5. Has new query keywords only: new_query
+    6. Ambiguous (both or neither):
+       - Short input + previous query exists: refinement
+       - Otherwise: new_query
+
+conversationManagement: |
+  STATE TRACKING:
+    - Session ID (unique per interactive session)
+    - Database name
+    - Turn history (last N turns, default 10)
+    - Current query and result
+
+  HISTORY PRUNING:
+    - Automatically prune turns exceeding maxTurns limit
+    - Keep most recent turns
+    - Preserve conversation context for refinement
+
+  OPERATIONS:
+    - addTurn(): Add user input and result to history
+    - detectIntent(): Classify user intent
+    - getContext(): Get conversation context for workflows
+    - getLastQuery(): Retrieve current query
+    - getLastResult(): Retrieve current result
+    - clear(): Reset conversation state
+    - getHistory(): Get all turns for display
+
+configuration:
+  maxTurns:
+    type: integer
+    default: 10
+    description: Maximum number of conversation turns to preserve
+  intentDetectionMode:
+    type: string
+    default: "rules"
+    enum: ["rules", "llm", "hybrid"]
+    description: Strategy for intent detection (rules-based by default)
+
+outputSchema:
+  type: object
+  required:
+    - intent
+    - context
+  properties:
+    intent:
+      type: string
+      enum: [new_query, refinement]
+      description: Detected user intent (new query or refinement)
+    context:
+      type: object
+      description: Current conversation context
+      properties:
+        sessionId:
+          type: string
+          description: Unique session identifier
+        database:
+          type: string
+          description: Database name for this session
+        turnCount:
+          type: integer
+          description: Number of turns in conversation
+        lastQuery:
+          type: string
+          description: Most recent SQL query (optional)
+        lastResult:
+          type: object
+          description: Most recent query result (optional)
+        recentTurns:
+          type: array
+          description: Recent conversation turns
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              timestamp:
+                type: string
+                format: date-time
+              userInput:
+                type: string
+              intent:
+                type: string
+                enum: [new_query, refinement]
+              result:
+                type: object
+                description: Query generation output (optional)
+
+performance:
+  intentDetection: < 1ms
+  contextRetrieval: < 1ms
+  memoryPerTurn: ~5-10 KB
+  maxMemoryPerSession: ~100 KB (10 turns)
+
+errorHandling:
+  scenarios:
+    - name: Intent detection fails
+      action: Fallback to new_query, log warning
+    - name: Refinement with no previous query
+      action: Route to new query generation
+    - name: Conversation state corruption
+      action: Reset conversation state
+    - name: Memory exhausted (too many turns)
+      action: Prune oldest turns beyond limit

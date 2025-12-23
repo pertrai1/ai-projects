@@ -1,0 +1,154 @@
+version: "1.0"
+kind: Workflow
+metadata:
+  name: interactive-refinement
+  description: |
+    Orchestrates conversational query refinement in interactive mode.
+
+    This workflow enables multi-turn dialog by:
+      1. Detecting user intent (new query vs refinement)
+      2. Routing to appropriate workflow (generation or refinement)
+      3. Managing conversation state across turns
+      4. Returning results with conversation metadata
+
+    KEY FEATURES:
+      - Intent detection (rule-based, <1ms)
+      - Conversation history tracking (last 10 turns)
+      - Automatic fallback (refinement -> new query if no context)
+      - Session-scoped state management
+
+flow:
+  description: |
+    User Input
+        ↓
+    ┌─────────────────┐
+    │ Dialog Manager  │
+    │ • Add turn      │
+    │ • Detect intent │
+    └────────┬────────┘
+             │
+        Intent?
+        /      \
+      New    Refinement
+       ↓         ↓
+    ┌──────┐  ┌──────────────┐
+    │ SQL  │  │ SQL          │
+    │ Gen  │  │ Refinement   │
+    └──┬───┘  └───┬──────────┘
+       │          │
+       └────┬─────┘
+            ↓
+        Update State
+            ↓
+        Return Result
+            (with metadata)
+
+steps:
+  - id: detect-intent
+    agent: dialog-manager
+    description: Classify user intent and get conversation context
+    input:
+      userInput: $input.userInput
+      database: $conversationState.database
+    output:
+      intent: IntentType (new_query | refinement)
+      context: ConversationContext
+
+  - id: route-workflow
+    description: Route to generation or refinement based on intent
+    logic: |
+      if (intent == "new_query"):
+        execute sql-generation workflow
+      else if (intent == "refinement"):
+        if (has previous query):
+          execute sql-refinement workflow
+        else:
+          fallback to sql-generation (no context available)
+
+  - id: sql-generation
+    workflow: sql-generation
+    condition: $steps.detect-intent.output.intent == "new_query"
+    input:
+      question: $input.userInput
+      database: $conversationState.database
+
+  - id: sql-refinement
+    workflow: sql-refinement
+    condition: |
+      $steps.detect-intent.output.intent == "refinement" AND
+      $conversationState.currentQuery != null
+    input:
+      originalQuestion: $conversationState.turns[0].userInput
+      currentQuery: $conversationState.currentQuery
+      currentResult: $conversationState.currentResult
+      feedback: $input.userInput
+
+  - id: update-conversation
+    agent: dialog-manager
+    description: Add turn to conversation history
+    input:
+      userInput: $input.userInput
+      intent: $steps.detect-intent.output.intent
+      result: $steps.route-workflow.output
+
+output:
+  result: $steps.route-workflow.output
+  intent: $steps.detect-intent.output.intent
+  turnNumber: $conversationState.turns.length + 1
+  sessionId: $conversationState.sessionId
+
+conversationManagement:
+  stateTracking:
+    - Session ID (unique per interactive session)
+    - Database name
+    - Turn history (last 10 turns)
+    - Current query and result
+
+  historyPruning:
+    maxTurns: 10
+    strategy: Keep most recent turns, discard oldest
+
+  resetTriggers:
+    - Explicit command: /new, /clear
+    - New session start
+    - Manual reset by user
+
+errorHandling:
+  scenarios:
+    - name: Refinement with no previous query
+      action: Fallback to new query generation
+      userMessage: "Starting new query (no previous query to refine)"
+
+    - name: Intent detection fails
+      action: Default to new query
+      logging: Warn with user input for analysis
+
+    - name: Conversation state corruption
+      action: Reset conversation state
+      userMessage: "Conversation reset due to error"
+
+    - name: Workflow execution fails
+      action: Return error to user, preserve conversation state
+      userMessage: Include error details and retry suggestion
+
+performance:
+  intentDetection: < 1ms
+  contextRetrieval: < 1ms
+  totalOverhead: < 2ms per turn
+  memoryUsage: ~100 KB per session (10 turns)
+
+integration:
+  cli:
+    mode: interactive
+    commands:
+      - /new: Force new query (bypass intent detection)
+      - /history: Show conversation turns
+      - /clear: Reset conversation state
+      - /help: Show available commands
+
+    display:
+      indicators:
+        new_query: "🆕 New query"
+        refinement: "✨ Refined query"
+      turnCounter: "querycraft [N]>"
+      contextInfo: Show turn number and intent in results

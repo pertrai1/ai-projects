@@ -8,12 +8,13 @@ _How to Prompt LLMs for Text-to-SQL_, arXiv:2305.11853. Research paper can be fo
 ## Features
 
 - **Natural Language to SQL** - Convert plain English questions into PostgreSQL queries
+- **Conversational Refinement** - Iteratively improve queries through natural feedback and multi-turn dialog
 - **Security Guardrails** - Built-in validation prevents SQL injection and dangerous operations
 - **Schema-Aware** - Understands database structure and relationships
 - **Confidence Scoring** - Indicates reliability of generated queries
 - **Multi-Step Validation** - Syntax, schema, and safety checks
 - **Evaluation Framework** - Automated testing with Braintrust
-- **CLI & Interactive Mode** - Easy-to-use command-line interface
+- **CLI & Interactive Mode** - Easy-to-use command-line interface with conversation memory
 
 ---
 
@@ -25,6 +26,9 @@ _How to Prompt LLMs for Text-to-SQL_, arXiv:2305.11853. Research paper can be fo
 - [Architecture](#architecture)
 - [Project Structure](#project-structure)
 - [Development](#development)
+  - [Spec-Driven Development](#spec-driven-development)
+  - [OpenSpec Workflow](#openspec-workflow)
+  - [Available Scripts](#available-scripts)
 - [Testing](#testing)
 - [Evaluation](#evaluation)
 - [Guardrails](#guardrails)
@@ -102,15 +106,44 @@ querycraft generate "Top 5 customers by order total" --verbose
 
 ### Interactive Mode
 
+QueryCraft's interactive mode now supports **conversational query refinement**, allowing you to iteratively improve queries through natural feedback.
+
 ```bash
 querycraft interactive
 
-# Then ask questions:
+# Ask an initial question:
 querycraft> Show me all users
-querycraft> Find products that cost more than $50
-querycraft> What are the top 5 customers by order total?
+
+# Refine the query conversationally:
+querycraft [1]> only from last month
+querycraft [2]> sort by name
+querycraft [3]> limit to 10
+
+# Start a new query:
+querycraft [4]> /new
+querycraft> Find expensive products
+
+# View conversation history:
+querycraft [1]> /history
+
+# Get help:
+querycraft> /help
+
+# Exit:
 querycraft> exit
 ```
+
+**Commands:**
+- `/new` - Start a new query (reset conversation)
+- `/history` - Show conversation history
+- `/clear` - Clear conversation history
+- `/help` - Show available commands
+- `exit` or `quit` - Exit interactive mode
+
+**Refinement Tips:**
+- Use short phrases: "only last month", "sort by name"
+- Add filters: "also show email", "exclude canceled orders"
+- Modify results: "limit to 10", "group by category"
 
 ### Example Output
 
@@ -332,6 +365,167 @@ outputSchema:
       type: string
       enum: [high, medium, low]
 ```
+
+### OpenSpec Workflow
+
+QueryCraft uses **OpenSpec** for spec-driven development workflows. OpenSpec provides structured change management with proposals, specifications, and automated validation.
+
+#### Quick Reference
+
+```bash
+# View all changes and specs
+openspec list                    # List all changes (active and closed)
+openspec list --specs            # List all capability specs
+
+# Create a new change proposal
+# 1. Create change directory structure
+mkdir -p openspec/changes/<change-id>/specs/<capability-name>
+
+# 2. Create required files:
+#    - proposal.md (why and what)
+#    - tasks.md (implementation steps)
+#    - design.md (architectural decisions, optional)
+#    - specs/<capability>/spec.md (delta specs)
+
+# Validate a change
+openspec validate <change-id> --strict
+
+# View change or spec details
+openspec show <change-id>        # Show change proposal
+openspec spec show <spec-name>   # Show capability spec
+
+# Apply approved changes
+openspec spec apply <change-id>  # Merge spec deltas into main specs
+
+# Archive completed changes
+openspec archive <change-id>     # Archive change after implementation
+```
+
+#### Three-Stage Development Workflow
+
+**Stage 1: Creating Changes (Proposal)**
+
+When adding new features or making significant changes:
+
+1. **Review current state**
+   ```bash
+   openspec list                 # Check active changes
+   openspec list --specs         # Check existing specs
+   cat openspec/project.md       # Review project context
+   ```
+
+2. **Create change proposal**
+   - Choose verb-led change ID (e.g., `add-query-refinement-dialog`)
+   - Create `proposal.md` with **Why** and **What** sections
+   - Create `tasks.md` with implementation task breakdown
+   - Create `design.md` for architectural decisions (if needed)
+
+3. **Write delta specs**
+   - Create `specs/<capability-name>/spec.md` for each affected capability
+   - Use delta headers: `## ADDED Requirements`, `## MODIFIED Requirements`, etc.
+   - Each requirement MUST include at least one `#### Scenario:` block
+   - First line after requirement MUST contain `MUST` or `SHALL`
+
+4. **Validate proposal**
+   ```bash
+   openspec validate <change-id> --strict
+   ```
+
+5. **Get approval** before proceeding to implementation
+
+**Stage 2: Implementing Changes**
+
+After proposal approval:
+
+1. **Apply spec deltas**
+   ```bash
+   openspec spec apply <change-id>
+   ```
+
+2. **Implement incrementally**
+   - Follow tasks in `tasks.md`
+   - Use TODO tool to track progress
+   - Write tests for each scenario
+   - Validate frequently
+
+3. **Run validation**
+   ```bash
+   openspec validate <change-id>
+   npm run type-check
+   npm run test:all
+   ```
+
+**Stage 3: Closing Changes**
+
+After successful implementation:
+
+1. **Final validation**
+   ```bash
+   openspec validate <change-id>
+   npm run test:all
+   ```
+
+2. **Archive the change**
+   ```bash
+   openspec archive <change-id>
+   ```
+
+This removes spec deltas and marks the change as complete.
+
+#### Example: Creating a Simple Change
+
+```bash
+# 1. Create change structure
+mkdir -p openspec/changes/add-feature-x/specs/new-agent
+
+# 2. Write proposal
+cat > openspec/changes/add-feature-x/proposal.md << 'EOF'
+# Change Proposal: Add Feature X
+
+## Why
+[Explain the problem this solves and why it's needed]
+
+## What
+[Describe what will be implemented]
+EOF
+
+# 3. Write spec delta
+cat > openspec/changes/add-feature-x/specs/new-agent/spec.md << 'EOF'
+# New Agent Δ
+
+## ADDED Requirements
+
+### Requirement: NA-REQ-01
+
+The agent MUST perform X when Y occurs.
+
+#### Scenario: Basic operation
+
+Given: Initial state
+When: Action occurs
+Then: Expected outcome
+EOF
+
+# 4. Validate
+openspec validate add-feature-x --strict
+
+# 5. After approval, apply and implement
+openspec spec apply add-feature-x
+# ... implement code ...
+
+# 6. Close when done
+openspec archive add-feature-x
+```
+
+#### Best Practices
+
+- **Search before creating**: Check existing specs and changes to avoid duplicates
+- **Keep changes focused**: One feature or fix per change
+- **Write scenarios first**: Scenario-driven development ensures testability
+- **Validate early and often**: Catch issues before implementation
+- **Reference project.md**: Follow project conventions and patterns
+
+For complete documentation, see `openspec/AGENTS.md`.
 
 ### Available Scripts
 
@@ -565,12 +759,12 @@ This project demonstrates:
 - [x] CLI interface
 - [x] Evaluation framework
 
-### Phase 2: Enhancement (Future)
+### Phase 2: Enhancement
 
 - [x] Query execution (safe sandbox)
 - [x] Result formatting and visualization
-- [ ] Query refinement through dialogue
-- [ ] Multi-turn conversation memory
+- [x] Query refinement through dialogue
+- [x] Multi-turn conversation memory
 - [ ] Schema documentation RAG
 
 ### Phase 3: Advanced (Future)
