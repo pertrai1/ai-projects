@@ -781,6 +781,7 @@ This project demonstrates:
 
 ### Phase 3: Advanced (Future)
 
+- [ ] OpenRouter integration
 - [ ] Multi-strategy query generation
 - [ ] Template-based + LLM hybrid approach
 - [ ] Result fusion (RRF algorithm)
