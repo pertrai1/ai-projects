@@ -5,6 +5,8 @@ A natural language to SQL query generator with built-in validation, safety guard
 This project follows findings from Chang & Fosler-Lussier (2023),
 _How to Prompt LLMs for Text-to-SQL_, arXiv:2305.11853. Research paper can be found in `docs/references/`.
 
+![QueryCraft Example](screenshot.png)
+
 ## Features
 
 - **Natural Language to SQL** - Convert plain English questions into PostgreSQL queries
@@ -134,6 +136,7 @@ querycraft> exit
 ```
 
 **Commands:**
+
 - `/new` - Start a new query (reset conversation)
 - `/history` - Show conversation history
 - `/clear` - Clear conversation history
@@ -141,6 +144,7 @@ querycraft> exit
 - `exit` or `quit` - Exit interactive mode
 
 **Refinement Tips:**
+
 - Use short phrases: "only last month", "sort by name"
 - Add filters: "also show email", "exclude canceled orders"
 - Modify results: "limit to 10", "group by category"
@@ -408,6 +412,7 @@ openspec archive <change-id>     # Archive change after implementation
 When adding new features or making significant changes:
 
 1. **Review current state**
+
    ```bash
    openspec list                 # Check active changes
    openspec list --specs         # Check existing specs
@@ -415,18 +420,21 @@ When adding new features or making significant changes:
    ```
 
 2. **Create change proposal**
+
    - Choose verb-led change ID (e.g., `add-query-refinement-dialog`)
    - Create `proposal.md` with **Why** and **What** sections
    - Create `tasks.md` with implementation task breakdown
    - Create `design.md` for architectural decisions (if needed)
 
 3. **Write delta specs**
+
    - Create `specs/<capability-name>/spec.md` for each affected capability
    - Use delta headers: `## ADDED Requirements`, `## MODIFIED Requirements`, etc.
    - Each requirement MUST include at least one `#### Scenario:` block
    - First line after requirement MUST contain `MUST` or `SHALL`
 
 4. **Validate proposal**
+
    ```bash
    openspec validate <change-id> --strict
    ```
@@ -438,11 +446,13 @@ When adding new features or making significant changes:
 After proposal approval:
 
 1. **Apply spec deltas**
+
    ```bash
    openspec spec apply <change-id>
    ```
 
 2. **Implement incrementally**
+
    - Follow tasks in `tasks.md`
    - Use TODO tool to track progress
    - Write tests for each scenario
@@ -460,6 +470,7 @@ After proposal approval:
 After successful implementation:
 
 1. **Final validation**
+
    ```bash
    openspec validate <change-id>
    npm run test:all
@@ -765,6 +776,7 @@ This project demonstrates:
 - [x] Result formatting and visualization
 - [x] Query refinement through dialogue
 - [x] Multi-turn conversation memory
+- [ ] Implement evaluation framework fully - Braintrust integration
 - [ ] Schema documentation RAG
 
 ### Phase 3: Advanced (Future)
