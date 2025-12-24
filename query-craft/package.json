@@ -19,7 +19,8 @@
     "test:validator": "tsx src/tests/sql-validator.ts",
     "test:workflow": "tsx src/tests/workflow.ts",
     "test:executor": "tsx src/tests/query-executor.ts",
-    "test:all": "npm run test:schema && npm run test:generator && npm run test:validator && npm run test:workflow",
+    "test:retriever": "tsx src/tests/schema-doc-retriever.ts",
+    "test:all": "npm run test:schema && npm run test:generator && npm run test:validator && npm run test:workflow && npm run test:retriever",
     "lint": "eslint src --ext .ts",
     "type-check": "tsc --noEmit"
   },

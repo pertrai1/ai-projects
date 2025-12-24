@@ -27,6 +27,19 @@ systemPrompt: |
     - Safe (SELECT only, no mutations)
     - Well-formatted (readable SQL with proper indentation)
 
+  # SCHEMA CONTEXT
+
+  The schema provided may be either:
+    - **Full schema**: All tables in the database (for smaller databases)
+    - **Focused schema**: Only tables relevant to your question, identified through
+      semantic retrieval (for larger databases)
+
+  If you see a note indicating "focused schema", the tables shown were selected as
+  most relevant to the question. Additional documentation context may be provided
+  to help you understand the domain and common query patterns. Trust that the
+  focused schema contains the tables you need - if a table seems missing, it's
+  likely not relevant to the question.
+
   # PROCESS
 
   1. Analyze the user's question to understand:

@@ -80,11 +80,22 @@ export class SqlGenerationWorkflow {
     const generatorResult = await this.queryGenerator.execute({
       question: input.question,
       schema: schemaResult.schema,
+      database: input.database,
     });
 
     console.log("Query generated");
     console.log(`   Confidence: ${generatorResult.confidence}`);
-    console.log(`   Tables used: ${generatorResult.tablesUsed.join(", ")}\n`);
+    console.log(`   Tables used: ${generatorResult.tablesUsed.join(", ")}`);
+
+    // Log RAG metadata if available
+    if (generatorResult.retrievalMetadata) {
+      console.log(`   Retrieval strategy: ${generatorResult.retrievalMetadata.strategy}`);
+      if (generatorResult.retrievalMetadata.strategy === "rag") {
+        console.log(`   Chunks retrieved: ${generatorResult.retrievalMetadata.chunksRetrieved}`);
+        console.log(`   Tables in context: ${generatorResult.retrievalMetadata.tablesIncluded.join(", ")}`);
+      }
+    }
+    console.log("");
 
     // STEP 3: Validate SQL Query
     console.log("Step 3: Validating SQL query...");

@@ -64,6 +64,12 @@ export interface SchemaLoaderOutput {
 export interface QueryGeneratorInput {
   question: string;
   schema: DatabaseSchema;
+  database?: string; // Database name for RAG retrieval
+  useRetrieval?: boolean; // Override auto-detection
+  retrievalConfig?: {
+    topK?: number;
+    relevanceThreshold?: number;
+  };
 }
 
 export interface QueryGeneratorOutput {
@@ -72,6 +78,59 @@ export interface QueryGeneratorOutput {
   confidence: "high" | "medium" | "low";
   tablesUsed: string[];
   assumptions?: string[];
+  retrievalMetadata?: RetrievalMetadata;
+}
+
+// Schema Doc Retriever
+export type ChunkType =
+  | "overview"
+  | "column"
+  | "query"
+  | "relationship"
+  | "example";
+
+export interface DocumentChunk {
+  content: string; // The actual text content
+  table: string; // Table this chunk relates to
+  chunkType: ChunkType;
+  column?: string; // If chunkType is 'column'
+  relatedTables: string[]; // Tables mentioned in this chunk
+  keywords: string[]; // Extracted important terms
+  tokens: number; // Estimated token count
+}
+
+export interface ScoredChunk {
+  chunk: DocumentChunk;
+  score: number; // Relevance score [0-1]
+}
+
+export interface RetrievalMetadata {
+  strategy: "full" | "rag";
+  tablesIncluded: string[];
+  chunksRetrieved?: number; // Only present if strategy='rag'
+  avgRelevanceScore?: number; // Only present if strategy='rag'
+  fallbackReason?: string; // Present if RAG was attempted but fell back
+  totalChunksSearched?: number;
+  cacheHit?: boolean;
+  timingMs?: {
+    load: number;
+    search: number;
+    rank: number;
+    total: number;
+  };
+}
+
+export interface SchemaDocRetrieverInput {
+  database: string; // Database name (e.g., "ecommerce")
+  question: string; // Natural language question
+  topK?: number; // Max chunks to return (default: 5)
+  relevanceThreshold?: number; // Min score for inclusion (default: 0.3)
+  debugMode?: boolean; // Enable detailed logging
+}
+
+export interface SchemaDocRetrieverOutput {
+  chunks: ScoredChunk[];
+  metadata: RetrievalMetadata;
 }
 
 // SQL Validator
