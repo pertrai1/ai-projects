@@ -601,40 +601,154 @@ This runs multiple test cases:
 
 ## Evaluation
 
-QueryCraft includes an evaluation framework using **Braintrust** for automated testing.
+QueryCraft includes a comprehensive evaluation framework using **Braintrust** for automated testing and quality measurement.
 
 ### Evaluation Metrics
 
 1. **Query Correctness** (LLM-as-Judge)
 
-   - Does generated SQL semantically match expected query?
-   - Score: 1.0 (correct), 0.5 (partial), 0.0 (wrong)
+   - Uses Claude (Haiku) to semantically compare generated SQL with expected SQL
+   - Handles semantic equivalence (e.g., different JOIN order, boolean representations)
+   - Score: 1.0 (semantically correct), 0.5 (partially correct), 0.0 (incorrect)
+   - Results are cached to avoid duplicate LLM calls
 
-2. **Table Accuracy** (Exact Match)
+2. **Table Accuracy** (Jaccard Similarity)
 
-   - Are the correct tables used?
-   - Score: % of correct tables
+   - Extracts tables from generated SQL (FROM and JOIN clauses)
+   - Compares with expected tables using Jaccard similarity
+   - Handles table aliases and case-insensitive matching
+   - Score: 0.0 to 1.0 (intersection / union)
 
 3. **Safety Validation** (Binary)
 
-   - Does validator correctly identify safe vs unsafe queries?
-   - Score: 1.0 (correct), 0.0 (missed)
+   - Checks if validator correctly identified safe vs unsafe queries
+   - Critical metric: must catch ALL unsafe queries (no false negatives)
+   - Score: 1.0 (correct classification), 0.0 (incorrect)
 
 4. **Validation Accuracy** (Binary)
-   - Does validator correctly identify valid vs invalid SQL?
-   - Score: 1.0 (correct), 0.0 (wrong)
+
+   - Checks if validator correctly identified valid vs invalid SQL
+   - Categorizes errors (syntax, schema, safety)
+   - Score: 1.0 (correct), 0.0 (incorrect)
+
+5. **Confidence Calibration** (Aggregate)
+   - Measures how well confidence scores predict actual correctness
+   - Analyzes correlation between confidence levels and accuracy
+   - Score: 0.0 (poor calibration) to 1.0 (perfect calibration)
 
 ### Running Evaluations
+
+![Evaluation CLI Example](evals-screenshot.png)
+
+**Basic usage:**
 
 ```bash
 npm run eval
 ```
 
+**Run with options:**
+
+```bash
+# Test specific category only
+npm run eval -- --category malicious
+
+# Run on small sample for quick testing
+npm run eval -- --sample 10
+
+# Force local mode (no Braintrust cloud)
+npm run eval -- --local
+
+# Verbose output with per-test results
+npm run eval -- --verbose
+
+# Export JSON report
+npm run eval -- --json
+
+# CI mode (no interactive output)
+npm run eval -- --ci
+```
+
+**Custom dataset:**
+
+```bash
+npm run eval -- --dataset path/to/custom-tests.json
+```
+
+### Evaluation Output
+
+The evaluation framework provides:
+
+- **Console report** with colored output and summary statistics
+- **Braintrust dashboard** (cloud mode) for historical tracking and comparison
+- **Local JSON logs** (local mode or cloud fallback) in `evals/results/`
+- **Per-category breakdowns** showing performance by query type
+- **Threshold checks** with pass/fail status
+
+Example output:
+
+```
+╔════════════════════════════════════════════════╗
+║       QueryCraft Evaluation Report             ║
+╚════════════════════════════════════════════════╝
+
+Experiment: eval-2025-01-15
+Duration: 4m 23s
+
+Total Tests: 25  |  Passed: 21  |  Failed: 4  (84%)
+
+Metrics:
+  ✓ Query Correctness:     0.84 / 0.80 PASS
+  Table Accuracy:         0.91 / N/A
+  ✓ Safety Validation:     1.00 / 1.00 PASS
+  ✗ Validation Accuracy:   0.88 / 0.90 FAIL
+  ℹ Confidence Calibration: 0.87 (well-calibrated)
+
+By Category:
+  ✓ simple-select    5/5 passed (100%)
+  ~ join             4/5 passed (80%)
+  ~ aggregation      4/5 passed (80%)
+  ✓ filter           4/4 passed (100%)
+  ✓ malicious        4/4 passed (100%)
+  ~ edge-case        0/2 passed (0%)
+
+✅ Overall: PASSED (2 of 3 thresholds met)
+```
+
 ### Success Thresholds
 
-- Query Correctness: **80%** (semantic accuracy)
-- Safety Validation: **100%** (must catch ALL unsafe queries)
-- Validation Accuracy: **90%** (syntax/schema validation)
+- **Query Correctness:** ≥ 80% (semantic accuracy)
+- **Safety Validation:** 100% (must catch ALL unsafe queries - no exceptions)
+- **Validation Accuracy:** ≥ 90% (syntax/schema validation)
+
+### Braintrust Setup (Optional)
+
+For cloud logging and dashboard features:
+
+1. Get API key from [braintrust.dev](https://braintrust.dev)
+2. Add to `.env`:
+   ```
+   BRAINTRUST_API_KEY=your_key_here
+   ```
+3. Run eval - results will appear in Braintrust dashboard
+
+**Without API key:** Evaluation runs in local mode with JSON logging to `evals/results/`
+
+### Adding Test Cases
+
+Edit `data/evals/sql-test-cases.json`:
+
+```json
+{
+  "id": "your-test-id",
+  "question": "Your natural language question",
+  "expectedQuery": "SELECT * FROM ...",
+  "expectedTables": ["table1", "table2"],
+  "shouldPass": true,
+  "category": "simple-select"
+}
+```
+
+Categories: `simple-select`, `join`, `aggregation`, `filter`, `malicious`, `edge-case`
 
 ---
 
@@ -776,7 +890,7 @@ This project demonstrates:
 - [x] Result formatting and visualization
 - [x] Query refinement through dialogue
 - [x] Multi-turn conversation memory
-- [ ] Implement evaluation framework fully - Braintrust integration
+- [x] Implement evaluation framework fully - Braintrust integration
 - [ ] Schema documentation RAG
 
 ### Phase 3: Advanced (Future)

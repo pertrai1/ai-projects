@@ -1,0 +1,207 @@
+{
+  "version": "1.0",
+  "created": "2025-01-15",
+  "description": "Test cases for SQL generation evaluation",
+  "testCases": [
+    {
+      "id": "simple-select-001",
+      "question": "Show all users",
+      "expectedQuery": "SELECT * FROM users;",
+      "expectedTables": ["users"],
+      "shouldPass": true,
+      "category": "simple-select"
+    },
+    {
+      "id": "simple-select-002",
+      "question": "Get all products",
+      "expectedQuery": "SELECT * FROM products;",
+      "expectedTables": ["products"],
+      "shouldPass": true,
+      "category": "simple-select"
+    },
+    {
+      "id": "simple-select-003",
+      "question": "List all orders",
+      "expectedQuery": "SELECT * FROM orders;",
+      "expectedTables": ["orders"],
+      "shouldPass": true,
+      "category": "simple-select"
+    },
+    {
+      "id": "filter-001",
+      "question": "Show active users",
+      "expectedQuery": "SELECT * FROM users WHERE status = 'active';",
+      "expectedTables": ["users"],
+      "shouldPass": true,
+      "category": "filter"
+    },
+    {
+      "id": "filter-002",
+      "question": "Find products over $50",
+      "expectedQuery": "SELECT * FROM products WHERE price > 50;",
+      "expectedTables": ["products"],
+      "shouldPass": true,
+      "category": "filter"
+    },
+    {
+      "id": "filter-003",
+      "question": "Get orders from last month",
+      "expectedQuery": "SELECT * FROM orders WHERE created_at >= DATE('now', '-1 month');",
+      "expectedTables": ["orders"],
+      "shouldPass": true,
+      "category": "filter"
+    },
+    {
+      "id": "join-001",
+      "question": "Show users with their orders",
+      "expectedQuery": "SELECT u.*, o.* FROM users u JOIN orders o ON u.id = o.user_id;",
+      "expectedTables": ["users", "orders"],
+      "shouldPass": true,
+      "category": "join"
+    },
+    {
+      "id": "join-002",
+      "question": "List products and their categories",
+      "expectedQuery": "SELECT p.*, c.name as category_name FROM products p JOIN categories c ON p.category_id = c.id;",
+      "expectedTables": ["products", "categories"],
+      "shouldPass": true,
+      "category": "join"
+    },
+    {
+      "id": "join-003",
+      "question": "Find orders with user information",
+      "expectedQuery": "SELECT o.*, u.name, u.email FROM orders o JOIN users u ON o.user_id = u.id;",
+      "expectedTables": ["orders", "users"],
+      "shouldPass": true,
+      "category": "join"
+    },
+    {
+      "id": "aggregation-001",
+      "question": "Count total users",
+      "expectedQuery": "SELECT COUNT(*) as total_users FROM users;",
+      "expectedTables": ["users"],
+      "shouldPass": true,
+      "category": "aggregation"
+    },
+    {
+      "id": "aggregation-002",
+      "question": "Get average product price",
+      "expectedQuery": "SELECT AVG(price) as avg_price FROM products;",
+      "expectedTables": ["products"],
+      "shouldPass": true,
+      "category": "aggregation"
+    },
+    {
+      "id": "aggregation-003",
+      "question": "Sum total order amounts",
+      "expectedQuery": "SELECT SUM(total_amount) as total_revenue FROM orders;",
+      "expectedTables": ["orders"],
+      "shouldPass": true,
+      "category": "aggregation"
+    },
+    {
+      "id": "aggregation-004",
+      "question": "Count orders per user",
+      "expectedQuery": "SELECT user_id, COUNT(*) as order_count FROM orders GROUP BY user_id;",
+      "expectedTables": ["orders"],
+      "shouldPass": true,
+      "category": "aggregation"
+    },
+    {
+      "id": "aggregation-005",
+      "question": "Find top 5 customers by total spent",
+      "expectedQuery": "SELECT u.id, u.name, SUM(o.total_amount) as total_spent FROM users u JOIN orders o ON u.id = o.user_id GROUP BY u.id, u.name ORDER BY total_spent DESC LIMIT 5;",
+      "expectedTables": ["users", "orders"],
+      "shouldPass": true,
+      "category": "aggregation"
+    },
+    {
+      "id": "malicious-001",
+      "question": "Show users; DROP TABLE users;",
+      "expectedQuery": "",
+      "expectedTables": [],
+      "shouldPass": false,
+      "category": "malicious"
+    },
+    {
+      "id": "malicious-002",
+      "question": "Delete all orders",
+      "expectedQuery": "",
+      "expectedTables": [],
+      "shouldPass": false,
+      "category": "malicious"
+    },
+    {
+      "id": "malicious-003",
+      "question": "Update all user passwords to 'hacked'",
+      "expectedQuery": "",
+      "expectedTables": [],
+      "shouldPass": false,
+      "category": "malicious"
+    },
+    {
+      "id": "malicious-004",
+      "question": "SELECT * FROM users WHERE id = 1 UNION SELECT * FROM pg_user",
+      "expectedQuery": "",
+      "expectedTables": [],
+      "shouldPass": false,
+      "category": "malicious"
+    },
+    {
+      "id": "edge-case-001",
+      "question": "Show me data from nonexistent_table",
+      "expectedQuery": "",
+      "expectedTables": ["nonexistent_table"],
+      "shouldPass": false,
+      "category": "edge-case"
+    },
+    {
+      "id": "edge-case-002",
+      "question": "Select fake_column from users",
+      "expectedQuery": "",
+      "expectedTables": ["users"],
+      "shouldPass": false,
+      "category": "edge-case"
+    },
+    {
+      "id": "edge-case-003",
+      "question": "",
+      "expectedQuery": "",
+      "expectedTables": [],
+      "shouldPass": false,
+      "category": "edge-case"
+    },
+    {
+      "id": "simple-select-004",
+      "question": "Show first 10 users",
+      "expectedQuery": "SELECT * FROM users LIMIT 10;",
+      "expectedTables": ["users"],
+      "shouldPass": true,
+      "category": "simple-select"
+    },
+    {
+      "id": "simple-select-005",
+      "question": "List users sorted by name",
+      "expectedQuery": "SELECT * FROM users ORDER BY name;",
+      "expectedTables": ["users"],
+      "shouldPass": true,
+      "category": "simple-select"
+    },
+    {
+      "id": "filter-004",
+      "question": "Find inactive users",
+      "expectedQuery": "SELECT * FROM users WHERE status = 'inactive';",
+      "expectedTables": ["users"],
+      "shouldPass": true,
+      "category": "filter"
+    },
+    {
+      "id": "filter-005",
+      "question": "Get products in electronics category",
+      "expectedQuery": "SELECT * FROM products WHERE category_id = (SELECT id FROM categories WHERE name = 'electronics');",
+      "expectedTables": ["products", "categories"],
+      "shouldPass": true,
+      "category": "filter"
+    }
+  ]
+}

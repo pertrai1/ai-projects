@@ -170,10 +170,10 @@ export interface EvalResult {
   testCase: EvalTestCase;
   generatedQuery: string;
   metrics: {
-    query_correctness: number;
-    table_accuracy: number;
-    safety_validation: number;
-    validation_accuracy: number;
+    queryCorrectness: number;
+    tableAccuracy: number;
+    safetyValidation: number;
+    validationAccuracy: number;
   };
   passed: boolean;
 }
@@ -255,4 +255,98 @@ export interface DialogManagerInput {
 export interface DialogManagerOutput {
   intent: IntentType;
   context: ConversationContext;
+}
+
+/**
+ * Braintrust Evaluation Types
+ */
+
+export interface BraintrustConfig {
+  apiKey?: string;
+  projectName: string;
+  localMode: boolean;
+}
+
+export interface MetricResults {
+  queryCorrectness: number;
+  tableAccuracy: number;
+  safetyValidation: number;
+  validationAccuracy: number;
+  error?: string;
+}
+
+export interface CategorySummary {
+  total: number;
+  passed: number;
+  failed: number;
+  averageMetrics: {
+    queryCorrectness: number;
+    tableAccuracy: number;
+    safetyValidation: number;
+    validationAccuracy: number;
+  };
+}
+
+export interface ThresholdCheck {
+  threshold: number;
+  actual: number;
+  passed: boolean;
+}
+
+export interface EvaluationSummary {
+  experimentId: string;
+  timestamp: Date;
+  totalTests: number;
+  passedTests: number;
+  failedTests: number;
+  averageMetrics: {
+    queryCorrectness: number;
+    tableAccuracy: number;
+    safetyValidation: number;
+    validationAccuracy: number;
+  };
+  byCategory: Record<string, CategorySummary>;
+  thresholdStatus: {
+    queryCorrectness: ThresholdCheck;
+    safetyValidation: ThresholdCheck;
+    validationAccuracy: ThresholdCheck;
+  };
+  confidenceCalibration: number;
+  totalDuration: number;
+}
+
+export interface EvaluationRecord {
+  testCase: EvalTestCase;
+  generated: SqlGenerationOutput;
+  metrics: MetricResults;
+  passed: boolean;
+  duration: number;
+  timestamp: Date;
+  error?: string;
+}
+
+export interface DatasetMetadata {
+  version: string;
+  created: string;
+  description: string;
+}
+
+export interface EvalDataset {
+  version: string;
+  created: string;
+  description: string;
+  testCases: Array<EvalTestCase & { id: string }>;
+}
+
+export interface MetricCalculatorResult {
+  score: number;
+  reasoning?: string;
+  error?: string;
+}
+
+export interface ConfidenceGroup {
+  confidence: "high" | "medium" | "low";
+  total: number;
+  correct: number;
+  accuracy: number;
 }
