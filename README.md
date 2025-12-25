@@ -10,6 +10,7 @@ A collection of machine learning and artificial intelligence projects demonstrat
 - [Plants FieldGuide](#plants-fieldguide) - Advanced RAG system with intent routing and adaptive retrieval
 - [QueryCraft](#querycraft) - Natural language to SQL with security guardrails and validation
 - [A11y Remediation Assistant](#a11y-remediation-assistant) - AI-powered accessibility remediation with audit trails
+- [Veridex](#veridex) - Governance-first RAG system with auditability and evaluation
 
 ---
 
