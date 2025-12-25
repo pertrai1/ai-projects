@@ -16,6 +16,7 @@ A collection of machine learning and artificial intelligence projects demonstrat
 ## Projects
 
 ### [Flower Recognition](./flower-recognition)
+
 A TypeScript implementation of a CNN-based flower classification system using TensorFlow.js.
 
 **Technology**: TensorFlow.js, TypeScript, Convolutional Neural Networks
@@ -23,6 +24,7 @@ A TypeScript implementation of a CNN-based flower classification system using Te
 **Description**: This supervised learning project trains a deep learning model to identify 5 different types of flowers (Daisy, Dandelion, Rose, Sunflower, and Tulip) from images. The model uses a Convolutional Neural Network architecture with multiple convolutional and pooling layers to extract visual features and classify flower images with high accuracy.
 
 **Key Features**:
+
 - Image classification for 5 flower species
 - Data augmentation for improved model generalization
 - Type-safe implementation with full TypeScript support
@@ -34,6 +36,7 @@ A TypeScript implementation of a CNN-based flower classification system using Te
 ---
 
 ### [PLANTS Natural Language Query Interface](./plants-nlqi)
+
 A TypeScript-based Natural Language Query Interface for the USDA PLANTS Database, powered by Claude AI and RAG (Retrieval Augmented Generation) architecture.
 
 **Technology**: Anthropic Claude (Sonnet 4), Pinecone Vector Database, Voyage AI Embeddings, TypeScript, Express.js
@@ -41,6 +44,7 @@ A TypeScript-based Natural Language Query Interface for the USDA PLANTS Database
 **Description**: This RAG-based project enables users to query the USDA PLANTS Database using natural language instead of complex search forms. Ask questions like "What native wildflowers bloom in spring in North Carolina?" and receive intelligent, contextual answers powered by semantic search and AI-generated responses. The system combines vector embeddings for semantic understanding with structured data retrieval to provide accurate, informative answers about native plants.
 
 **Key Features**:
+
 - Natural language plant queries with semantic search
 - Hybrid search combining vector similarity and structured filters
 - AI-powered conversational responses using Claude
@@ -53,6 +57,7 @@ A TypeScript-based Natural Language Query Interface for the USDA PLANTS Database
 ---
 
 ### [Cortex](./cortex)
+
 An autonomous AI agent CLI that intelligently executes tasks through natural language conversations.
 
 **Technology**: Vercel AI SDK, OpenAI, TypeScript, Ink (React for CLI), Laminar, OpenSpec
@@ -60,6 +65,7 @@ An autonomous AI agent CLI that intelligently executes tasks through natural lan
 **Description**: Cortex is a production-ready AI agent that combines file operations, shell commands, code execution, and web search into a conversational terminal interface. Built with a manual agent loop using `streamText`, Cortex demonstrates advanced agent architecture patterns including tool chaining, autonomous task execution, and systematic agent evaluation. The project showcases spec-driven development with OpenSpec for managing change proposals and maintaining alignment between documentation and implementation.
 
 **Key Features**:
+
 - Manual agent loop with full control over conversation flow and tool execution
 - Autonomous multi-step task execution with intelligent tool chaining
 - Interactive terminal UI built with React components (Ink)
@@ -73,6 +79,7 @@ An autonomous AI agent CLI that intelligently executes tasks through natural lan
 ---
 
 ### [Plants FieldGuide](./plants-fieldguide)
+
 An AI-powered CLI assistant for the USDA PLANTS Help documentation using intelligent query routing, adaptive retrieval strategies, and multi-agent orchestration.
 
 **Technology**: Anthropic Claude (Sonnet 4.5), OpenAI Embeddings, HNSWLib Vector Store, TypeScript, Commander.js, YAML Agent Specs
@@ -80,6 +87,7 @@ An AI-powered CLI assistant for the USDA PLANTS Help documentation using intelli
 **Description**: Plants FieldGuide demonstrates advanced RAG (Retrieval Augmented Generation) concepts through a sophisticated query system for USDA PLANTS documentation. The project implements intent classification to route queries to specialized agents, adaptive retrieval that dynamically optimizes search parameters, multi-source retrieval with result fusion (RRF algorithm), and conversational memory for multi-turn interactions. Built with spec-driven agent design using YAML specifications, the system intelligently processes PDFs, generates vector embeddings, and orchestrates specialized agents for definitions, procedures, and comparisons.
 
 **Key Features**:
+
 - Intent classification routing queries to specialized agents
 - Adaptive retrieval with dynamic search parameter optimization
 - Multi-source retrieval combining vector, keyword, and filtered searches
@@ -95,6 +103,7 @@ An AI-powered CLI assistant for the USDA PLANTS Help documentation using intelli
 ---
 
 ### [QueryCraft](./query-craft)
+
 A natural language to SQL query generator with built-in validation, security guardrails, and evaluation framework using spec-driven development.
 
 **Technology**: Anthropic Claude (Sonnet 4), TypeScript, Commander.js, Braintrust, Zod, YAML Agent Specs
@@ -102,6 +111,7 @@ A natural language to SQL query generator with built-in validation, security gua
 **Description**: QueryCraft demonstrates spec-driven, multi-agent architecture for converting natural language questions into safe, validated SQL queries. The system implements a three-agent pipeline: a deterministic schema loader that validates database structure, an LLM-powered query generator using Claude Sonnet 4, and a hybrid validator combining deterministic safety checks with semantic validation. All agents are defined in YAML specifications before implementation, enabling executable documentation and clear separation of concerns. The project showcases production patterns including multi-layer security guardrails, confidence scoring, and automated evaluation frameworks.
 
 **Key Features**:
+
 - Natural language to PostgreSQL query generation with confidence scoring
 - Multi-layer security guardrails preventing SQL injection and dangerous operations
 - Deterministic safety validation blocking mutations, system table access, and file operations
@@ -117,6 +127,7 @@ A natural language to SQL query generator with built-in validation, security gua
 ---
 
 ### [A11y Remediation Assistant](./a11y-remediation-assistant)
+
 An AI-powered accessibility remediation assistant that bridges the gap between identifying WCAG/Section 508 violations and safely fixing them with audit-ready evidence.
 
 **Technology**: TBD
@@ -124,6 +135,7 @@ An AI-powered accessibility remediation assistant that bridges the gap between i
 **Description**: A11y Remediation Assistant (ARA) operates as a layer above traditional accessibility scanning tools (axe-core, Lighthouse), acting as a senior accessibility engineer who explains issues in plain language, proposes context-aware fixes, validates outcomes with deterministic tools, and produces audit-ready artifacts. Unlike detection tools, ARA focuses on remediation assistance while maintaining strict boundaries between AI reasoning and deterministic verification—AI explains and proposes, but never certifies compliance.
 
 **Key Features**:
+
 - Jargon-to-English translation explaining violations in plain language with user impact context
 - Context-aware code repair analyzing component structure, frameworks, and interaction patterns
 - Multi-strategy fix proposals ranked by effort and impact (semantic HTML prioritized over ARIA patches)
@@ -135,5 +147,27 @@ An AI-powered accessibility remediation assistant that bridges the gap between i
 - Multi-agent architecture with specialized agents (Analyzer, Strategist, Coder, Validator, Educator)
 
 **Use Cases**: Web accessibility compliance, WCAG remediation, inclusive design implementation, accessibility auditing, Section 508 compliance documentation
+
+---
+
+### [Veridex](./veridex/)
+
+A Retrieval-Augmented Generation (RAG) system with a strong focus on governance, document ingestion, chunking experiments, and a comprehensive evaluation harness.
+
+**Technology**: TypeScript, OpenAI / Anthropic Claude, Vector Databases, OpenSpec, Zod, YAML Agent Specs
+
+**Description**: Veridex is a governance-first Retrieval-Augmented Generation (RAG) system that answers questions strictly from an approved document corpus, prioritizing provenance, auditability, and refusal over fluent but unverifiable responses. The project treats epistemic constraints as first-class design artifacts, emphasizing document versioning, chunk lineage, retrieval evaluation, and reproducible system behavior. Built using spec-driven development with OpenSpec, Veridex serves as a reference architecture for trustworthy, document-bound AI systems in regulated or high-trust environments.
+
+**Key Features**:
+
+- Governance-first RAG architecture with document-bounded answer generation
+- Explicit refusal semantics when evidence is missing or insufficient
+- End-to-end provenance tracking from document ingestion to answer output
+- Retrieval- and generation-level evaluation harness with regression detection
+- Experimentation framework for comparing chunking, embeddings, and retrieval strategies
+- Structured audit logs with replayable system state (corpus, prompt, model, config)
+- Spec-driven development with OpenSpec to enforce system invariants
+
+**Use Cases**: Governance-first RAG reference implementations, audit-ready document question answering, evaluation and benchmarking of retrieval and chunking strategies, research on hallucination boundaries and refusal behavior in document-grounded AI systems.
 
 ---
