@@ -1,0 +1,15 @@
+# Virtual environment directories
+bin/
+lib/
+include/
+share/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.Python
+pyvenv.cfg

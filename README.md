@@ -2,6 +2,16 @@
 
 A collection of machine learning and artificial intelligence projects demonstrating various AI techniques and applications.
 
+## Project Intent
+
+These projects are intentionally designed as **learning-through-building exercises** focused on developing a deep, practical understanding of modern AI systems rather than producing polished end-user products.
+
+Each project explores a specific set of technical and architectural questions—such as retrieval-augmented generation, agent design, evaluation frameworks, governance, and safety—by implementing real, working systems with increasing rigor. The emphasis is on understanding trade-offs, failure modes, and best practices through hands-on experimentation, spec-driven development, and systematic evaluation.
+
+While many of these projects are production-inspired and follow real-world engineering patterns, their primary purpose is **skill development, exploration, and knowledge consolidation**.
+
+---
+
 ## Table of Contents
 
 - [Flower Recognition](#flower-recognition) - CNN-based flower classification with TensorFlow.js
