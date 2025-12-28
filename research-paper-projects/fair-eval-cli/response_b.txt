@@ -1,0 +1,1 @@
+A closure is created when a function is defined inside another function. The inner function can access the outer function's variables and parameters.

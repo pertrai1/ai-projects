@@ -22,6 +22,10 @@ While many of these projects are production-inspired and follow real-world engin
 - [A11y Remediation Assistant](#a11y-remediation-assistant) - AI-powered accessibility remediation with audit trails
 - [Veridex](#veridex) - Governance-first RAG system with auditability and evaluation
 
+### Research Paper Projects
+
+- [FairEval-CLI](#faireval-cli) - Calibrated pairwise LLM evaluation mitigating positional bias
+
 ---
 
 ## Projects
@@ -180,5 +184,34 @@ A Retrieval-Augmented Generation (RAG) system with a strong focus on governance,
 - Spec-driven development with OpenSpec to enforce system invariants
 
 **Use Cases**: Governance-first RAG reference implementations, audit-ready document question answering, evaluation and benchmarking of retrieval and chunking strategies, research on hallucination boundaries and refusal behavior in document-grounded AI systems.
+
+---
+
+## Research Paper Projects
+
+These are small projects that are used to understand the research paper.
+
+### [FairEval-CLI](./research-paper-projects/fair-eval-cli)
+
+A CLI tool for pairwise evaluation of LLM responses that mitigates positional bias using calibrated evaluation procedures from the research paper "Large Language Models are not Fair Evaluators" (Wang et al., 2023).
+
+**Technology**: Anthropic Claude / OpenAI, TypeScript, Commander.js
+
+**Description**: FairEval-CLI implements Multiple Evidence Calibration (MEC) and Balanced Position Calibration (BPC) strategies to address the systematic positional bias in LLM-as-judge systems. Instead of treating evaluation as a single API call, the system performs statistical calibration: forcing evidence-first reasoning with multiple sampling iterations, evaluating both (A,B) and (B,A) orderings, and aggregating scores across positions to cancel bias. The tool produces calibrated win/lose/tie decisions with confidence estimates based on cross-sample variance, making LLM evaluation more reliable and trustworthy.
+
+**Key Features**:
+
+- Multiple Evidence Calibration (MEC) requiring evidence generation before scoring
+- Balanced Position Calibration (BPC) evaluating both response orderings
+- Configurable sampling iterations (k) to reduce variance
+- Confidence estimation from cross-sample disagreement metrics
+- Evidence-first prompt templates preventing verdict-first bias
+- Support for file input, inline text, and stdin for flexible workflows
+- Human-readable and JSON output modes for automation
+- OpenAI-compatible API support (works with gateways and proxies)
+
+**Research Reference**: [Large Language Models are not Fair Evaluators (arXiv:2305.17926)](https://arxiv.org/abs/2305.17926) - Wang et al., ACL 2024
+
+**Use Cases**: LLM response comparison and ranking, evaluation benchmarking, model quality assessment, prompt engineering validation, automated testing of AI outputs
 
 ---

@@ -1,0 +1,1 @@
+Closures in JavaScript are functions that have access to variables from their outer scope, even after the outer function has returned. This allows for data encapsulation and private variables.
