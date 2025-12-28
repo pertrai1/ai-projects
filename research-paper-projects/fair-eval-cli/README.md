@@ -212,5 +212,3 @@ LLMs are **useful but noisy annotators**.
 
 If you treat them like a single, deterministic oracle, you will get misleading results.
 If you treat them like a biased, stochastic process—and calibrate accordingly—you get something genuinely useful.
-
-That is what `fair-eval` is built to do.
