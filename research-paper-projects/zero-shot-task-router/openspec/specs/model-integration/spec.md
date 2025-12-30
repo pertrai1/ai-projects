@@ -24,3 +24,7 @@ The system SHALL provide a CLI option to execute the rendered prompt through the
 - **WHEN** the CLI is invoked with completion enabled and a prompt template
 - **THEN** it prints the model completion to stdout
 
+#### Scenario: Run completion for multiple templates
+- **WHEN** the CLI is invoked with completion enabled for multiple templates
+- **THEN** it prints the completion output for each template in order
+

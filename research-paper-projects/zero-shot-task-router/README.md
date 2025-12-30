@@ -137,6 +137,21 @@ npm run dev -- --template summarize-minimal --input "<your input text here>" --c
 
 ---
 
+## Phase 5 Prompt Ablation Mode
+
+Run multiple templates in one command (comma-separated list) with a real-world input:
+
+```bash
+npm run dev -- --templates summarize-minimal,summarize-brief,summarize-plain,summarize-concise --input "The city council approved a transit expansion plan that adds two new light rail lines, increases bus frequency by 15%, and commits $200M to station upgrades over the next five years."
+```
+
+Use an input file (or stdin with `-`) for repeatable comparisons:
+
+```bash
+npm run dev -- --templates summarize-minimal,summarize-brief --input-file ./observations/input.txt
+printf "Your input text here." | npm run dev -- --templates summarize-minimal,summarize-brief --input-file -
+```
+
 ## Expected Observations
 
 Based on prior analysis of zero-shot behavior, this project anticipates that:

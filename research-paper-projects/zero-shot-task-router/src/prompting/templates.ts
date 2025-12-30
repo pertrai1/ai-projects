@@ -11,6 +11,21 @@ const promptTemplates: PromptTemplate[] = [
     description: "Minimal summarization instruction with the input appended.",
     render: (input) => `Summarize the following text:\n${input}`,
   },
+  {
+    id: "summarize-brief",
+    description: "Single-sentence summary instruction.",
+    render: (input) => `Summarize in one sentence:\n${input}`,
+  },
+  {
+    id: "summarize-plain",
+    description: "Bare summary label before the input.",
+    render: (input) => `Summary:\n${input}`,
+  },
+  {
+    id: "summarize-concise",
+    description: "Concise summary instruction.",
+    render: (input) => `Provide a concise summary:\n${input}`,
+  },
 ];
 
 const templateIndex = new Map(

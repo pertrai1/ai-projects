@@ -21,6 +21,10 @@ The system SHALL provide a CLI command that accepts flags for template selection
 - **WHEN** the user runs the CLI with a template flag and input flag
 - **THEN** stdout contains the exact prompt text produced by the selected template
 
+#### Scenario: Run CLI with file or stdin input
+- **WHEN** the user provides input via a file path or stdin
+- **THEN** the prompt is constructed using the resolved input text
+
 ### Requirement: Stub model client
 The system SHALL include a language model client interface with a stub implementation that produces a deterministic placeholder completion without calling an external service.
 
