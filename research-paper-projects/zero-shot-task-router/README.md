@@ -97,7 +97,19 @@ The CLI exists to enforce repeatability and clarity in experiments, not to provi
 
 ---
 
-## Phase 2 CLI Usage
+## CLI Usage
+
+Configure the OpenAI API key:
+
+```bash
+export OPENAI_API_KEY="your-api-key"
+```
+
+Optional base URL override:
+
+```bash
+export OPENAI_BASE_URL="https://api.openai.com/v1"
+```
 
 Render a prompt template with an input string and print the exact prompt text (replace the placeholder with real text):
 
@@ -113,21 +125,7 @@ Baseline summarization template (replace the placeholder with real text):
 npm run dev -- --template summarize-minimal --input "<your input text here>"
 ```
 
----
-
-## Phase 4 Completion Mode
-
-Configure the OpenAI API key:
-
-```bash
-export OPENAI_API_KEY="your-api-key"
-```
-
-Optional base URL override:
-
-```bash
-export OPENAI_BASE_URL="https://api.openai.com/v1"
-```
+### Prompt Completion Mode
 
 Run a completion with fixed decoding parameters (replace the placeholder with real text):
 
@@ -135,9 +133,7 @@ Run a completion with fixed decoding parameters (replace the placeholder with re
 npm run dev -- --template summarize-minimal --input "<your input text here>" --complete
 ```
 
----
-
-## Phase 5 Prompt Ablation Mode
+### Prompt Ablation Mode
 
 Run multiple templates in one command (comma-separated list) with a real-world input:
 
