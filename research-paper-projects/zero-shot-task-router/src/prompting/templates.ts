@@ -26,6 +26,16 @@ const promptTemplates: PromptTemplate[] = [
     description: "Concise summary instruction.",
     render: (input) => `Provide a concise summary:\n${input}`,
   },
+  {
+    id: "qa-minimal",
+    description: "Minimal QA instruction with the input appended.",
+    render: (input) => `Answer the question:\n${input}`,
+  },
+  {
+    id: "translate-en-es",
+    description: "English to Spanish translation instruction.",
+    render: (input) => `Translate the following text to Spanish:\n${input}`,
+  },
 ];
 
 const templateIndex = new Map(

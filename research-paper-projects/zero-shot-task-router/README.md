@@ -148,6 +148,20 @@ npm run dev -- --templates summarize-minimal,summarize-brief --input-file ./obse
 printf "Your input text here." | npm run dev -- --templates summarize-minimal,summarize-brief --input-file -
 ```
 
+### Task Expansion
+
+QA (single input string):
+
+```bash
+npm run dev -- --template qa-minimal --input "Who wrote the novel 1984?"
+```
+
+Translation (English → Spanish):
+
+```bash
+npm run dev -- --template translate-en-es --input "The experiment shows prompt sensitivity across tasks."
+```
+
 ## Expected Observations
 
 Based on prior analysis of zero-shot behavior, this project anticipates that:
