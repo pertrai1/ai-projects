@@ -99,18 +99,40 @@ The CLI exists to enforce repeatability and clarity in experiments, not to provi
 
 ## Phase 2 CLI Usage
 
-Render a prompt template with an input string and print the exact prompt text:
+Render a prompt template with an input string and print the exact prompt text (replace the placeholder with real text):
 
 ```bash
-npm run dev -- --template raw --input "Your input text here."
+npm run dev -- --template raw --input "<your input text here>"
 ```
 
 The output is the prompt text only, with no additional labels or markers added by the system.
 
-Baseline summarization template:
+Baseline summarization template (replace the placeholder with real text):
 
 ```bash
-npm run dev -- --template summarize-minimal --input "Your input text here."
+npm run dev -- --template summarize-minimal --input "<your input text here>"
+```
+
+---
+
+## Phase 4 Completion Mode
+
+Configure the OpenAI API key:
+
+```bash
+export OPENAI_API_KEY="your-api-key"
+```
+
+Optional base URL override:
+
+```bash
+export OPENAI_BASE_URL="https://api.openai.com/v1"
+```
+
+Run a completion with fixed decoding parameters (replace the placeholder with real text):
+
+```bash
+npm run dev -- --template summarize-minimal --input "<your input text here>" --complete
 ```
 
 ---

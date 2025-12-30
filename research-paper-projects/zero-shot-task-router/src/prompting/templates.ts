@@ -13,7 +13,9 @@ const promptTemplates: PromptTemplate[] = [
   },
 ];
 
-const templateIndex = new Map(promptTemplates.map((template) => [template.id, template]));
+const templateIndex = new Map(
+  promptTemplates.map((template) => [template.id, template]),
+);
 
 export const listPromptTemplates = (): PromptTemplate[] => [...promptTemplates];
 
