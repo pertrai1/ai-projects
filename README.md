@@ -25,6 +25,7 @@ While many of these projects are production-inspired and follow real-world engin
 ### Research Paper Projects
 
 - [FairEval-CLI](#faireval-cli) - Calibrated pairwise LLM evaluation mitigating positional bias
+- [Zero-Shot Task Router](#zero-shot-task-router) - Prompt-conditioned zero-shot task induction experiments
 
 ---
 
@@ -213,5 +214,25 @@ A CLI tool for pairwise evaluation of LLM responses that mitigates positional bi
 **Research Reference**: [Large Language Models are not Fair Evaluators (arXiv:2305.17926)](https://arxiv.org/abs/2305.17926) - Wang et al., ACL 2024
 
 **Use Cases**: LLM response comparison and ranking, evaluation benchmarking, model quality assessment, prompt engineering validation, automated testing of AI outputs
+
+---
+
+### [Zero-Shot Task Router](./research-paper-projects/zero-shot-task-router)
+
+A prompt-conditioned CLI research harness for studying zero-shot task induction via natural language task specification.
+
+**Technology**: OpenAI, TypeScript, Commander.js
+
+**Description**: Zero-Shot Task Router investigates how a single language model can switch between tasks based only on prompt wording. It provides prompt templates for summarization, QA, and translation, along with ablation tooling to compare prompt variants under fixed decoding parameters. The project emphasizes controlled experiments, reproducible runs, and explicit observation logging.
+
+**Key Features**:
+
+- Prompt template registry with multiple minimal variants
+- Multi-template ablation runs with side-by-side outputs
+- Fixed model parameters for reproducibility
+- CLI support for input files and stdin
+- Observation templates for experiment logging
+
+**Use Cases**: Prompt sensitivity studies, zero-shot task induction experiments, reproducible prompt ablations, educational demos of prompt control
 
 ---

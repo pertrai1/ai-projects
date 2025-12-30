@@ -97,6 +97,19 @@ The CLI exists to enforce repeatability and clarity in experiments, not to provi
 
 ---
 
+## Project Status
+
+Completed phases:
+
+- Phase 1: Research setup and framing
+- Phase 2: Experimental skeleton
+- Phase 3: Baseline summarization task
+- Phase 4: Real model integration (OpenAI)
+- Phase 5: Prompt ablation studies (summarization variants)
+- Phase 6: Task expansion (QA + translation)
+
+---
+
 ## CLI Usage
 
 Configure the OpenAI API key:
