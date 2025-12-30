@@ -22,7 +22,7 @@ program
         input: options.input,
       });
 
-      process.stdout.write(prompt);
+      process.stdout.write(`${prompt}\n`);
     } catch (error) {
       const templates = listPromptTemplates()
         .map((template) => template.id)

@@ -107,6 +107,12 @@ npm run dev -- --template raw --input "Your input text here."
 
 The output is the prompt text only, with no additional labels or markers added by the system.
 
+Baseline summarization template:
+
+```bash
+npm run dev -- --template summarize-minimal --input "Your input text here."
+```
+
 ---
 
 ## Expected Observations

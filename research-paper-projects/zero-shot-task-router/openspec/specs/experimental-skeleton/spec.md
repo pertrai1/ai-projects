@@ -10,6 +10,10 @@ The system SHALL define prompt templates as first-class objects that render unad
 - **WHEN** a template is rendered with input text
 - **THEN** the output is the template's text with the input inserted and no extra markers or labels added
 
+#### Scenario: Render baseline summarization prompt
+- **WHEN** the baseline summarization template is rendered with input text
+- **THEN** the prompt text contains the baseline summarization instruction followed by the input text without extra markers
+
 ### Requirement: CLI prompt runner
 The system SHALL provide a CLI command that accepts flags for template selection and input text and prints the constructed prompt to stdout.
 
