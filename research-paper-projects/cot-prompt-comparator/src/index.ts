@@ -21,7 +21,7 @@ async function main() {
   const command = process.argv[2]; // Still check for 'analyze' command
 
   if (command === "analyze") {
-    analyze();
+    await analyze();
   } else {
     await run(options);
   }

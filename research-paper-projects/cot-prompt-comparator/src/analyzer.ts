@@ -42,12 +42,24 @@ const calculateAccuracyByCategory = (results: any[]) => {
 };
 
 export const analyze = () => {
-  const results = JSON.parse(
-    fs.readFileSync(path.resolve("./src/results/output.json"), "utf-8"),
+  const rawResults = JSON.parse(
+    fs.readFileSync(path.resolve("./dist/results/output.json"), "utf-8"),
   );
 
-  const accuracyByPromptType = calculateAccuracyByPromptType(results);
-  const accuracyByCategory = calculateAccuracyByCategory(results);
+  const flattenedResults: any[] = [];
+  for (const taskResult of rawResults) {
+    const category = taskResult.taskId.split('-')[0]; // Extract category from taskId
+    for (const promptResult of taskResult.promptResults) {
+      flattenedResults.push({
+        category: category,
+        promptType: promptResult.promptType,
+        isCorrect: promptResult.isCorrect,
+      });
+    }
+  }
+
+  const accuracyByPromptType = calculateAccuracyByPromptType(flattenedResults);
+  const accuracyByCategory = calculateAccuracyByCategory(flattenedResults);
 
   console.log(chalk.bold.yellow("Analysis Results:\n"));
   console.log(chalk.bold.cyan("Overall Accuracy:"));
@@ -63,3 +75,5 @@ export const analyze = () => {
     }
   }
 };
+
+analyze();
