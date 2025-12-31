@@ -7,6 +7,7 @@ import { conciseChainOfThoughtPrompt } from "./prompts/conciseChainOfThoughtProm
 import { verboseChainOfThoughtPrompt } from "./prompts/verboseChainOfThoughtPrompt.js";
 import { reasoningAfterAnswerPrompt } from "./prompts/reasoningAfterAnswerPrompt.js";
 import { evaluate, extractAnswer } from "./evaluator.js";
+import chalk from "chalk";
 
 import "dotenv/config";
 
@@ -27,114 +28,125 @@ if (!fs.existsSync(resultsDir)) {
   fs.mkdirSync(resultsDir);
 }
 
+// Concurrency limiter helper function
+async function pLimit(concurrency: number, tasks: (() => Promise<any>)[]) {
+  let currentIndex = 0; // Index for the next task to pick from `tasks`
+
+  // Worker function that picks a task, runs it, and then picks another
+  const worker = async () => {
+    while (currentIndex < tasks.length) {
+      const taskIndex = currentIndex++; // Get current index and increment for next worker
+      const taskFn = tasks[taskIndex];
+
+      if (taskFn) { // Explicitly check if taskFn is defined
+        try {
+          await taskFn();
+        } catch (error) {
+          // Errors are already handled within the taskFn (API call) itself
+          // so we don't need to re-throw or log here unless for specific pLimit errors
+        }
+      }
+    }
+  };
+
+  // Create 'concurrency' number of workers
+  const workers = Array(concurrency).fill(null).map(worker);
+
+  // Wait for all workers to complete
+  await Promise.all(workers);
+}
+
 export const run = async () => {
-  
+  const allApiCallPromises: (() => Promise<any>)[] = [];
+  const taskResults: any[] = [];
 
-  const results: any[] = [];
   for (const task of tasks) {
-    const standard = standardPrompt(task.question);
-    const cot = chainOfThoughtPrompt(task.question);
-    const conciseCot = conciseChainOfThoughtPrompt(task.question);
-    const verboseCot = verboseChainOfThoughtPrompt(task.question);
-    const reasoningAfterAnswer = reasoningAfterAnswerPrompt(task.question);
-
-    const standardResult = await genAI.models.generateContent({ model: "gemini-pro-latest", contents: [{ role: "user", parts: [{ text: standard }] }] });
-    const cotResult = await genAI.models.generateContent({ model: "gemini-pro-latest", contents: [{ role: "user", parts: [{ text: cot }] }] });
-    const conciseCotResult = await genAI.models.generateContent({ model: "gemini-pro-latest", contents: [{ role: "user", parts: [{ text: conciseCot }] }] });
-    const verboseCotResult = await genAI.models.generateContent({ model: "gemini-pro-latest", contents: [{ role: "user", parts: [{ text: verboseCot }] }] });
-    const reasoningAfterAnswerResult = await genAI.models.generateContent({ model: "gemini-pro-latest", contents: [{ role: "user", parts: [{ text: reasoningAfterAnswer }] }] });
-
-    const standardResponse = standardResult;
-    const cotResponse = cotResult;
-    const conciseCotResponse = conciseCotResult;
-    const verboseCotResponse = verboseCotResult;
-    const reasoningAfterAnswerResponse = reasoningAfterAnswerResult;
-
-    const standardOutput = standardResponse.text ?? "";
-    const cotOutput = cotResponse.text ?? "";
-    const conciseCotOutput = conciseCotResponse.text ?? "";
-    const verboseCotOutput = verboseCotResponse.text ?? "";
-    const reasoningAfterAnswerOutput = reasoningAfterAnswerResponse.text ?? "";
-
-    const standardExtractedAnswer = extractAnswer(standardOutput);
-    const cotExtractedAnswer = extractAnswer(cotOutput);
-    const conciseCotExtractedAnswer = extractAnswer(conciseCotOutput);
-    const verboseCotExtractedAnswer = extractAnswer(verboseCotOutput);
-    const reasoningAfterAnswerExtractedAnswer = extractAnswer(
-      reasoningAfterAnswerOutput,
-    );
-
-    const standardIsCorrect = evaluate(
-      standardExtractedAnswer,
-      task.expectedAnswer,
-    );
-    const cotIsCorrect = evaluate(cotExtractedAnswer, task.expectedAnswer);
-    const conciseCotIsCorrect = evaluate(
-      conciseCotExtractedAnswer,
-      task.expectedAnswer,
-    );
-    const verboseCotIsCorrect = evaluate(
-      verboseCotExtractedAnswer,
-      task.expectedAnswer,
-    );
-    const reasoningAfterAnswerIsCorrect = evaluate(
-      reasoningAfterAnswerExtractedAnswer,
-      task.expectedAnswer,
-    );
-
-    results.push({
+    taskResults.push({
       taskId: task.id,
-      promptType: "standard",
       question: task.question,
-      modelOutput: standardOutput,
-      extractedAnswer: standardExtractedAnswer,
       expectedAnswer: task.expectedAnswer,
-      isCorrect: standardIsCorrect,
+      promptResults: [],
     });
 
-    results.push({
-      taskId: task.id,
-      promptType: "cot",
-      question: task.question,
-      modelOutput: cotOutput,
-      extractedAnswer: cotExtractedAnswer,
-      expectedAnswer: task.expectedAnswer,
-      isCorrect: cotIsCorrect,
-    });
+    const currentTaskResult = taskResults[taskResults.length - 1];
 
-    results.push({
-      taskId: task.id,
-      promptType: "concise-cot",
-      question: task.question,
-      modelOutput: conciseCotOutput,
-      extractedAnswer: conciseCotExtractedAnswer,
-      expectedAnswer: task.expectedAnswer,
-      isCorrect: conciseCotIsCorrect,
-    });
+    const promptTypes = [
+      { name: "standard", fn: standardPrompt },
+      { name: "cot", fn: chainOfThoughtPrompt },
+      { name: "concise-cot", fn: conciseChainOfThoughtPrompt },
+      { name: "verbose-cot", fn: verboseChainOfThoughtPrompt },
+      { name: "reasoning-after-answer", fn: reasoningAfterAnswerPrompt },
+    ];
 
-    results.push({
-      taskId: task.id,
-      promptType: "verbose-cot",
-      question: task.question,
-      modelOutput: verboseCotOutput,
-      extractedAnswer: verboseCotExtractedAnswer,
-      expectedAnswer: task.expectedAnswer,
-      isCorrect: verboseCotIsCorrect,
-    });
+    for (const promptType of promptTypes) {
+      allApiCallPromises.push(async () => {
+        console.log(
+          `Processing task ID: ${task.id} - Question: ${task.question} - Prompt: ${promptType.name}`,
+        );
+        try {
+          const promptText = promptType.fn(task.question);
+          const modelResult = await genAI.models.generateContent({
+            model: "gemini-pro-latest",
+            contents: [{ role: "user", parts: [{ text: promptText }] }],
+          });
+          const modelOutput = modelResult.text ?? "";
+          const extractedAnswer = extractAnswer(modelOutput);
+          const isCorrect = evaluate(extractedAnswer, task.expectedAnswer);
 
-    results.push({
-      taskId: task.id,
-      promptType: "reasoning-after-answer",
-      question: task.question,
-      modelOutput: reasoningAfterAnswerOutput,
-      extractedAnswer: reasoningAfterAnswerExtractedAnswer,
-      expectedAnswer: task.expectedAnswer,
-      isCorrect: reasoningAfterAnswerIsCorrect,
-    });
+          currentTaskResult.promptResults.push({
+            promptType: promptType.name,
+            modelOutput,
+            extractedAnswer,
+            isCorrect,
+          });
+
+          console.log(chalk.blue(`  Prompt Type: ${getDescriptivePromptName(promptType.name)}`));
+          console.log(chalk.yellow(`    Model Output: ${modelOutput}`));
+          console.log(chalk.yellow(`    Extracted Answer: ${extractedAnswer}`));
+          console.log(chalk.green(`    Expected Answer: ${task.expectedAnswer}`));
+          console.log(isCorrect ? chalk.green(`    Correct: Yes`) : chalk.red(`    Correct: No`));
+          console.log(""); // Add a blank line for readability
+        } catch (error: any) {
+          console.error(
+            chalk.red(
+              `API Error for task ${task.id}, prompt ${promptType.name}:`,
+              error.message,
+            ),
+          );
+          currentTaskResult.promptResults.push({
+            promptType: promptType.name,
+            modelOutput: "ERROR",
+            extractedAnswer: "ERROR",
+            isCorrect: false,
+            error: error.message,
+          });
+        }
+      });
+    }
   }
+
+  function getDescriptivePromptName(promptName: string): string {
+    switch (promptName) {
+      case "standard":
+        return "Standard Prompt";
+      case "cot":
+        return "Chain-of-Thought";
+      case "concise-cot":
+        return "Concise Chain-of-Thought";
+      case "verbose-cot":
+        return "Verbose Chain-of-Thought";
+      case "reasoning-after-answer":
+        return "Reasoning After Answer";
+      default:
+        return promptName;
+    }
+  }
+
+  // Execute all API calls with a concurrency limit of 4
+  await pLimit(4, allApiCallPromises);
 
   fs.writeFileSync(
     path.join(resultsDir, "output.json"),
-    JSON.stringify(results, null, 2),
+    JSON.stringify(taskResults, null, 2),
   );
 };

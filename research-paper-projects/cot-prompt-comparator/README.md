@@ -4,6 +4,8 @@ This project is a small experimental playground for studying and applying **chai
 
 The goal is to **compare standard prompting vs. chain-of-thought prompting** on the same set of reasoning tasks and observe when, why, and how reasoning-oriented prompts help or fail.
 
+[Screenshot](screenshot.png)
+
 ---
 
 ## Background
