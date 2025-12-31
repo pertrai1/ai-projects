@@ -7,75 +7,57 @@ const results = JSON.parse(
 );
 
 const calculateAccuracyByPromptType = () => {
-  const standardCorrect = results.filter(
-    (r: any) => r.promptType === "standard" && r.isCorrect,
-  ).length;
-  const standardTotal = results.filter(
-    (r: any) => r.promptType === "standard",
-  ).length;
-  const standardAccuracy = (standardCorrect / standardTotal) * 100;
+  const promptTypes = [...new Set(results.map((r: any) => r.promptType))] as string[];
+  const accuracyByPromptType: any = {};
 
-  const cotCorrect = results.filter(
-    (r: any) => r.promptType === "cot" && r.isCorrect,
-  ).length;
-  const cotTotal = results.filter((r: any) => r.promptType === "cot").length;
-  const cotAccuracy = (cotCorrect / cotTotal) * 100;
+  for (const promptType of promptTypes) {
+    const correct = results.filter((r: any) => r.promptType === promptType && r.isCorrect).length;
+    const total = results.filter((r: any) => r.promptType === promptType).length;
+    const accuracy = (correct / total) * 100;
+    accuracyByPromptType[promptType] = accuracy;
+  }
 
-  return { standardAccuracy, cotAccuracy };
+  return accuracyByPromptType;
 };
 
 const calculateAccuracyByCategory = () => {
-  const categories = [
-    ...new Set(results.map((r: any) => r.category)),
-  ] as string[];
+  const categories = [...new Set(results.map((r: any) => r.category))] as string[];
+  const promptTypes = [...new Set(results.map((r: any) => r.promptType))] as string[];
   const accuracyByCategory: any = {};
 
   for (const category of categories) {
-    const standardCorrect = results.filter(
-      (r: any) =>
-        r.category === category && r.promptType === "standard" && r.isCorrect,
-    ).length;
-    const standardTotal = results.filter(
-      (r: any) => r.category === category && r.promptType === "standard",
-    ).length;
-    const standardAccuracy = (standardCorrect / standardTotal) * 100;
-
-    const cotCorrect = results.filter(
-      (r: any) =>
-        r.category === category && r.promptType === "cot" && r.isCorrect,
-    ).length;
-    const cotTotal = results.filter(
-      (r: any) => r.category === category && r.promptType === "cot",
-    ).length;
-    const cotAccuracy = (cotCorrect / cotTotal) * 100;
-
-    accuracyByCategory[category] = { standardAccuracy, cotAccuracy };
+    accuracyByCategory[category] = {};
+    for (const promptType of promptTypes) {
+      const correct = results.filter(
+        (r: any) =>
+          r.category === category && r.promptType === promptType && r.isCorrect,
+      ).length;
+      const total = results.filter(
+        (r: any) => r.category === category && r.promptType === promptType,
+      ).length;
+      const accuracy = (correct / total) * 100;
+      accuracyByCategory[category][promptType] = accuracy;
+    }
   }
 
   return accuracyByCategory;
 };
 
 export const analyze = () => {
-  const { standardAccuracy, cotAccuracy } = calculateAccuracyByPromptType();
+  const accuracyByPromptType = calculateAccuracyByPromptType();
   const accuracyByCategory = calculateAccuracyByCategory();
 
   console.log(chalk.bold.yellow("Analysis Results:\n"));
   console.log(chalk.bold.cyan("Overall Accuracy:"));
-  console.log(
-    `- Standard Prompt: ${chalk.green(standardAccuracy.toFixed(2) + "%")}`,
-  );
-  console.log(
-    `- Chain-of-Thought Prompt: ${chalk.green(cotAccuracy.toFixed(2) + "%")}\n`,
-  );
+  for (const promptType in accuracyByPromptType) {
+    console.log(`- ${promptType}: ${chalk.green(accuracyByPromptType[promptType].toFixed(2) + "%" )}`);
+  }
 
-  console.log(chalk.bold.cyan("Accuracy by Category:"));
+  console.log(chalk.bold.cyan("\nAccuracy by Category:"));
   for (const category in accuracyByCategory) {
     console.log(`- ${chalk.magenta(category)}:`);
-    console.log(
-      `  - Standard Prompt: ${chalk.green(accuracyByCategory[category].standardAccuracy.toFixed(2) + "%")}`,
-    );
-    console.log(
-      `  - Chain-of-Thought Prompt: ${chalk.green(accuracyByCategory[category].cotAccuracy.toFixed(2) + "%")}`,
-    );
+    for (const promptType in accuracyByCategory[category]) {
+      console.log(`  - ${promptType}: ${chalk.green(accuracyByCategory[category][promptType].toFixed(2) + "%" )}`);
+    }
   }
 };
