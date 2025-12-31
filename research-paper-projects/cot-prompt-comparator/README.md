@@ -25,6 +25,50 @@ The following summary is adapted directly from *Chain-of-Thought Prompting Elici
 
 ---
 
+## Getting Started
+
+### Prerequisites
+
+*   Node.js (v18 or higher)
+*   npm
+*   A Google Gemini API key
+
+### Setup
+
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/pertrai1/ai-projects.git
+    cd ai-projects/research-paper-projects/cot-prompt-comparator
+    ```
+2.  Install the dependencies:
+    ```bash
+    npm install
+    ```
+3.  Create a `.env` file from the example:
+    ```bash
+    cp .env.example .env
+    ```
+4.  Add your Google Gemini API key to the `.env` file:
+    ```
+    GEMINI_API_KEY="your_key"
+    ```
+
+### Running the Experiment
+
+1.  Run the experiment:
+    ```bash
+    npm run start
+    ```
+    This will execute the prompts and store the results in `src/results/output.json`.
+
+2.  Analyze the results:
+    ```bash
+    npm run start analyze
+    ```
+    This will print a summary of the results to the console.
+
+---
+
 ## Language Model
 
 This project uses **Google Gemini** as the large language model for all experiments and comparisons.
