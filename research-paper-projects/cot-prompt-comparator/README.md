@@ -99,6 +99,23 @@ The following summary is adapted directly from *Chain-of-Thought Prompting Elici
     npm run start analyze
     ```
     This will print a summary of the results to the console.
+  
+    ```bash
+    Analysis Results:
+  
+    Overall Accuracy:
+      - standard: 75.00%
+  
+    Accuracy by Category:
+      - arithmetic:
+        - standard: 100.00%
+      - symbolic:
+        - standard: 66.67%
+      - commonsense:
+        - standard: 33.33%
+      - control:
+        - standard: 100.00%
+    ```
 
 ---
 
