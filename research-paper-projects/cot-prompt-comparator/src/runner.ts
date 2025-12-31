@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { standardPrompt } from "./prompts/standardPrompt.js";
 import { chainOfThoughtPrompt } from "./prompts/chainOfThoughtPrompt.js";
 import { conciseChainOfThoughtPrompt } from "./prompts/conciseChainOfThoughtPrompt.js";
@@ -8,9 +8,8 @@ import { verboseChainOfThoughtPrompt } from "./prompts/verboseChainOfThoughtProm
 import { reasoningAfterAnswerPrompt } from "./prompts/reasoningAfterAnswerPrompt.js";
 import { evaluate, extractAnswer } from "./evaluator.js";
 
-import * as dotenv from "dotenv";
+import "dotenv/config";
 
-dotenv.config();
 
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -21,9 +20,7 @@ const __dirname = dirname(__filename);
 const tasks = JSON.parse(
   fs.readFileSync(path.resolve("./src/tasks.json"), "utf-8"),
 );
-const genAI = new GoogleGenerativeAI(process.env["GEMINI_API_KEY"] as string);
-
-const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+const genAI = new GoogleGenAI({ apiKey: process.env["GEMINI_API_KEY"] as string });
 
 const resultsDir = path.join(__dirname, "results");
 if (!fs.existsSync(resultsDir)) {
@@ -31,6 +28,8 @@ if (!fs.existsSync(resultsDir)) {
 }
 
 export const run = async () => {
+  
+
   const results: any[] = [];
   for (const task of tasks) {
     const standard = standardPrompt(task.question);
@@ -39,24 +38,23 @@ export const run = async () => {
     const verboseCot = verboseChainOfThoughtPrompt(task.question);
     const reasoningAfterAnswer = reasoningAfterAnswerPrompt(task.question);
 
-    const standardResult = await model.generateContent(standard);
-    const cotResult = await model.generateContent(cot);
-    const conciseCotResult = await model.generateContent(conciseCot);
-    const verboseCotResult = await model.generateContent(verboseCot);
-    const reasoningAfterAnswerResult =
-      await model.generateContent(reasoningAfterAnswer);
+    const standardResult = await genAI.models.generateContent({ model: "gemini-pro-latest", contents: [{ role: "user", parts: [{ text: standard }] }] });
+    const cotResult = await genAI.models.generateContent({ model: "gemini-pro-latest", contents: [{ role: "user", parts: [{ text: cot }] }] });
+    const conciseCotResult = await genAI.models.generateContent({ model: "gemini-pro-latest", contents: [{ role: "user", parts: [{ text: conciseCot }] }] });
+    const verboseCotResult = await genAI.models.generateContent({ model: "gemini-pro-latest", contents: [{ role: "user", parts: [{ text: verboseCot }] }] });
+    const reasoningAfterAnswerResult = await genAI.models.generateContent({ model: "gemini-pro-latest", contents: [{ role: "user", parts: [{ text: reasoningAfterAnswer }] }] });
 
-    const standardResponse = standardResult.response;
-    const cotResponse = cotResult.response;
-    const conciseCotResponse = conciseCotResult.response;
-    const verboseCotResponse = verboseCotResult.response;
-    const reasoningAfterAnswerResponse = reasoningAfterAnswerResult.response;
+    const standardResponse = standardResult;
+    const cotResponse = cotResult;
+    const conciseCotResponse = conciseCotResult;
+    const verboseCotResponse = verboseCotResult;
+    const reasoningAfterAnswerResponse = reasoningAfterAnswerResult;
 
-    const standardOutput = standardResponse.text();
-    const cotOutput = cotResponse.text();
-    const conciseCotOutput = conciseCotResponse.text();
-    const verboseCotOutput = verboseCotResponse.text();
-    const reasoningAfterAnswerOutput = reasoningAfterAnswerResponse.text();
+    const standardOutput = standardResponse.text ?? "";
+    const cotOutput = cotResponse.text ?? "";
+    const conciseCotOutput = conciseCotResponse.text ?? "";
+    const verboseCotOutput = verboseCotResponse.text ?? "";
+    const reasoningAfterAnswerOutput = reasoningAfterAnswerResponse.text ?? "";
 
     const standardExtractedAnswer = extractAnswer(standardOutput);
     const cotExtractedAnswer = extractAnswer(cotOutput);
