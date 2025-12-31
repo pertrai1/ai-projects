@@ -26,6 +26,7 @@ While many of these projects are production-inspired and follow real-world engin
 
 - [FairEval-CLI](#faireval-cli) - Calibrated pairwise LLM evaluation mitigating positional bias
 - [Zero-Shot Task Router](#zero-shot-task-router) - Prompt-conditioned zero-shot task induction experiments
+- [Chain-of-Thought Prompt Comparator](#chain-of-thought-prompt-comparator) - A CLI tool for comparing Chain-of-Thought (CoT) prompting strategies
 
 ---
 
@@ -234,5 +235,25 @@ A prompt-conditioned CLI research harness for studying zero-shot task induction 
 - Observation templates for experiment logging
 
 **Use Cases**: Prompt sensitivity studies, zero-shot task induction experiments, reproducible prompt ablations, educational demos of prompt control
+
+---
+
+### [Chain-of-Thought Prompt Comparator](./research-paper-projects/cot-prompt-comparator)
+
+A CLI tool for comparing Chain-of-Thought (CoT) prompting strategies and analyzing their impact on LLM reasoning and output quality.
+
+**Technology**: Google Gemini, TypeScript, Commander.js
+
+**Description**: This project provides a framework for systematically evaluating different Chain-of-Thought prompting techniques. It allows users to define multiple CoT prompts, run them against a set of inputs, and compare the generated outputs based on various metrics suchs as accuracy, coherence, and completeness.
+
+**Key Features**:
+
+- Define and manage multiple Chain-of-Thought prompt templates
+- Run comparative evaluations across different CoT strategies
+- Analyze LLM outputs for accuracy, coherence, and other custom metrics
+- CLI for easy execution and result visualization
+
+**Use Cases**: Research on LLM reasoning, prompt engineering optimization, comparative analysis of CoT techniques, educational tool for understanding advanced prompting
+
 
 ---

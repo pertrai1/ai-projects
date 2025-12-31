@@ -147,20 +147,29 @@ This allows you to empirically observe:
 
 ```text
 .
-├── src/
-│   ├── prompts/
-│   │   ├── standardPrompt.ts
-│   │   └── chainOfThoughtPrompt.ts
-│   ├── tasks/
-│   │   └── tasks.json
-│   ├── evaluator.ts
-│   ├── runner.ts
-│   └── index.ts
-├── results/
-│   └── output.json
-├── README.md
+├── .env.example
+├── .gitignore
+├── AGENTS.md
+├── cot-prompting-elicits-reasoning-in-llms.pdf
+├── package-lock.json
 ├── package.json
-└── tsconfig.json
+├── README.md
+├── screenshot.png
+├── tsconfig.json
+├── src/
+│   ├── analyzer.ts
+│   ├── evaluator.ts
+│   ├── index.ts
+│   ├── runner.ts
+│   ├── tasks.json
+│   ├── prompts/
+│   │   ├── chainOfThoughtPrompt.ts
+│   │   ├── conciseChainOfThoughtPrompt.ts
+│   │   ├── reasoningAfterAnswerPrompt.ts
+│   │   ├── standardPrompt.ts
+│   │   └── verboseChainOfThoughtPrompt.ts
+│   ├── results/
+│   └── tasks/
 ```
 
 ---
