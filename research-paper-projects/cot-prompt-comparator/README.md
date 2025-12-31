@@ -61,7 +61,38 @@ The following summary is adapted directly from *Chain-of-Thought Prompting Elici
     ```bash
     npm run start
     ```
-    This will execute the prompts and store the results in `src/results/output.json`.
+    This will execute the prompts and store the results in `dist/results/output.json`.
+
+    #### Controlling Prompt Types with CLI Flags
+
+    You can specify which prompt types to include in the evaluation using command-line flags. This allows for focused analysis and can reduce execution time and API costs.
+
+    **Available Flags:**
+    *   `--standard`: Include the Standard Prompt.
+    *   `--cot`: Include the Chain-of-Thought Prompt.
+    *   `--concise-cot`: Include the Concise Chain-of-Thought Prompt.
+    *   `--verbose-cot`: Include the Verbose Chain-of-Thought Prompt.
+    *   `--reasoning-after-answer`: Include the Reasoning After Answer Prompt.
+
+    **Usage Examples:**
+
+    *   **Run all prompt types (default behavior):**
+        ```bash
+        npm run start
+        ```
+    *   **Run only the Standard Prompt:**
+        ```bash
+        npm run start -- --standard
+        ```
+    *   **Run only Chain-of-Thought and Verbose Chain-of-Thought prompts:**
+        ```bash
+        npm run start -- --cot --verbose-cot
+        ```
+    *   **Run only the Reasoning After Answer prompt:**
+        ```bash
+        npm run start -- --reasoning-after-answer
+        ```
+    If you provide any prompt type flags, only the specified types will be run. If no prompt type flags are provided, all types will be run by default.
 
 2.  Analyze the results:
     ```bash

@@ -56,9 +56,34 @@ async function pLimit(concurrency: number, tasks: (() => Promise<any>)[]) {
   await Promise.all(workers);
 }
 
-export const run = async () => {
+export const run = async (cliOptions: { [key: string]: boolean }) => {
   const allApiCallPromises: (() => Promise<any>)[] = [];
   const taskResults: any[] = [];
+
+  const availablePromptTypes = [
+    { name: "standard", fn: standardPrompt, cliFlag: "standard" },
+    { name: "cot", fn: chainOfThoughtPrompt, cliFlag: "cot" },
+    { name: "concise-cot", fn: conciseChainOfThoughtPrompt, cliFlag: "conciseCot" },
+    { name: "verbose-cot", fn: verboseChainOfThoughtPrompt, cliFlag: "verboseCot" },
+    { name: "reasoning-after-answer", fn: reasoningAfterAnswerPrompt, cliFlag: "reasoningAfterAnswer" },
+  ];
+
+  // Determine which prompt types to run based on CLI options
+  let promptTypesToRun = availablePromptTypes;
+  const anyPromptFlagProvided = Object.values(cliOptions).some(value => value === true);
+
+  if (anyPromptFlagProvided) {
+    promptTypesToRun = availablePromptTypes.filter(pt => cliOptions[pt.cliFlag]);
+  }
+
+  if (promptTypesToRun.length === 0 && anyPromptFlagProvided) {
+    console.warn(chalk.yellow("No valid prompt type flags provided. Running all prompt types by default."));
+    promptTypesToRun = availablePromptTypes;
+  } else if (promptTypesToRun.length === 0 && !anyPromptFlagProvided) {
+    // This case should ideally not happen if anyPromptFlagProvided logic is correct,
+    // but as a safeguard, if no flags were provided and no types are selected, run all.
+    promptTypesToRun = availablePromptTypes;
+  }
 
   for (const task of tasks) {
     taskResults.push({
@@ -70,15 +95,7 @@ export const run = async () => {
 
     const currentTaskResult = taskResults[taskResults.length - 1];
 
-    const promptTypes = [
-      { name: "standard", fn: standardPrompt },
-      { name: "cot", fn: chainOfThoughtPrompt },
-      { name: "concise-cot", fn: conciseChainOfThoughtPrompt },
-      { name: "verbose-cot", fn: verboseChainOfThoughtPrompt },
-      { name: "reasoning-after-answer", fn: reasoningAfterAnswerPrompt },
-    ];
-
-    for (const promptType of promptTypes) {
+    for (const promptType of promptTypesToRun) {
       allApiCallPromises.push(async () => {
         console.log(
           `Processing task ID: ${task.id} - Question: ${task.question} - Prompt: ${promptType.name}`,
@@ -90,7 +107,7 @@ export const run = async () => {
             contents: [{ role: "user", parts: [{ text: promptText }] }],
           });
           const modelOutput = modelResult.text ?? "";
-          const extractedAnswer = extractAnswer(modelOutput);
+          const extractedAnswer = extractAnswer(modelOutput, task.expectedAnswer);
           const isCorrect = evaluate(extractedAnswer, task.expectedAnswer);
 
           currentTaskResult.promptResults.push({
