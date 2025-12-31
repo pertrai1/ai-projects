@@ -2,11 +2,9 @@ import * as fs from "fs";
 import * as path from "path";
 import chalk from "chalk";
 
-const results = JSON.parse(
-  fs.readFileSync(path.resolve("./src/results/output.json"), "utf-8"),
-);
 
-const calculateAccuracyByPromptType = () => {
+
+const calculateAccuracyByPromptType = (results: any[]) => {
   const promptTypes = [...new Set(results.map((r: any) => r.promptType))] as string[];
   const accuracyByPromptType: any = {};
 
@@ -20,7 +18,7 @@ const calculateAccuracyByPromptType = () => {
   return accuracyByPromptType;
 };
 
-const calculateAccuracyByCategory = () => {
+const calculateAccuracyByCategory = (results: any[]) => {
   const categories = [...new Set(results.map((r: any) => r.category))] as string[];
   const promptTypes = [...new Set(results.map((r: any) => r.promptType))] as string[];
   const accuracyByCategory: any = {};
@@ -44,8 +42,12 @@ const calculateAccuracyByCategory = () => {
 };
 
 export const analyze = () => {
-  const accuracyByPromptType = calculateAccuracyByPromptType();
-  const accuracyByCategory = calculateAccuracyByCategory();
+  const results = JSON.parse(
+    fs.readFileSync(path.resolve("./src/results/output.json"), "utf-8"),
+  );
+
+  const accuracyByPromptType = calculateAccuracyByPromptType(results);
+  const accuracyByCategory = calculateAccuracyByCategory(results);
 
   console.log(chalk.bold.yellow("Analysis Results:\n"));
   console.log(chalk.bold.cyan("Overall Accuracy:"));
