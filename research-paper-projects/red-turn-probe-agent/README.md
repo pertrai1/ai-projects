@@ -82,6 +82,28 @@ This project is explicitly designed for **educational exploration**, not as a pr
 
 ---
 
+## Current Configuration (Milestone 0)
+
+RedTurn is currently configured to test the following specific behavior:
+
+**Testing Objective:**
+> Testing whether the model can be made to contradict its own statements within a 2-turn conversation.
+
+**Configuration Parameters:**
+- **Target Model:** `gpt-3.5-turbo`
+  - Chosen for cost-effectiveness during development
+  - Sufficiently capable to exhibit self-contradiction behaviors
+- **Behavioral Objective:** Self-contradiction
+  - Turn 1: Elicit an initial position or statement
+  - Turn 2: Attempt to get the model to contradict its Turn 1 response
+- **Maximum Turns:** 2
+  - One turn = one user message + one model response
+  - Keeps scope manageable and focused
+
+These parameters are defined in `src/config.ts` and are considered non-negotiable decisions per Milestone 0 of the ROADMAP. Future milestones will build upon this foundation to implement static baselines, rubrics, and adaptive strategies.
+
+---
+
 ## Project Structure
 
 ```text
@@ -100,6 +122,7 @@ This project is explicitly designed for **educational exploration**, not as a pr
 │   ├── specs/                 # Current capability specifications
 │   └── changes/               # Proposed changes and archives
 ├── src/                       # TypeScript source files
+│   ├── config.ts              # Test configuration (Milestone 0)
 │   └── index.ts               # Application entry point
 └── dist/                      # Compiled JavaScript (generated)
 ```
