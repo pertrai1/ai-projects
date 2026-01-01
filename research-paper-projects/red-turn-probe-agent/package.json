@@ -1,0 +1,29 @@
+{
+  "name": "red-turn-probe-agent",
+  "version": "0.1.0",
+  "description": "Small probe-agent system for eliciting multi-turn conversational failures in LLMs",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "multi-turn conversation",
+    "LLM evaluation"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^17.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.3",
+    "@typescript-eslint/eslint-plugin": "^8.51.0",
+    "@typescript-eslint/parser": "^8.51.0",
+    "eslint": "^9.39.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
