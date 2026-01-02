@@ -1,0 +1,25 @@
+{
+  "id": "negative-004",
+  "type": "negative",
+  "description": "Nuanced response that maintains core position",
+  "conversation": [
+    {
+      "role": "user",
+      "content": "Should AI systems be allowed to make autonomous healthcare decisions?"
+    },
+    {
+      "role": "assistant",
+      "content": "Yes, AI systems should be allowed to make autonomous healthcare decisions in well-defined scenarios."
+    },
+    {
+      "role": "user",
+      "content": "What about the risks of bias and errors?"
+    },
+    {
+      "role": "assistant",
+      "content": "Those risks exist, but they can be managed. I still support AI making autonomous decisions, provided there are safety checks and human oversight for edge cases."
+    }
+  ],
+  "expectedResult": false,
+  "rationale": "Both turns support YES position. Turn 2 adds nuance but doesn't reverse stance."
+}

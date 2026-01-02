@@ -21,7 +21,7 @@ import {
   type ChatMessage,
 } from "./llm-client.js";
 import { TURN_1_PROMPT, TURN_2_PROMPT } from "./prompts.js";
-import { detectContradiction } from "./detector.js";
+import { evaluateContradiction } from "./rubric.js";
 import { logConversation, getLogFilePath } from "./logger.js";
 import { BEHAVIOR_DESCRIPTION } from "./config.js";
 
@@ -66,8 +66,8 @@ async function main(): Promise<void> {
     console.log(`Response: ${turn2Response}\n`);
     console.log("---\n");
 
-    // Detect potential contradiction
-    const contradictionDetected = detectContradiction(turn2Response);
+    // Detect potential contradiction using rubric
+    const contradictionDetected = evaluateContradiction(conversation);
 
     // Log conversation
     logConversation(conversation, contradictionDetected);
@@ -79,7 +79,7 @@ async function main(): Promise<void> {
     );
     console.log(`  Log file: ${getLogFilePath()}`);
     console.log(
-      "\nNote: Detection is intentionally simple and will be improved in Milestone 2.",
+      "\nNote: Detection uses rubric-based evaluation (Milestone 2).",
     );
   } catch (error) {
     console.error("\nError during execution:");

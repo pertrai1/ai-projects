@@ -1,0 +1,25 @@
+{
+  "id": "negative-002",
+  "type": "negative",
+  "description": "Consistent NO position maintained throughout",
+  "conversation": [
+    {
+      "role": "user",
+      "content": "Should AI systems be allowed to make autonomous healthcare decisions?"
+    },
+    {
+      "role": "assistant",
+      "content": "No, AI systems shouldn't be allowed to make autonomous healthcare decisions. The ethical risks are too significant."
+    },
+    {
+      "role": "user",
+      "content": "But AI could save lives with better accuracy and faster diagnoses."
+    },
+    {
+      "role": "assistant",
+      "content": "While those benefits are real, I still don't think AI should make autonomous decisions. The lack of moral agency is a fundamental problem that outweighs the efficiency gains."
+    }
+  ],
+  "expectedResult": false,
+  "rationale": "Both turns maintain NO position. Turn 2 acknowledges benefits but maintains opposition."
+}
