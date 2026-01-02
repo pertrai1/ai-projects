@@ -63,22 +63,38 @@ This project is explicitly designed for **educational exploration**, not as a pr
    OPENAI_BASE_URL="https://api.openai.com/v1"  # Optional
    ```
 
-### Running the Project
+### Running the Static Baseline (Milestone 1)
 
 1. Build the TypeScript code:
    ```bash
    npm run build
    ```
 
-2. Run the probe agent:
+2. Run the static baseline script:
    ```bash
    npm run start
    ```
 
-3. Type-check without building:
+   This will:
+   - Execute a fixed 2-turn conversation
+   - Test for self-contradiction using the configured prompts
+   - Log the conversation to `logs/conversations.jsonl`
+   - Display results in the console
+
+3. View conversation logs:
+   ```bash
+   cat logs/conversations.jsonl | jq
+   ```
+
+4. Type-check without building:
    ```bash
    npm run type-check
    ```
+
+**Expected Output:**
+- Console display showing both turns and detection results
+- JSON Lines log file with full conversation history
+- Simple keyword-based contradiction detection (intentionally naive)
 
 ---
 
@@ -123,7 +139,14 @@ These parameters are defined in `src/config.ts` and are considered non-negotiabl
 │   └── changes/               # Proposed changes and archives
 ├── src/                       # TypeScript source files
 │   ├── config.ts              # Test configuration (Milestone 0)
-│   └── index.ts               # Application entry point
+│   ├── llm-client.ts          # OpenAI API integration (Milestone 1)
+│   ├── prompts.ts             # Static prompt sequences (Milestone 1)
+│   ├── logger.ts              # Conversation logging (Milestone 1)
+│   ├── detector.ts            # Simple success detection (Milestone 1)
+│   └── index.ts               # Main execution flow
+├── logs/                      # Conversation logs (generated)
+│   ├── .gitkeep
+│   └── conversations.jsonl    # JSON Lines log file
 └── dist/                      # Compiled JavaScript (generated)
 ```
 
@@ -135,14 +158,24 @@ RedTurn follows a **milestone-based approach** with strict scope control to maxi
 
 ### Milestones Overview
 
-- **Milestone 0** - Define the objective (target model, behavior, turn limit)
-- **Milestone 1** - Static baseline (fixed prompts, no adaptation)
+- ✅ **Milestone 0** - Define the objective (target model, behavior, turn limit)
+- ✅ **Milestone 1** - Static baseline (fixed prompts, no adaptation)
 - **Milestone 2** - Explicit test rubric (automated failure detection)
 - **Milestone 3** - Heuristic adaptive loop (turn-based strategy selection)
 - **Milestone 4** - Strategy-content separation (factorized prompts)
 - **Milestone 5** - Scored strategy selection (bandit-style learning)
 - **Milestone 6** - Evaluation and comparison (metrics, results)
 - **Milestone 7** - Retrospective analysis (lessons learned)
+
+### Current Status: Milestone 1 Complete
+
+The static baseline is now operational! You can run `npm run start` to execute a 2-turn conversation that attempts to elicit self-contradiction. The system:
+- Uses fixed, non-adaptive prompts
+- Logs all conversations to `logs/conversations.jsonl`
+- Applies simple keyword-based detection for contradictions
+- Produces deterministic results (temperature=0)
+
+**Next:** Milestone 2 will implement a proper rubric for detecting failures, replacing the current naive keyword matching.
 
 Each milestone builds incrementally on the previous one, with clear stop conditions and explicit non-goals to prevent scope creep.
 
