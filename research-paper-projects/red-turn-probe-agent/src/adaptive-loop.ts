@@ -2,14 +2,16 @@
  * Adaptive Loop Module
  *
  * Orchestrates multi-run execution of adaptive prompting strategy.
+ * Updated in Milestone 4 to use template-based prompt generation.
  *
  * Each run:
  * 1. Executes Turn 1 with fixed prompt
  * 2. Classifies Turn 1 response
  * 3. Selects Turn 2 strategy based on classification
- * 4. Executes Turn 2 with selected strategy
- * 5. Evaluates for contradiction using rubric
- * 6. Logs all metadata
+ * 4. Generates Turn 2 prompt using template system
+ * 5. Executes Turn 2 with generated prompt
+ * 6. Evaluates for contradiction using rubric
+ * 7. Logs all metadata including template information
  *
  * No learning across runs - each conversation is independent.
  */
@@ -19,15 +21,20 @@ import {
   sendMessage,
   type ChatMessage,
 } from "./llm-client.js";
-import { TURN_1_PROMPT } from "./prompts.js";
 import { classifyResponse, type ResponseCategory } from "./classifier.js";
-import { selectStrategy, type StrategyName } from "./strategies.js";
+import { selectStrategy } from "./strategies.js";
 import { evaluateContradiction } from "./rubric.js";
 import {
   logAdaptiveConversation,
   getLogFilePath,
   type AdaptiveMetadata,
 } from "./logger.js";
+import {
+  applyTemplate,
+  type StrategyName,
+  type TacticContext,
+} from "./templates.js";
+import { DEFAULT_TOPIC, type ContentTopic } from "./content.js";
 
 /**
  * Result of a single adaptive run.
@@ -57,14 +64,19 @@ export interface AdaptiveStatistics {
  * Execute a single adaptive conversation run.
  *
  * @param runId - Unique identifier for this run
+ * @param contentTopic - Content topic to use for template generation
  * @returns Result of the run including metadata
  */
-async function executeAdaptiveRun(runId: number): Promise<AdaptiveRunResult> {
+async function executeAdaptiveRun(
+  runId: number,
+  contentTopic: ContentTopic = DEFAULT_TOPIC
+): Promise<AdaptiveRunResult> {
   const client = createLLMClient();
   const conversation: ChatMessage[] = [];
 
-  // Turn 1: Elicit position (fixed prompt)
-  conversation.push({ role: "user", content: TURN_1_PROMPT });
+  // Turn 1: Elicit position (use topic's question)
+  const turn1Prompt = contentTopic.question;
+  conversation.push({ role: "user", content: turn1Prompt });
   const turn1Response = await sendMessage(client, conversation);
   conversation.push({ role: "assistant", content: turn1Response });
 
@@ -74,10 +86,19 @@ async function executeAdaptiveRun(runId: number): Promise<AdaptiveRunResult> {
 
   // Select Turn 2 strategy based on category
   const selection = selectStrategy(category);
-  const strategy = selection.strategy.name;
-  const turn2Prompt = selection.strategy.prompt;
+  const strategyName = selection.strategyName;
 
-  // Turn 2: Challenge with selected strategy
+  // Generate Turn 2 prompt using template system
+  const tacticContext: TacticContext = {
+    turn1Response,
+    contentTopic,
+    responseCategory: category,
+  };
+
+  const templateResult = applyTemplate(strategyName, tacticContext);
+  const turn2Prompt = templateResult.prompt;
+
+  // Turn 2: Challenge with template-generated prompt
   conversation.push({ role: "user", content: turn2Prompt });
   const turn2Response = await sendMessage(client, conversation);
   conversation.push({ role: "assistant", content: turn2Response });
@@ -85,14 +106,17 @@ async function executeAdaptiveRun(runId: number): Promise<AdaptiveRunResult> {
   // Evaluate for contradiction
   const contradictionDetected = evaluateContradiction(conversation);
 
-  // Log conversation with adaptive metadata
+  // Log conversation with adaptive metadata including template info
   const metadata: AdaptiveMetadata = {
     runId,
     responseCategory: category,
-    selectedStrategy: strategy,
+    selectedStrategy: strategyName,
     strategyRationale: selection.selectionRationale,
     classificationRationale: classification.rationale,
     matchedPatterns: classification.matchedPatterns,
+    tacticsUsed: templateResult.tacticsUsed,
+    contentTopicId: templateResult.metadata.contentTopicId,
+    strategyIntent: templateResult.metadata.strategyIntent,
   };
 
   logAdaptiveConversation(conversation, contradictionDetected, metadata);
@@ -100,7 +124,7 @@ async function executeAdaptiveRun(runId: number): Promise<AdaptiveRunResult> {
   return {
     runId,
     category,
-    strategy,
+    strategy: strategyName,
     contradictionDetected,
     conversation,
   };
@@ -113,13 +137,14 @@ async function executeAdaptiveRun(runId: number): Promise<AdaptiveRunResult> {
  * @returns Aggregated statistics
  */
 function calculateStatistics(
-  results: readonly AdaptiveRunResult[],
+  results: readonly AdaptiveRunResult[]
 ): AdaptiveStatistics {
   const totalRuns = results.length;
   const contradictionsDetected = results.filter(
-    (r) => r.contradictionDetected,
+    (r) => r.contradictionDetected
   ).length;
-  const successRate = totalRuns > 0 ? contradictionsDetected / totalRuns : 0;
+  const successRate =
+    totalRuns > 0 ? contradictionsDetected / totalRuns : 0;
 
   // Initialize counts
   const categoryCounts: Record<ResponseCategory, number> = {
@@ -185,7 +210,9 @@ function displayStatistics(stats: AdaptiveStatistics): void {
   console.log("Overall Results:");
   console.log(`  Total runs: ${stats.totalRuns}`);
   console.log(`  Contradictions detected: ${stats.contradictionsDetected}`);
-  console.log(`  Success rate: ${(stats.successRate * 100).toFixed(1)}%\n`);
+  console.log(
+    `  Success rate: ${(stats.successRate * 100).toFixed(1)}%\n`
+  );
 
   console.log("Category Distribution:");
   for (const [category, count] of Object.entries(stats.categoryCounts)) {
@@ -193,7 +220,7 @@ function displayStatistics(stats: AdaptiveStatistics): void {
     const successes = stats.successByCategory[category as ResponseCategory];
     const rate = count > 0 ? ((successes / count) * 100).toFixed(1) : "0.0";
     console.log(
-      `  ${category}: ${count} (${percentage}%) - ${successes} contradictions (${rate}%)`,
+      `  ${category}: ${count} (${percentage}%) - ${successes} contradictions (${rate}%)`
     );
   }
 
@@ -203,13 +230,13 @@ function displayStatistics(stats: AdaptiveStatistics): void {
     const successes = stats.successByStrategy[strategy as StrategyName];
     const rate = count > 0 ? ((successes / count) * 100).toFixed(1) : "0.0";
     console.log(
-      `  ${strategy}: ${count} (${percentage}%) - ${successes} contradictions (${rate}%)`,
+      `  ${strategy}: ${count} (${percentage}%) - ${successes} contradictions (${rate}%)`
     );
   }
 
   console.log(`\nLog file: ${getLogFilePath()}`);
   console.log(
-    "Note: Each run is independent. No learning occurs between runs.\n",
+    "Note: Each run is independent. No learning occurs between runs.\n"
   );
 }
 
@@ -220,11 +247,16 @@ function displayStatistics(stats: AdaptiveStatistics): void {
  * maintain clear logging order.
  *
  * @param numRuns - Number of runs to execute (default: 10)
+ * @param contentTopic - Content topic to use (default: healthcare)
  */
-export async function runAdaptiveLoop(numRuns: number = 10): Promise<void> {
-  console.log("RedTurn - Adaptive Loop");
+export async function runAdaptiveLoop(
+  numRuns: number = 10,
+  contentTopic: ContentTopic = DEFAULT_TOPIC
+): Promise<void> {
+  console.log("RedTurn - Adaptive Loop (Milestone 4)");
   console.log("======================================\n");
   console.log(`Executing ${numRuns} adaptive runs...\n`);
+  console.log(`Content topic: ${contentTopic.name}\n`);
 
   const results: AdaptiveRunResult[] = [];
 
@@ -232,12 +264,12 @@ export async function runAdaptiveLoop(numRuns: number = 10): Promise<void> {
     console.log(`\n--- Run ${i}/${numRuns} ---`);
 
     try {
-      const result = await executeAdaptiveRun(i);
+      const result = await executeAdaptiveRun(i, contentTopic);
 
       console.log(`  Category: ${result.category}`);
       console.log(`  Strategy: ${result.strategy}`);
       console.log(
-        `  Contradiction: ${result.contradictionDetected ? "YES" : "NO"}`,
+        `  Contradiction: ${result.contradictionDetected ? "YES" : "NO"}`
       );
 
       results.push(result);
@@ -258,7 +290,7 @@ export async function runAdaptiveLoop(numRuns: number = 10): Promise<void> {
     displayStatistics(stats);
   } else {
     console.error(
-      "\nNo runs completed successfully. Check your configuration and API key.",
+      "\nNo runs completed successfully. Check your configuration and API key."
     );
     process.exit(1);
   }

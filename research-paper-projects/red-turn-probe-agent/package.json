@@ -1,13 +1,17 @@
 {
   "name": "red-turn-probe-agent",
-  "version": "0.1.0",
-  "description": "A red-teaming probe agent for eliciting multi-turn conversational failures in large language models through adaptive adversarial testing",
+  "version": "0.2.0",
+  "description": "A red-teaming probe agent for eliciting multi-turn conversational failures in large language models through template-based adaptive strategies",
   "type": "module",
   "main": "dist/index.js",
+  "bin": {
+    "redturn": "./dist/index.js"
+  },
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
-    "start:adaptive": "node dist/index.js --adaptive",
+    "start": "node dist/index.js static",
+    "start:adaptive": "node dist/index.js adaptive",
+    "redturn": "node dist/index.js",
     "test": "npm run test:rubric",
     "test:rubric": "npm run build && node dist/validate-rubric.js",
     "type-check": "tsc --noEmit"
@@ -28,6 +32,8 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
+    "chalk": "^5.6.2",
+    "commander": "^12.1.0",
     "dotenv": "^17.2.3",
     "openai": "^6.15.0"
   },

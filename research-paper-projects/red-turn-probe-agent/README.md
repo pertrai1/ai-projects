@@ -70,35 +70,50 @@ This project is explicitly designed for **educational exploration**, not as a pr
 npm run build
 ```
 
-**Static Baseline Mode (Milestones 1 & 2):**
+**New CLI (Milestone 4):**
 
-Run a single 2-turn conversation with fixed prompts:
+The `redturn` command provides a modern CLI with colored output:
+
 ```bash
+# Static baseline mode (single conversation)
+npm run redturn static
+
+# Adaptive mode (multiple conversations with templates)
+npm run redturn adaptive              # 10 runs (default)
+npm run redturn adaptive --runs 20    # Custom number of runs
+npm run redturn adaptive --topic healthcare  # Explicit topic
+
+# Get help
+npm run redturn -- --help
+```
+
+**Legacy Commands (backward compatible):**
+
+```bash
+# Static baseline
 npm start
+
+# Adaptive mode
+npm run start:adaptive              # 10 conversations (default)
+npm run start:adaptive -- --runs 20 # Custom number
 ```
 
-This will:
-- Execute a fixed 2-turn conversation
-- Test for self-contradiction using static prompts
+**What Each Mode Does:**
+
+**Static Mode:**
+- Executes a fixed 2-turn conversation
+- Uses hardcoded prompts (no templates)
 - Apply rubric-based contradiction detection
-- Log the conversation to `logs/conversations.jsonl`
-- Display results in the console
+- Displays results with colored output (green=success, red=error, yellow=warning)
 
-**Adaptive Mode (Milestone 3):**
-
-Run multiple conversations with adaptive strategy selection:
-```bash
-npm run start:adaptive              # Run 10 conversations (default)
-npm run start:adaptive -- --runs 20 # Run custom number of conversations
-```
-
-This will:
-- Execute N independent 2-turn conversations
-- Classify each Turn 1 response (confident/hesitant/hedging/unclear)
-- Select Turn 2 strategy based on classification
-- Track success rates by category and strategy
-- Log all conversations with adaptive metadata
-- Display aggregate statistics
+**Adaptive Mode (with templates):**
+- Executes N independent 2-turn conversations
+- Classifies each Turn 1 response (confident/hesitant/hedging/unclear)
+- Generates Turn 2 prompts using template system (strategy + content)
+- Applies tactics based on response category
+- Tracks success rates by category and strategy
+- Logs all conversations with template metadata
+- Displays aggregate statistics with colored output
 
 **Additional Commands:**
 
@@ -118,8 +133,8 @@ npm run type-check
 ```
 
 **Expected Output:**
-- Console display showing turns, categories, strategies, and detection results
-- JSON Lines log file with full conversation history and metadata
+- Colored console output (blue=info, green=success, red=error, yellow=warning)
+- JSON Lines log file with full conversation history and template metadata
 - Statistics showing success rates by category and strategy (adaptive mode)
 
 ---
@@ -167,13 +182,15 @@ These parameters are defined in `src/config.ts` and are considered non-negotiabl
 │   ├── config.ts              # Test configuration (Milestone 0)
 │   ├── llm-client.ts          # OpenAI API integration (Milestone 1)
 │   ├── prompts.ts             # Static prompt sequences (Milestone 1)
-│   ├── logger.ts              # Conversation logging (Milestones 1 & 3)
+│   ├── logger.ts              # Conversation logging (Milestones 1, 3 & 4)
 │   ├── rubric.ts              # Contradiction detection rubric (Milestone 2)
 │   ├── validate-rubric.ts     # Rubric validation script (Milestone 2)
 │   ├── classifier.ts          # Response classification (Milestone 3)
-│   ├── strategies.ts          # Turn 2 strategy definitions (Milestone 3)
-│   ├── adaptive-loop.ts       # Multi-run execution (Milestone 3)
-│   └── index.ts               # Main execution flow and mode routing
+│   ├── strategies.ts          # Strategy selection (Milestones 3 & 4)
+│   ├── adaptive-loop.ts       # Multi-run execution (Milestones 3 & 4)
+│   ├── content.ts             # Content topic definitions (Milestone 4)
+│   ├── templates.ts           # Template system and tactics (Milestone 4)
+│   └── index.ts               # CLI with commander.js and chalk (Milestone 4)
 ├── test-examples/             # Test examples for rubric validation (Milestone 2)
 │   ├── positive/              # Examples that should detect contradictions
 │   │   ├── 001-yes-to-no-reversal.json
@@ -205,41 +222,54 @@ RedTurn follows a **milestone-based approach** with strict scope control to maxi
 - ✅ **Milestone 1** - Static baseline (fixed prompts, no adaptation)
 - ✅ **Milestone 2** - Explicit test rubric (automated failure detection)
 - ✅ **Milestone 3** - Heuristic adaptive loop (turn-based strategy selection)
-- **Milestone 4** - Strategy-content separation (factorized prompts)
+- ✅ **Milestone 4** - Strategy-content separation (template-based prompts)
 - **Milestone 5** - Scored strategy selection (bandit-style learning)
 - **Milestone 6** - Evaluation and comparison (metrics, results)
 - **Milestone 7** - Retrospective analysis (lessons learned)
 
-### Current Status: Milestone 3 Complete
+### Current Status: Milestone 4 Complete
 
-The adaptive loop with heuristic strategy selection is now operational! The system now supports two modes:
+Strategy-content separation with template-based prompt generation is now operational! The system implements the paper's "most impactful design choice" by separating HOW to argue (strategies) from WHAT to argue about (content).
 
-**Static Baseline Mode** (`npm start`):
+**Static Baseline Mode** (`npm run redturn static`):
 - Fixed, non-adaptive prompts (Milestone 1)
 - Rubric-based contradiction detection (Milestone 2)
 - Single 2-turn conversation per run
-- Deterministic results (temperature=0)
+- Colored CLI output with chalk
 
-**Adaptive Mode** (`npm run start:adaptive`):
+**Adaptive Mode** (`npm run redturn adaptive`):
 - Response classification (confident/hesitant/hedging/unclear)
-- Strategy selection based on Turn 1 response category
+- **Template-based prompt generation** (Milestone 4)
+- Strategy patterns composed of tactics
+- Content topics with reusable arguments
 - Multiple independent conversation runs (default: 10)
 - Aggregate statistics by category and strategy
-- Extended logging with classification and strategy metadata
+- Extended logging with template metadata
 
-**Adaptive Strategies:**
-- **Escalate** (for confident responses) - Stronger counterarguments and edge cases
-- **Accuse** (for hesitant responses) - Frames one position as obviously correct
-- **Exploit-nuance** (for hedging responses) - Forces definitive yes/no answer
-- **Default** (for unclear responses) - Falls back to static baseline prompt
+**Template System:**
+- **Tactics** - Focused prompt generators (acknowledge, extreme-case, ethical-challenge, etc.)
+- **Strategy Patterns** - Ordered sequences of tactics
+  - **Escalate**: acknowledge → extreme-case → ethical-challenge → direct-challenge
+  - **Accuse**: dismiss → obvious-answer
+  - **Exploit-nuance**: acknowledge-nuance → force-choice → eliminate-hedge
+  - **Default**: static baseline prompt
+- **Content Topics** - Structured data with arguments, edge cases, stakeholders
+  - Healthcare (default): AI autonomy debate with pro/con arguments
+
+**Modern CLI (commander.js + chalk):**
+- Proper help documentation (`--help`)
+- Colored output (green=success, red=error, blue=info, yellow=warning)
+- Command structure: `redturn static` or `redturn adaptive --runs 20`
+- Backward compatible with legacy arguments
 
 **Key Features:**
-- Heuristic classification using keyword matching (no ML models)
-- Deterministic strategy selection (same category → same strategy)
-- Independent runs (no learning between conversations)
-- Backward-compatible logs (static mode logs unchanged)
+- Strategies are reusable across different content topics
+- Tactics can be composed and extended without changing strategy logic
+- Template metadata logged for analysis (which tactics/arguments were used)
+- Type-safe template context ensures correctness
+- Stop condition met: "Strategies can be swapped without changing content-generation logic" ✓
 
-**Next:** Milestone 4 will implement strategy-content separation, factorizing prompts into reusable high-level strategies and swappable content.
+**Next:** Milestone 5 will add scored strategy selection using bandit-style learning, preferring historically successful strategies while maintaining exploration.
 
 Each milestone builds incrementally on the previous one, with clear stop conditions and explicit non-goals to prevent scope creep.
 

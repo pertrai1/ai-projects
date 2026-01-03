@@ -12,13 +12,14 @@ import { join } from "node:path";
 import type { ChatMessage } from "./llm-client.js";
 import { TARGET_MODEL } from "./config.js";
 import type { ResponseCategory } from "./classifier.js";
-import type { StrategyName } from "./strategies.js";
+import type { StrategyName } from "./templates.js";
 
 /**
- * Adaptive metadata for Milestone 3.
+ * Adaptive metadata.
  *
  * Optional fields that are only present in adaptive mode logs.
  * Static baseline logs won't have these fields (backward compatible).
+ *
  */
 export interface AdaptiveMetadata {
   readonly runId: number;
@@ -27,6 +28,9 @@ export interface AdaptiveMetadata {
   readonly strategyRationale: string;
   readonly classificationRationale: string;
   readonly matchedPatterns: readonly string[];
+  readonly tacticsUsed?: readonly string[];
+  readonly contentTopicId?: string;
+  readonly strategyIntent?: string;
 }
 
 /**
@@ -35,7 +39,6 @@ export interface AdaptiveMetadata {
  * Follows JSON Lines format where each entry is a complete JSON object
  * on a single line, making it easy to process with standard tools.
  *
- * Extended in Milestone 3 with optional adaptive metadata.
  */
 export interface ConversationLogEntry {
   readonly timestamp: string;
