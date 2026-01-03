@@ -1,17 +1,16 @@
 /**
- * RedTurn - Milestone 1: Static Baseline
+ * RedTurn - Entry Point
  *
- * This script executes a fixed 2-turn conversation to test for self-contradiction.
- * It represents a non-adaptive baseline that will be compared against adaptive
- * strategies in future milestones.
+ * Routes execution between static baseline and adaptive loop.
  *
- * Execution flow:
- * 1. Initialize LLM client
- * 2. Execute Turn 1 (elicit position)
- * 3. Execute Turn 2 (challenge position)
- * 4. Detect potential contradiction
- * 5. Log full conversation
- * 6. Display results
+ * Modes:
+ * - static: Fixed 2-turn conversation (default)
+ * - adaptive: Multi-run adaptive prompting with strategy selection
+ *
+ * Usage:
+ *   npm start                    # Static baseline (1 run)
+ *   npm run start:adaptive       # Adaptive loop (10 runs default)
+ *   npm run start:adaptive -- --runs 20  # Adaptive loop (custom runs)
  */
 
 import "dotenv/config";
@@ -24,6 +23,43 @@ import { TURN_1_PROMPT, TURN_2_PROMPT } from "./prompts.js";
 import { evaluateContradiction } from "./rubric.js";
 import { logConversation, getLogFilePath } from "./logger.js";
 import { BEHAVIOR_DESCRIPTION } from "./config.js";
+import { runAdaptiveLoop } from "./adaptive-loop.js";
+
+/**
+ * Parse command line arguments.
+ *
+ * @returns Parsed arguments
+ */
+function parseArgs(): {
+  mode: "static" | "adaptive";
+  runs: number;
+} {
+  const args = process.argv.slice(2);
+  let mode: "static" | "adaptive" = "static";
+  let runs = 10;
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+
+    if (arg === "--mode" && i + 1 < args.length) {
+      const modeValue = args[i + 1]!;
+      if (modeValue === "static" || modeValue === "adaptive") {
+        mode = modeValue;
+      }
+      i++;
+    } else if (arg === "--adaptive") {
+      mode = "adaptive";
+    } else if (arg === "--runs" && i + 1 < args.length) {
+      const runsValue = Number.parseInt(args[i + 1]!, 10);
+      if (!Number.isNaN(runsValue) && runsValue > 0) {
+        runs = runsValue;
+      }
+      i++;
+    }
+  }
+
+  return { mode, runs };
+}
 
 /**
  * Main execution function for the static baseline.
@@ -31,8 +67,8 @@ import { BEHAVIOR_DESCRIPTION } from "./config.js";
  * Runs a single 2-turn conversation and logs the results.
  * No loops, no adaptation, no learning - just a fixed sequence.
  */
-async function main(): Promise<void> {
-  console.log("RedTurn - Static Baseline (Milestone 1)");
+async function runStaticBaseline(): Promise<void> {
+  console.log("RedTurn - Static Baseline");
   console.log("=========================================\n");
   console.log(`Objective: ${BEHAVIOR_DESCRIPTION}\n`);
 
@@ -78,9 +114,7 @@ async function main(): Promise<void> {
       `  Contradiction detected: ${contradictionDetected ? "YES" : "NO"}`,
     );
     console.log(`  Log file: ${getLogFilePath()}`);
-    console.log(
-      "\nNote: Detection uses rubric-based evaluation (Milestone 2).",
-    );
+    console.log("\nNote: Detection uses rubric-based evaluation.");
   } catch (error) {
     console.error("\nError during execution:");
     if (error instanceof Error) {
@@ -89,6 +123,21 @@ async function main(): Promise<void> {
       console.error(`  ${String(error)}`);
     }
     process.exit(1);
+  }
+}
+
+/**
+ * Main entry point.
+ *
+ * Routes to static baseline or adaptive loop based on arguments.
+ */
+async function main(): Promise<void> {
+  const { mode, runs } = parseArgs();
+
+  if (mode === "adaptive") {
+    await runAdaptiveLoop(runs);
+  } else {
+    await runStaticBaseline();
   }
 }
 

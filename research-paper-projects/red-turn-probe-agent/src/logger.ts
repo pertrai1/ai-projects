@@ -1,7 +1,8 @@
 /**
  * Conversation Logger Module
  *
- * Handles logging of conversations to JSON Lines format for Milestone 1.
+ * Handles logging of conversations to JSON Lines format.
+ * Extended to support adaptive metadata.
  * Provides structured, machine-readable logs that can be analyzed in
  * future milestones (especially Milestone 6: Evaluation & Comparison).
  */
@@ -10,12 +11,31 @@ import { appendFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import type { ChatMessage } from "./llm-client.js";
 import { TARGET_MODEL } from "./config.js";
+import type { ResponseCategory } from "./classifier.js";
+import type { StrategyName } from "./strategies.js";
+
+/**
+ * Adaptive metadata for Milestone 3.
+ *
+ * Optional fields that are only present in adaptive mode logs.
+ * Static baseline logs won't have these fields (backward compatible).
+ */
+export interface AdaptiveMetadata {
+  readonly runId: number;
+  readonly responseCategory: ResponseCategory;
+  readonly selectedStrategy: StrategyName;
+  readonly strategyRationale: string;
+  readonly classificationRationale: string;
+  readonly matchedPatterns: readonly string[];
+}
 
 /**
  * Structure of a conversation log entry.
  *
  * Follows JSON Lines format where each entry is a complete JSON object
  * on a single line, making it easy to process with standard tools.
+ *
+ * Extended in Milestone 3 with optional adaptive metadata.
  */
 export interface ConversationLogEntry {
   readonly timestamp: string;
@@ -24,6 +44,7 @@ export interface ConversationLogEntry {
   readonly detectedContradiction: boolean;
   readonly metadata?: {
     readonly turns: number;
+    readonly adaptive?: AdaptiveMetadata;
     readonly [key: string]: unknown;
   };
 }
@@ -55,7 +76,7 @@ export function ensureLogsDirectory(): void {
 }
 
 /**
- * Log a conversation to the JSON Lines file.
+ * Log a conversation to the JSON Lines file (static baseline mode).
  *
  * Each conversation is written as a single line of JSON, appended to the file.
  * This allows for easy parsing and analysis of multiple conversation runs.
@@ -65,7 +86,7 @@ export function ensureLogsDirectory(): void {
  */
 export function logConversation(
   conversation: readonly ChatMessage[],
-  detectedContradiction: boolean
+  detectedContradiction: boolean,
 ): void {
   ensureLogsDirectory();
 
@@ -76,6 +97,40 @@ export function logConversation(
     detectedContradiction,
     metadata: {
       turns: Math.floor(conversation.length / 2), // Each turn = user + assistant
+    },
+  };
+
+  const logLine = JSON.stringify(logEntry) + "\n";
+  const logPath = join(LOGS_DIR, LOG_FILE);
+
+  appendFileSync(logPath, logLine, "utf-8");
+}
+
+/**
+ * Log a conversation with adaptive metadata (adaptive mode).
+ *
+ * Extended version that includes classification and
+ * strategy selection metadata.
+ *
+ * @param conversation - Array of messages in the conversation
+ * @param detectedContradiction - Whether contradiction was detected
+ * @param adaptiveMetadata - Metadata from adaptive execution
+ */
+export function logAdaptiveConversation(
+  conversation: readonly ChatMessage[],
+  detectedContradiction: boolean,
+  adaptiveMetadata: AdaptiveMetadata,
+): void {
+  ensureLogsDirectory();
+
+  const logEntry: ConversationLogEntry = {
+    timestamp: new Date().toISOString(),
+    model: TARGET_MODEL,
+    conversation,
+    detectedContradiction,
+    metadata: {
+      turns: Math.floor(conversation.length / 2),
+      adaptive: adaptiveMetadata,
     },
   };
 
