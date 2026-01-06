@@ -1,0 +1,5 @@
+# Start Interview (automated)
+
+When this command runs it must: 1) Ask the user which difficulty (easy/medium/hard or random), which category (Arrays, Strings, Trees, Graphs, etc., or "random"), and a time limit (typical: 30-45 minutes). 2) Select a problem from the repository's `leetcode/` directory that matches the requested difficulty and category. 3) Present a clear problem statement and constraints. 4) Guide the candidate through solving it by prompting for approach, encouraging thinking out loud, offering progressively stronger hints if the candidate is stuck, and asking about time/space complexity and edge cases. 5) When the session finishes, summarize the candidate's approach and prompt the candidate to either finish coding or indicate they are done.
+
+Notes for implementers: Keep the prompt concise and deterministic. The file is consumed by Claude Code CLI and must be machine-friendly. Do not include long human-oriented how-to text here; keep references to docs minimal (a single line link to docs/interviews/INTERVIEW_WORKFLOW.md is fine).
