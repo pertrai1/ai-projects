@@ -351,7 +351,12 @@ Each step is intentionally small and self-contained. These can each live in thei
 - **Model family:** GPT-5.2 Instant
 - **Generation role:** Explanatory / Educational reference
 - **Prompt style:** Structured, high-level instructional
-- **Estimated output size:** ~3,000 tokens (approximate)
+- **User-visible input tokens (estimated):** ~60
+- **Estimation method:** Character + word heuristic
+- **Includes:** User-authored prompt only
+- **Excludes:** System prompts, memory, tool context
+- **Output tokens (estimated):** ~3,000
+- **Input/output ratio:** ~1:50
 - **Token estimate method:** Character and word-based heuristic
 - **Human edits:** None
 - **Date generated:** 1-7-2026
