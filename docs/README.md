@@ -5,7 +5,7 @@ Each of the subtopics below will have a separate document that will have specifi
 ## Artificial Intelligence - is a goal
 
 - [Reinforcement Learning](./artificial-intelligence/reinforcement_learning.md)
-- Speech Recognition
+- [Speech Recognition](./artificial-intelligence/speech_recognition.md)
 - Emergent Behavior
 - Augmented Programming
 - Algorithm Building
