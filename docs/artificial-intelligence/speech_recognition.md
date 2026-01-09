@@ -14,6 +14,8 @@ The core idea is simple:
 
 ASR is particularly well-suited for problems involving **human-computer interaction**, **accessibility**, and **content transcription**.
 
+![Mindmap](./graphics/speech_recognition_mindmap.jpg)
+
 ---
 
 ## 2. Core Concepts
