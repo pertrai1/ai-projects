@@ -1,0 +1,298 @@
+name: Gemini Documentation Review
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.issue.pull_request &&
+      github.event.comment.user.login == 'pertrai1' &&
+      contains(github.event.comment.body, '@research-reviewer review') &&
+      github.repository == 'pertrai1/ai-projects'
+    steps:
+      - name: Verify User Permissions
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          USER: ${{ github.event.comment.user.login }}
+        run: |
+          # Double-check that the user has admin or write permissions
+          PERMISSION=$(gh api /repos/$REPO/collaborators/$USER/permission --jq '.permission')
+
+          if [[ "$PERMISSION" != "admin" && "$PERMISSION" != "write" ]]; then
+            echo "❌ User $USER does not have sufficient permissions (has: $PERMISSION)"
+            exit 1
+          fi
+
+          echo "✓ User $USER has $PERMISSION permissions"
+
+          # Additional safeguard: verify it's really pertrai1
+          if [[ "$USER" != "pertrai1" ]]; then
+            echo "❌ Unauthorized user: $USER"
+            exit 1
+          fi
+
+          echo "✓ Authorized user confirmed"
+
+      - name: Check Rate Limiting
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          # Check how many times this workflow has run on this PR in the last hour
+          WORKFLOW_NAME="Gemini Documentation Review"
+          ONE_HOUR_AGO=$(date -u -d '1 hour ago' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -v-1H +%Y-%m-%dT%H:%M:%SZ)
+
+          # Get recent workflow runs for this PR
+          RUN_COUNT=$(gh api "/repos/${{ github.repository }}/actions/runs" \
+            --jq "[.workflow_runs[] | select(.name == \"$WORKFLOW_NAME\" and .created_at > \"$ONE_HOUR_AGO\")] | length")
+
+          echo "Workflow runs in last hour: $RUN_COUNT"
+
+          # Limit to 5 reviews per hour to prevent excessive API usage
+          if [ "$RUN_COUNT" -ge 5 ]; then
+            echo "❌ Rate limit exceeded: $RUN_COUNT runs in the last hour (max: 5)"
+            echo "Please wait before requesting another review."
+            exit 1
+          fi
+
+          echo "✓ Rate limit check passed ($RUN_COUNT/5 runs)"
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: refs/pull/${{ github.event.issue.number }}/head
+
+      - name: Get PR Details
+        id: pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          # Get the base branch of the PR
+          BASE_REF=$(gh pr view "$PR_NUMBER" --json baseRefName --jq '.baseRefName')
+          echo "base_ref=$BASE_REF" >> $GITHUB_OUTPUT
+
+      - name: Prepare Documentation Diff
+        run: |
+          # Get diff only for markdown files in docs directory
+          git diff origin/${{ steps.pr.outputs.base_ref }}...HEAD -- 'docs/**/*.md' > pr_diff.txt
+
+          # Check if there are any documentation changes
+          if [ ! -s pr_diff.txt ]; then
+            echo "No markdown files changed in docs directory. Skipping review."
+            echo "HAS_DOCS_CHANGES=false" >> $GITHUB_ENV
+            exit 0
+          fi
+
+          echo "HAS_DOCS_CHANGES=true" >> $GITHUB_ENV
+
+          # Increased limit to 300KB (Flash handles large context easily)
+          DIFF_SIZE=$(wc -c < pr_diff.txt)
+          if [ $DIFF_SIZE -gt 300000 ]; then
+            echo "Diff is extremely large. Truncating to 300KB..."
+            head -c 300000 pr_diff.txt > pr_diff_truncated.txt
+            mv pr_diff_truncated.txt pr_diff.txt
+          fi
+          echo "Diff size: $(wc -c < pr_diff.txt) bytes"
+
+      - name: Read Documentation Guidelines
+        if: env.HAS_DOCS_CHANGES == 'true'
+        run: |
+          # Look for the Research Assistant agent guidelines
+          if [ -f ".github/agents/research_assistant.agent.md" ]; then
+            # Extract relevant sections for review (skip metadata, focus on quality standards)
+            cat .github/agents/research_assistant.agent.md | head -c 8000 > guidelines.txt
+            echo "Found research_assistant.agent.md guidelines"
+          else
+            # Default documentation guidelines
+            cat > guidelines.txt << 'GUIDELINES_EOF'
+          Documentation Quality Standards:
+          1. **Structure**: Follow hierarchical organization (Foundational → Methodological → Resources → Practical)
+          2. **Clarity**: Explain complex concepts without oversimplification, accessible to beginners while valuable to experts
+          3. **Completeness**: Comprehensive coverage without unnecessary tangents
+          4. **Accuracy**: Technically precise, cross-referenced from authoritative sources
+          5. **Formatting**: Proper markdown, consistent terminology, functional links
+          6. **Resources**: Current, authoritative sources properly cited
+          7. **Examples**: Code snippets tested and functional, mathematical notation correct
+          8. **Progressive Complexity**: Content flows from basic to advanced concepts
+          GUIDELINES_EOF
+          fi
+
+      - name: Generate Review with Gemini
+        if: env.HAS_DOCS_CHANGES == 'true'
+        id: gemini
+        env:
+          API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          # 1. Construct the JSON payload safely using jq
+          jq -n \
+            --arg prompt "You are an AI/ML Documentation Review Specialist. This repository contains comprehensive technical documentation for AI and machine learning topics aimed at learners from beginner to advanced levels.
+
+          REVIEW STRUCTURE:
+
+          1. **Documentation Quality Assessment**:
+             - Does the content follow a logical, progressive structure from foundational to advanced concepts?
+             - Are technical terms properly defined and explained?
+             - Is the writing clear, concise, and accessible while maintaining technical accuracy?
+
+          2. **Technical Accuracy**:
+             - Are concepts explained correctly and completely?
+             - Are there any technical errors, outdated information, or misleading statements?
+             - Do code examples follow best practices and modern conventions?
+             - Is mathematical notation (if present) correct and properly formatted?
+
+          3. **Structure & Organization**:
+             - Does the document follow the established template structure?
+             - Are headings hierarchical and appropriately nested?
+             - Is there a clear flow of information?
+             - Are sections properly separated and organized?
+
+          4. **Resources & Citations**:
+             - Are referenced resources current and authoritative?
+             - Are links functional and pointing to stable sources?
+             - Are citations properly formatted and attributed?
+             - Is there a good balance of papers, books, courses, and tools?
+
+          5. **Completeness**:
+             - Are there any gaps in coverage for the topic?
+             - Are important subtopics or concepts missing?
+             - Would a beginner understand the fundamentals? Would an expert find value?
+
+          6. **Formatting & Consistency**:
+             - Is markdown formatting correct and consistent?
+             - Are code blocks properly formatted with language tags?
+             - Are lists, bold, and emphasis used appropriately?
+             - Is terminology consistent throughout?
+
+          7. **Learning Value**:
+             - Are practical examples and projects included?
+             - Is there a clear learning path for readers?
+             - Are common pitfalls and best practices addressed?
+             - Would this documentation help someone actually learn the topic?
+
+          8. **Suggested Improvements**:
+             - Specific additions or corrections needed
+             - Missing resources or examples
+             - Clarity improvements
+             - Structural reorganization recommendations
+
+          Be constructive and educational. Focus on helping improve the documentation quality while acknowledging what's done well." \
+            --rawfile guidelines guidelines.txt \
+            --rawfile diff pr_diff.txt \
+            '{
+              contents: [{
+                parts: [
+                  {text: $prompt},
+                  {text: ("\n\nDOCUMENTATION GUIDELINES:\n" + $guidelines)},
+                  {text: "\n\nProvide your review in Markdown format with the sections outlined above. Be specific with line numbers or section references when suggesting changes.\n\nDOCUMENTATION CHANGES:\n"},
+                  {text: $diff}
+                ]
+              }],
+              generationConfig: {
+                temperature: 0.7,
+                maxOutputTokens: 8192
+              }
+            }' > payload.json
+
+          # 2. Call Gemini API with retry logic and model fallback
+          MODELS=("gemini-2.5-flash" "gemini-2.0-flash")
+          MAX_RETRIES=3
+          SUCCESS=false
+          USED_MODEL=""
+
+          for MODEL in "${MODELS[@]}"; do
+            if [ "$SUCCESS" = true ]; then
+              break
+            fi
+
+            echo "Trying model: $MODEL"
+            RETRY_COUNT=0
+
+            while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+              echo "  Attempt $((RETRY_COUNT + 1)) of $MAX_RETRIES..."
+
+              # Make API request
+              HTTP_CODE=$(curl -s -w "%{http_code}" -o response.json \
+                -H "Content-Type: application/json" \
+                -d @payload.json \
+                "https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=$API_KEY")
+
+              # Check if request was successful
+              if [ "$HTTP_CODE" = "200" ]; then
+                # Verify we got valid content
+                REVIEW_TEXT=$(cat response.json | jq -r '.candidates[0].content.parts[0].text // empty')
+                if [ -n "$REVIEW_TEXT" ]; then
+                  echo "✓ Successfully received review from $MODEL"
+                  SUCCESS=true
+                  USED_MODEL="$MODEL"
+                  break
+                fi
+              fi
+
+              # Check for specific error codes
+              ERROR_CODE=$(cat response.json | jq -r '.error.code // empty')
+              ERROR_STATUS=$(cat response.json | jq -r '.error.status // empty')
+              ERROR_MESSAGE=$(cat response.json | jq -r '.error.message // "Unknown error"')
+
+              echo "  HTTP Code: $HTTP_CODE, Error: $ERROR_MESSAGE"
+
+              # If it's a 503/UNAVAILABLE or 429/RESOURCE_EXHAUSTED, retry with backoff
+              if [ "$HTTP_CODE" = "503" ] || [ "$HTTP_CODE" = "429" ] || \
+                 [ "$ERROR_STATUS" = "UNAVAILABLE" ] || [ "$ERROR_STATUS" = "RESOURCE_EXHAUSTED" ]; then
+                RETRY_COUNT=$((RETRY_COUNT + 1))
+                if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+                  SLEEP_TIME=$((2 ** RETRY_COUNT))  # Exponential backoff: 2, 4, 8 seconds
+                  echo "  ⏳ API overloaded. Waiting ${SLEEP_TIME}s before retry..."
+                  sleep $SLEEP_TIME
+                fi
+              else
+                # For other errors (400, 404, etc.), don't retry - try next model
+                echo "  ❌ Non-retryable error, trying next model..."
+                break
+              fi
+            done
+          done
+
+          # 3. Handle final result
+          if [ "$SUCCESS" = true ]; then
+            echo "---" > review_comment.md
+            echo "**📚 Gemini Documentation Review** (Model: \`$USED_MODEL\`)" >> review_comment.md
+            echo "" >> review_comment.md
+            echo "$REVIEW_TEXT" >> review_comment.md
+          else
+            echo "⚠️ **Failed to get documentation review from Gemini API**" > review_comment.md
+            echo "" >> review_comment.md
+            echo "All models failed after multiple retry attempts. This usually indicates:" >> review_comment.md
+            echo "- The Gemini API is experiencing high load across all models" >> review_comment.md
+            echo "- There may be an issue with your API key or quota" >> review_comment.md
+            echo "" >> review_comment.md
+            echo "**Last Error:**" >> review_comment.md
+            echo '```' >> review_comment.md
+            echo "$ERROR_MESSAGE" >> review_comment.md
+            echo '```' >> review_comment.md
+            echo "" >> review_comment.md
+            echo "The review will be attempted again on the next PR update." >> review_comment.md
+            echo "" >> review_comment.md
+            echo "<details><summary>Debug Response</summary>" >> review_comment.md
+            echo "" >> review_comment.md
+            echo '```json' >> review_comment.md
+            cat response.json | jq '.' >> review_comment.md
+            echo '```' >> review_comment.md
+            echo "" >> review_comment.md
+            echo "</details>" >> review_comment.md
+          fi
+
+      - name: Post Comment to PR
+        if: env.HAS_DOCS_CHANGES == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          gh pr comment "$PR_NUMBER" --body-file review_comment.md
