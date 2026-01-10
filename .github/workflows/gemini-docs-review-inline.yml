@@ -173,7 +173,7 @@ jobs:
           - Formatting issues (markdown errors, broken links, inconsistent style)
           - Missing information (gaps in coverage, missing examples)
           - Code examples (syntax errors, best practices, functionality)
-          - Resources and citations (broken links, outdated sources)
+          - Resources and citations (outdated sources) - Links are not required
 
           EXAMPLE OUTPUT:
           [
