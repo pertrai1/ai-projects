@@ -281,31 +281,44 @@ jobs:
             exit 0
           fi
 
-          # Create a pending review
-          REVIEW_ID=$(gh api "/repos/${{ github.repository }}/pulls/$PR_NUMBER/reviews" \
-            -f body="📚 **Gemini Documentation Review**
+          # Transform comments to proper format for GitHub API
+          # GitHub requires 'line' for single-line comments on the new version
+          REVIEW_PAYLOAD=$(jq -n \
+            --arg body "**Gemini Documentation Review**
 
           Found $COMMENT_COUNT suggestions for improvement. Please review the inline comments below." \
-            -f event="COMMENT" \
-            -f commit_id="$HEAD_SHA" \
-            --jq '.id')
+            --arg event "COMMENT" \
+            --arg commit_id "$HEAD_SHA" \
+            --argjson comments "$(jq 'map({path: .path, line: .line, body: .body})' review_comments.json)" \
+            '{
+              body: $body,
+              event: $event,
+              commit_id: $commit_id,
+              comments: $comments
+            }')
 
-          echo "Created review #$REVIEW_ID"
+          echo "Creating review with $COMMENT_COUNT inline comments..."
 
-          # Add inline comments to the review
-          jq -c '.[]' review_comments.json | while read -r comment; do
-            FILE_PATH=$(echo "$comment" | jq -r '.path')
-            LINE=$(echo "$comment" | jq -r '.line')
-            BODY=$(echo "$comment" | jq -r '.body')
+          # Create the review with all comments in a single API call
+          RESPONSE=$(gh api "/repos/${{ github.repository }}/pulls/$PR_NUMBER/reviews" \
+            --method POST \
+            --input - <<< "$REVIEW_PAYLOAD" 2>&1)
 
-            echo "Adding comment to $FILE_PATH:$LINE"
+          if [ $? -eq 0 ]; then
+            echo "✅ Review created successfully with inline comments"
+            echo "$RESPONSE" | jq -r '.html_url // "Review created"'
+          else
+            echo "❌ Failed to create review with inline comments"
+            echo "Error: $RESPONSE"
 
-            # Add the comment to the review
-            gh api "/repos/${{ github.repository }}/pulls/$PR_NUMBER/reviews/$REVIEW_ID/comments" \
-              -f path="$FILE_PATH" \
-              -F line="$LINE" \
-              -f body="$BODY" \
-              -f side="RIGHT" || echo "⚠️ Failed to add comment to $FILE_PATH:$LINE (line may not exist in diff)"
-          done
+            # Fallback: Post as regular comment with all suggestions
+            echo "## 📚 Gemini Documentation Review" > fallback.md
+            echo "" >> fallback.md
+            echo "Found $COMMENT_COUNT suggestions (inline comments failed, showing as list):" >> fallback.md
+            echo "" >> fallback.md
 
-          echo "✅ Review complete with inline comments"
+            jq -r '.[] | "### `\(.path)` (Line \(.line))\n\(.body)\n"' review_comments.json >> fallback.md
+
+            gh pr comment "$PR_NUMBER" --body-file fallback.md
+            echo "Posted fallback comment instead"
+          fi
