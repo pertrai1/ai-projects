@@ -1,0 +1,311 @@
+name: Gemini Documentation Review (Inline)
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.issue.pull_request &&
+      github.event.comment.user.login == 'pertrai1' &&
+      contains(github.event.comment.body, '@research-reviewer review') &&
+      github.repository == 'pertrai1/ai-projects'
+    steps:
+      - name: Verify User Permissions
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          USER: ${{ github.event.comment.user.login }}
+        run: |
+          PERMISSION=$(gh api /repos/$REPO/collaborators/$USER/permission --jq '.permission')
+
+          if [[ "$PERMISSION" != "admin" && "$PERMISSION" != "write" ]]; then
+            echo "❌ User $USER does not have sufficient permissions (has: $PERMISSION)"
+            exit 1
+          fi
+
+          echo "✓ User $USER has $PERMISSION permissions"
+
+          if [[ "$USER" != "pertrai1" ]]; then
+            echo "❌ Unauthorized user: $USER"
+            exit 1
+          fi
+
+          echo "✓ Authorized user confirmed"
+
+      - name: Check Rate Limiting
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          WORKFLOW_NAME="Gemini Documentation Review (Inline)"
+          ONE_HOUR_AGO=$(date -u -d '1 hour ago' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -v-1H +%Y-%m-%dT%H:%M:%SZ)
+
+          RUN_COUNT=$(gh api "/repos/${{ github.repository }}/actions/runs" \
+            --jq "[.workflow_runs[] | select(.name == \"$WORKFLOW_NAME\" and .created_at > \"$ONE_HOUR_AGO\")] | length")
+
+          echo "Workflow runs in last hour: $RUN_COUNT"
+
+          if [ "$RUN_COUNT" -ge 5 ]; then
+            echo "❌ Rate limit exceeded: $RUN_COUNT runs in the last hour (max: 5)"
+            exit 1
+          fi
+
+          echo "✓ Rate limit check passed ($RUN_COUNT/5 runs)"
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: refs/pull/${{ github.event.issue.number }}/head
+
+      - name: Get PR Details
+        id: pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          BASE_REF=$(gh pr view "$PR_NUMBER" --json baseRefName --jq '.baseRefName')
+          echo "base_ref=$BASE_REF" >> $GITHUB_OUTPUT
+
+          HEAD_SHA=$(gh pr view "$PR_NUMBER" --json headRefOid --jq '.headRefOid')
+          echo "head_sha=$HEAD_SHA" >> $GITHUB_OUTPUT
+
+      - name: Get Changed Files
+        id: files
+        run: |
+          git diff origin/${{ steps.pr.outputs.base_ref }}...HEAD --name-only -- 'docs/**/*.md' > changed_files.txt
+
+          if [ ! -s changed_files.txt ]; then
+            echo "No markdown files changed in docs directory. Skipping review."
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+          echo "Changed files:"
+          cat changed_files.txt
+
+      - name: Get File Contents and Diffs
+        if: steps.files.outputs.has_changes == 'true'
+        run: |
+          # Create a JSON structure with file contents and diffs
+          echo '[]' > files_data.json
+
+          while IFS= read -r file; do
+            if [ -f "$file" ]; then
+              # Get the full content of the new file
+              CONTENT=$(cat "$file" | jq -Rs .)
+
+              # Get the diff for this specific file
+              DIFF=$(git diff origin/${{ steps.pr.outputs.base_ref }}...HEAD -- "$file" | jq -Rs .)
+
+              # Get line numbers from diff for context
+              git diff origin/${{ steps.pr.outputs.base_ref }}...HEAD -- "$file" > "${file}.diff"
+
+              # Add to JSON array
+              jq --arg path "$file" \
+                 --argjson content "$CONTENT" \
+                 --argjson diff "$DIFF" \
+                 '. += [{path: $path, content: $content, diff: $diff}]' \
+                 files_data.json > files_data_tmp.json
+              mv files_data_tmp.json files_data.json
+            fi
+          done < changed_files.txt
+
+          echo "Prepared data for $(jq 'length' files_data.json) files"
+
+      - name: Read Documentation Guidelines
+        if: steps.files.outputs.has_changes == 'true'
+        run: |
+          if [ -f ".github/agents/research_assistant.agent.md" ]; then
+            cat .github/agents/research_assistant.agent.md | head -c 8000 > guidelines.txt
+            echo "Found research_assistant.agent.md guidelines"
+          else
+            cat > guidelines.txt << 'GUIDELINES_EOF'
+          Documentation Quality Standards:
+          1. **Structure**: Follow hierarchical organization (Foundational → Methodological → Resources → Practical)
+          2. **Clarity**: Explain complex concepts without oversimplification
+          3. **Accuracy**: Technically precise, cross-referenced from authoritative sources
+          4. **Formatting**: Proper markdown, consistent terminology, functional links
+          5. **Resources**: Current, authoritative sources properly cited
+          GUIDELINES_EOF
+          fi
+
+      - name: Generate Inline Review with Gemini
+        if: steps.files.outputs.has_changes == 'true'
+        env:
+          API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          # Read files data and guidelines
+          FILES_DATA=$(cat files_data.json)
+          GUIDELINES=$(cat guidelines.txt)
+
+          # Construct the prompt for inline comments
+          jq -n \
+            --arg prompt "You are an AI/ML Documentation Review Specialist performing a detailed code review-style analysis.
+
+          YOUR TASK: Analyze the provided markdown documentation files and provide specific, actionable feedback in the form of inline review comments.
+
+          OUTPUT FORMAT (CRITICAL - Must be valid JSON):
+          Return a JSON array of review comments. Each comment must have:
+          {
+            \"path\": \"docs/path/to/file.md\",
+            \"line\": <line_number>,
+            \"body\": \"Your specific suggestion or feedback\"
+          }
+
+          IMPORTANT RULES:
+          1. Return ONLY valid JSON - no markdown, no explanation text, just the JSON array
+          2. Line numbers must be positive integers from the new version of the file
+          3. Focus on actionable improvements (not generic praise)
+          4. Each comment should be specific to that line/section
+          5. Limit to the most important 10-15 comments per file to avoid overwhelming
+
+          REVIEW CRITERIA:
+          - Technical accuracy (incorrect concepts, outdated info, errors)
+          - Clarity and accessibility (confusing explanations, jargon without definition)
+          - Structure and organization (heading hierarchy, flow issues)
+          - Formatting issues (markdown errors, broken links, inconsistent style)
+          - Missing information (gaps in coverage, missing examples)
+          - Code examples (syntax errors, best practices, functionality)
+          - Resources and citations (broken links, outdated sources)
+
+          EXAMPLE OUTPUT:
+          [
+            {\"path\": \"docs/ai/example.md\", \"line\": 15, \"body\": \"Consider adding a concrete example here to illustrate the concept of gradient descent.\"},
+            {\"path\": \"docs/ai/example.md\", \"line\": 42, \"body\": \"This link appears to be broken. Suggest updating to the current documentation URL.\"},
+            {\"path\": \"docs/ai/example.md\", \"line\": 78, \"body\": \"The time complexity stated here is incorrect. It should be O(n log n) not O(n^2).\"}
+          ]
+
+          If there are NO issues worth commenting on, return an empty array: []" \
+            --rawfile guidelines guidelines.txt \
+            --argjson files "$FILES_DATA" \
+            '{
+              contents: [{
+                parts: [
+                  {text: $prompt},
+                  {text: ("\n\nDOCUMENTATION GUIDELINES:\n" + $guidelines)},
+                  {text: "\n\nFILES TO REVIEW:\n"},
+                  {text: ($files | tostring)}
+                ]
+              }],
+              generationConfig: {
+                temperature: 0.3,
+                maxOutputTokens: 8192,
+                responseMimeType: "application/json"
+              }
+            }' > payload.json
+
+          # Call Gemini API with retry logic
+          MODELS=("gemini-2.5-flash" "gemini-2.0-flash")
+          MAX_RETRIES=3
+          SUCCESS=false
+          USED_MODEL=""
+
+          for MODEL in "${MODELS[@]}"; do
+            if [ "$SUCCESS" = true ]; then
+              break
+            fi
+
+            echo "Trying model: $MODEL"
+            RETRY_COUNT=0
+
+            while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+              echo "  Attempt $((RETRY_COUNT + 1)) of $MAX_RETRIES..."
+
+              HTTP_CODE=$(curl -s -w "%{http_code}" -o response.json \
+                -H "Content-Type: application/json" \
+                -d @payload.json \
+                "https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=$API_KEY")
+
+              if [ "$HTTP_CODE" = "200" ]; then
+                REVIEW_TEXT=$(cat response.json | jq -r '.candidates[0].content.parts[0].text // empty')
+                if [ -n "$REVIEW_TEXT" ]; then
+                  echo "✓ Successfully received review from $MODEL"
+                  echo "$REVIEW_TEXT" > review_comments.json
+                  SUCCESS=true
+                  USED_MODEL="$MODEL"
+                  break
+                fi
+              fi
+
+              ERROR_MESSAGE=$(cat response.json | jq -r '.error.message // "Unknown error"')
+              echo "  HTTP Code: $HTTP_CODE, Error: $ERROR_MESSAGE"
+
+              if [ "$HTTP_CODE" = "503" ] || [ "$HTTP_CODE" = "429" ]; then
+                RETRY_COUNT=$((RETRY_COUNT + 1))
+                if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+                  SLEEP_TIME=$((2 ** RETRY_COUNT))
+                  echo "  ⏳ Waiting ${SLEEP_TIME}s before retry..."
+                  sleep $SLEEP_TIME
+                fi
+              else
+                break
+              fi
+            done
+          done
+
+          if [ "$SUCCESS" != true ]; then
+            echo "[]" > review_comments.json
+            echo "⚠️ Failed to get review from Gemini API"
+          fi
+
+      - name: Create PR Review with Inline Comments
+        if: steps.files.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+          HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
+        run: |
+          # Validate the JSON
+          if ! jq empty review_comments.json 2>/dev/null; then
+            echo "❌ Invalid JSON from Gemini. Creating summary comment instead."
+            cat review_comments.json
+
+            gh pr comment "$PR_NUMBER" --body "⚠️ **Review Failed**: Gemini returned invalid JSON. Please try again."
+            exit 0
+          fi
+
+          COMMENT_COUNT=$(jq 'length' review_comments.json)
+          echo "Processing $COMMENT_COUNT review comments"
+
+          if [ "$COMMENT_COUNT" -eq 0 ]; then
+            gh pr comment "$PR_NUMBER" --body "✅ **Documentation Review Complete**
+
+          No issues found! The documentation looks good. 🎉"
+            exit 0
+          fi
+
+          # Create a pending review
+          REVIEW_ID=$(gh api "/repos/${{ github.repository }}/pulls/$PR_NUMBER/reviews" \
+            -f body="📚 **Gemini Documentation Review**
+
+          Found $COMMENT_COUNT suggestions for improvement. Please review the inline comments below." \
+            -f event="COMMENT" \
+            -f commit_id="$HEAD_SHA" \
+            --jq '.id')
+
+          echo "Created review #$REVIEW_ID"
+
+          # Add inline comments to the review
+          jq -c '.[]' review_comments.json | while read -r comment; do
+            FILE_PATH=$(echo "$comment" | jq -r '.path')
+            LINE=$(echo "$comment" | jq -r '.line')
+            BODY=$(echo "$comment" | jq -r '.body')
+
+            echo "Adding comment to $FILE_PATH:$LINE"
+
+            # Add the comment to the review
+            gh api "/repos/${{ github.repository }}/pulls/$PR_NUMBER/reviews/$REVIEW_ID/comments" \
+              -f path="$FILE_PATH" \
+              -F line="$LINE" \
+              -f body="$BODY" \
+              -f side="RIGHT" || echo "⚠️ Failed to add comment to $FILE_PATH:$LINE (line may not exist in diff)"
+          done
+
+          echo "✅ Review complete with inline comments"
