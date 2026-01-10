@@ -6,7 +6,7 @@ Each of the subtopics below will have a separate document that will have specifi
 
 - [Reinforcement Learning](./artificial-intelligence/reinforcement_learning.md)
 - [Speech Recognition](./artificial-intelligence/speech_recognition.md)
-- Emergent Behavior
+- [Emergent Behavior](./artificial-intelligence/emergent_behavior.md)
 - Augmented Programming
 - Algorithm Building
 - AI Ethics
