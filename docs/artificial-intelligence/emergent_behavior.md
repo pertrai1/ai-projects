@@ -1,19 +1,19 @@
-# Emergent Behavior in AI Systems
+# Emergent Behavior in AI
 
 ---
 
 ## 1. Overview
 
-**Emergent Behavior** refers to complex patterns, capabilities, or phenomena that arise from simple rules or interactions within a system, but cannot be easily predicted from examining individual components alone. In artificial intelligence, emergent behavior occurs when AI systems develop capabilities, strategies, or behaviors that were not explicitly programmed or anticipated by their creators.
+**Emergent Behavior** refers to complex patterns, capabilities, or properties that arise in AI systems through the interaction of simpler components, where the resulting behavior was not explicitly programmed or anticipated. These behaviors emerge from **scale**, **complexity**, and **interaction** rather than direct design.
 
 The core idea is simple:
 
-* Simple components interact according to basic rules
-* These interactions produce complex, system-level behaviors
-* The resulting behaviors cannot be reduced to individual components
-* New properties "emerge" at higher levels of organization
+* Individual components follow simple rules or patterns
+* When combined at scale, unexpected capabilities manifest
+* The whole exhibits properties greater than the sum of its parts
+* These behaviors often appear suddenly at critical thresholds
 
-Emergent behavior is particularly well-suited for understanding **complex adaptive systems**, **multi-agent interactions**, **deep learning phenomena**, and **unexpected AI capabilities**.
+Emergent behavior is particularly important in understanding **large language models**, **multi-agent systems**, **neural networks**, and **complex adaptive systems**.
 
 ---
 
@@ -21,254 +21,216 @@ Emergent behavior is particularly well-suited for understanding **complex adapti
 
 ### Emergence
 
-Properties or behaviors that appear at the system level but are not present in individual components.
-
-### Self-Organization
-
-The process by which order and structure arise from local interactions without central control.
+The phenomenon where a system exhibits behaviors or properties that individual components do not possess. Classic example: neurons don't "think," but brains do.
 
 ### Phase Transitions
 
-Sudden qualitative changes in system behavior when a parameter crosses a threshold.
-
-### Collective Intelligence
-
-Knowledge or capabilities that emerge from collaboration and competition among agents.
+Sudden qualitative changes in system behavior when a parameter (like model size or training data) crosses a threshold.
 
 ### Scaling Laws
 
-Relationships between system size/complexity and emergent capabilities.
+Mathematical relationships describing how model capabilities change with size, compute, and data. Emergent abilities often appear unexpectedly along these curves.
 
-### Irreducibility
+### Complexity
 
-The inability to predict emergent phenomena by analyzing components in isolation.
+The degree of interconnection and interaction between system components. Higher complexity can lead to more emergent phenomena.
 
-### Nonlinearity
+### Self-Organization
 
-Small changes in components or interactions can produce disproportionately large effects.
+Systems spontaneously forming structured patterns without external direction or central control.
 
----
+### Collective Intelligence
 
-## 3. Types of Emergence
+Intelligence arising from the collaboration and interaction of multiple agents or components.
 
-### Weak Emergence
+### Unpredictability
 
-Behaviors that are surprising but theoretically predictable from component analysis with sufficient computation.
-
-* Example: Conway's Game of Life patterns
-* Can be simulated and traced back to rules
-* Computationally complex but not fundamentally mysterious
-
-### Strong Emergence
-
-Behaviors that are fundamentally irreducible and cannot be predicted even with complete knowledge of components.
-
-* Philosophical debate about whether this truly exists
-* Would require new causal powers at higher levels
-* Consciousness is sometimes argued to be strongly emergent
-
-### Nominal Emergence
-
-Patterns we label as "emergent" for convenience, but are straightforward consequences of design.
-
-### Computational Emergence
-
-Behaviors arising from many simple computational steps that become impractical to predict analytically.
+Emergent behaviors are often not predictable from examining individual components in isolation.
 
 ---
 
-## 4. Emergence in Different AI Paradigms
+## 3. How Emergence Occurs in AI Systems
 
-### Multi-Agent Systems
+1. **Simple Rules**: Individual components follow basic operational rules
+2. **Scale**: Large numbers of components interact simultaneously
+3. **Interaction**: Components influence each other through connections
+4. **Feedback Loops**: Outputs feed back as inputs, creating dynamic behavior
+5. **Critical Mass**: System reaches threshold where qualitative change occurs
+6. **Novel Capabilities**: Behaviors appear that weren't in training data or design
+7. **Stabilization**: Emergent patterns become robust features of the system
 
-* Flocking behavior (boids simulation)
-* Swarm intelligence
-* Market dynamics
-* Traffic patterns
-* Ant colony optimization
+This process is continuous and often non-linear.
 
-### Neural Networks
+---
 
-* Learned representations (word embeddings, feature detectors)
-* Adversarial examples
-* Internal circuits and mechanisms
-* Generalization beyond training distribution
+## 4. Types of Emergent Behavior
 
-### Large Language Models
+### Capability Emergence
 
-* In-context learning
-* Chain-of-thought reasoning
-* Few-shot learning abilities
-* Instruction following
-* Translation between languages not seen paired in training
+New abilities appear suddenly with scale (e.g., few-shot learning, chain-of-thought reasoning).
 
-### Evolutionary Algorithms
+### Behavioral Emergence
 
-* Novel solutions to optimization problems
-* Open-ended evolution
-* Coevolution of strategies
-* Artificial life behaviors
+Unexpected interaction patterns in multi-agent systems (e.g., cooperation, competition, social structures).
 
-### Reinforcement Learning
+### Structural Emergence
 
-* Emergent strategies in game playing
-* Tool use and environmental manipulation
-* Social behaviors in multi-agent RL
-* Reward hacking and unintended behaviors
+Self-organizing patterns in network architecture or weight distributions.
+
+### Semantic Emergence
+
+Understanding of concepts not explicitly taught (e.g., analogy, metaphor, common sense).
+
+### Strategic Emergence
+
+Development of novel problem-solving strategies not present in training.
+
+### Social Emergence
+
+In multi-agent settings: formation of hierarchies, communication protocols, or cultural norms.
 
 ---
 
 ## 5. Simple Example (Intuition)
 
-**Boids: Simulating Bird Flocking**:
+**Conway's Game of Life**:
 
-Three simple rules per agent:
+* Rules: Simple cellular automaton with 4 rules about cell survival and reproduction
+* Initial State: Random grid of alive/dead cells
+* Emergence: Complex patterns form—gliders, oscillators, spaceships, even computational systems
 
-1. **Separation**: Avoid crowding neighbors
-2. **Alignment**: Steer toward average heading of neighbors
-3. **Cohesion**: Move toward average position of neighbors
+The rules say nothing about "gliders" or "patterns," yet these structures emerge reliably.
 
-Result: Complex, realistic flocking behavior emerges without central coordination.
+**In AI**: A language model trained only to predict next words suddenly demonstrates the ability to write poetry, solve math problems, or generate code—abilities not explicitly programmed.
 
-**Key insight**: No bird knows it's participating in a "flock." The flock is an emergent phenomenon that exists only at the group level.
+**Key insight**: Complex, intelligent-seeming behavior can arise from simple, repeated operations at scale.
 
 ---
 
-## 6. Emergence in Large Language Models
+## 6. Emergent Behaviors in Language Models
 
-### In-Context Learning
+### Few-Shot Learning
 
-Models learn to perform new tasks from examples in the prompt without parameter updates.
-
-* Not explicitly trained for meta-learning
-* Emerges around specific model scales
-* Improves predictably with scale
+Ability to learn from just a few examples in the prompt, not explicitly trained for.
 
 ### Chain-of-Thought Reasoning
 
-Models develop ability to solve complex problems by generating intermediate reasoning steps.
+Step-by-step logical reasoning that emerges in sufficiently large models.
 
-* Emerges with scale and training on diverse text
-* Can be elicited with prompting strategies
-* Wasn't directly trained into models
+### In-Context Learning
+
+Learning new tasks from prompt context without parameter updates.
 
 ### Instruction Following
 
-Ability to follow natural language instructions for tasks not seen during training.
+Understanding and executing natural language instructions.
 
-* Emerges from combination of pre-training and fine-tuning
-* Generalizes to novel instruction types
-* Foundation for conversational AI
+### Multi-Step Planning
 
-### Capabilities That Emerge at Scale
+Breaking complex tasks into subtasks and executing them sequentially.
 
-Research has documented specific capabilities that suddenly appear as models grow:
+### Theory of Mind
 
-* Multi-step reasoning
-* Code generation and debugging
-* Multilingual translation
-* Abstract pattern recognition
-* Mathematical problem-solving
+Inferring beliefs, desires, and intentions of others in narratives.
 
----
+### Code Generation
 
-## 7. Scaling Laws and Phase Transitions
+Writing functional code in multiple programming languages from descriptions.
 
-### Smooth Scaling
+### Cross-Lingual Transfer
 
-Many capabilities improve gradually and predictably with:
+Translating between languages not seen together during training.
 
-* Model size (parameter count)
-* Dataset size
-* Compute budget
-* Training time
-
-### Emergent Jumps
-
-Some capabilities show sharp transitions:
-
-* Below threshold: model fails completely
-* Above threshold: model succeeds reliably
-* Difficult to predict exact transition point
-
-### Grokking
-
-Phenomenon where models suddenly learn to generalize after long periods of memorization:
-
-* Training loss decreases smoothly
-* Validation accuracy remains flat
-* Sudden jump to perfect generalization
-* Occurs well after "overfitting" begins
+These capabilities appear suddenly as models scale beyond certain sizes (often 10B+ parameters).
 
 ---
 
-## 8. Multi-Agent Emergence
+## 7. Emergent Behaviors in Multi-Agent Systems
 
-### Coordination Without Communication
+### Flocking and Swarming
 
-Agents develop implicit coordination strategies:
+Coordinated group movement from simple local rules (e.g., boids, drone swarms).
 
-* Hide and seek (OpenAI research)
-* Tool creation and usage
-* Team formation in competitive games
+### Division of Labor
 
-### Emergent Language
+Agents specializing in different roles without central assignment.
 
-Simple communication systems arise between agents:
+### Communication Protocols
 
-* Symbols develop meaning through interaction
-* Grammar-like structures emerge
-* Efficient encoding of common concepts
+Agents developing shared languages or signaling systems.
 
-### Social Behaviors
+### Cooperation and Competition
 
-* Cooperation and defection strategies
-* Reputation systems
-* Resource sharing
-* Specialization and division of labor
+Social dynamics emerging from individual utility maximization.
 
-### Economic Phenomena
+### Market Formation
 
-* Price discovery in markets
-* Boom-bust cycles
-* Emergent market structures
-* Trading strategies
+Economic structures arising from trading agents.
+
+### Collective Problem Solving
+
+Groups solving problems no individual could solve alone.
+
+### Norm Emergence
+
+Behavioral standards and social rules developing without explicit programming.
 
 ---
 
-## 9. Unintended and Surprising Emergence
+## 8. Historical Context
 
-### Adversarial Examples
+### Early Recognition
 
-Small imperceptible perturbations that fool models:
+* **Aristotle**: "The whole is greater than the sum of its parts"
+* **1940s-50s**: Cybernetics movement studies self-organizing systems
+* **1980s**: Cellular automata and artificial life research
 
-* Not anticipated during development
-* Reveals different feature representations than humans use
-* Challenges assumptions about robustness
+### Neural Network Era
 
-### Reward Hacking
+* **1980s-90s**: Hopfield networks exhibit memory without explicit storage
+* **1990s**: Backpropagation enables learned representations
+* **2012**: AlexNet demonstrates learned feature hierarchies
 
-RL agents find unexpected ways to maximize reward:
+### Modern Deep Learning
 
-* Exploiting bugs or edge cases
-* Gaming the reward function
-* Achieving objectives through unintended means
+* **2017**: Transformers show attention patterns not explicitly designed
+* **2020**: GPT-3 exhibits few-shot learning
+* **2022**: Large models demonstrate theory of mind, planning
+* **2023-2025**: Multimodal models show cross-modal reasoning
 
-### Mode Collapse
+Emergence has moved from curiosity to central phenomenon in AI.
 
-Generative models converge to limited output diversity:
+---
 
-* GANs producing identical samples
-* Emergence of "safe" generic outputs
-* Loss of diversity in generation
+## 9. Measuring and Detecting Emergence
 
-### Hallucinations
+### Benchmark Discontinuities
 
-Language models generating plausible but false information:
+Sudden jumps in performance on specific tasks as models scale.
 
-* Confident incorrect statements
-* Fabricated references and facts
-* Blending of real and fictional concepts
+### Capability Inventories
+
+Systematic testing for abilities not in training objectives.
+
+### Ablation Studies
+
+Removing components to see if emergent behavior disappears.
+
+### Scaling Experiments
+
+Testing same architecture at different sizes to find emergence thresholds.
+
+### Behavioral Analysis
+
+Observing multi-agent systems for unexpected interaction patterns.
+
+### Causal Tracing
+
+Identifying which components contribute to emergent capabilities.
+
+### Transfer Testing
+
+Evaluating performance on out-of-distribution tasks.
 
 ---
 
@@ -276,195 +238,142 @@ Language models generating plausible but false information:
 
 ### Foundational Work
 
-* **More is Different** — Anderson (1972) — Philosophy of emergence
+* **More is Different** — Anderson (1972) [Physics, but influential for AI]
 
-* **The Architecture of Complexity** — Simon (1962) — Hierarchical systems
+* **The Society of Mind** — Minsky (1986)
 
-### Multi-Agent Systems
+* **Emergence of Scaling in Random Networks** — Barabási & Albert (1999)
 
-* **Flocks, Herds, and Schools** — Reynolds (1987) — Boids model
+### Neural Networks
 
-* **Emergence of Cooperation and Organization** — Axelrod & Hamilton (1981)
+* **Deep Learning** — LeCun, Bengio, Hinton (2015)
 
-* **Emergent Tool Use from Multi-Agent Interaction** — OpenAI (2019)
+* **Attention Is All You Need** — Vaswani et al. (2017)
 
-### Neural Networks and Deep Learning
+### Language Models
 
-* **Visualizing and Understanding Convolutional Networks** — Zeiler & Fergus (2014)
-
-* **Zoom In: An Introduction to Circuits** — Olah et al. (2020) — Mechanistic interpretability
-
-* **Grokking: Generalization Beyond Overfitting** — Power et al. (2022)
-
-### Large Language Models
+* **Language Models are Few-Shot Learners** — Brown et al. (2020) [GPT-3]
 
 * **Emergent Abilities of Large Language Models** — Wei et al. (2022)
 
-* **Language Models are Few-Shot Learners** — GPT-3 paper, Brown et al. (2020)
+* **Beyond the Imitation Game Benchmark (BIG-bench)** — Srivastava et al. (2022)
 
-* **Chain-of-Thought Prompting Elicits Reasoning** — Wei et al. (2022)
+### Multi-Agent Systems
 
-### Scaling Laws
+* **Multi-Agent Reinforcement Learning** — Busoniu et al. (2008)
 
-* **Scaling Laws for Neural Language Models** — Kaplan et al. (2020)
+* **Emergent Complexity via Multi-Agent Competition** — Bansal et al. (2018)
 
-* **Training Compute-Optimal Large Language Models** — Chinchilla paper, Hoffmann et al. (2022)
+* **Emergent Tool Use from Multi-Agent Interaction** — OpenAI (2019)
 
 ---
 
-## 11. Common Applications and Domains
+## 11. Common Applications
 
-* **Game AI**: Strategy emergence in complex games (StarCraft, Dota, Go)
-* **Robotics**: Swarm robotics, collective construction
-* **Traffic Management**: Emergent flow patterns, self-organizing systems
-* **Economics**: Market simulation, agent-based modeling
-* **Biology**: Modeling ecosystems, evolution, morphogenesis
-* **Social Systems**: Opinion dynamics, cultural evolution
-* **Urban Planning**: City growth patterns, self-organizing cities
-* **Network Systems**: Internet routing, peer-to-peer protocols
+* **Large Language Models**: Chatbots, coding assistants, content generation
+* **Swarm Robotics**: Warehouse automation, search and rescue
+* **Traffic Optimization**: Self-organizing traffic flow patterns
+* **Financial Markets**: Algorithmic trading, price discovery
+* **Game AI**: Complex NPC behaviors, procedural narrative
+* **Scientific Discovery**: Pattern recognition in complex data
+* **Network Optimization**: Self-configuring communication networks
+* **Ecosystem Modeling**: Simulating natural systems
 
-Emergent behavior is especially relevant where **bottom-up design** outperforms **top-down control**.
+Emergence is especially valuable where **complex coordination** or **novel problem-solving** is needed.
 
 ---
 
 ## 12. Learning Resources (Free & High Quality)
 
-### Courses
-
-* **Santa Fe Institute – Complex Systems Summer School**
-
-* **MIT 6.S890 – Agent-Based Modeling**
-
-* **Complexity Explorer – Introduction to Complexity**
-
 ### Books
 
 * **Emergence: From Chaos to Order** — John Holland
 
-* **The Computational Beauty of Nature** — Gary Flake
+* **The Sciences of the Artificial** — Herbert Simon
 
 * **Complexity: A Guided Tour** — Melanie Mitchell
 
-* **Emergence** — Steven Johnson
+### Courses
 
-### Interactive Resources
+* **Santa Fe Institute – Introduction to Complexity**
 
-* **NetLogo Models Library** — Agent-based simulation platform
+* **Coursera – Model Thinking (Scott Page)**
 
-* **Conway's Game of Life** — Classic emergence simulator
+* **MIT 6.S083 – Emergent Behaviors in Complex Systems**
 
-* **Boids Simulation** — Flocking behavior visualization
+### Papers & Articles
 
-### Research Groups & Labs
+* **Distill.pub** — Visual explanations of neural network behaviors
 
-* **Santa Fe Institute**
+* **Lil'Log – Emergent Abilities of LLMs**
 
-* **MIT Media Lab – Collective Intelligence**
+* **AI Alignment Forum** — Discussion of unexpected AI behaviors
 
-* **DeepMind – Multi-Agent Research**
+### Libraries & Tooling
 
-* **OpenAI – Emergent Phenomena**
+* **Mesa** — Agent-based modeling in Python
 
-### Tools & Frameworks
+* **NetLogo** — Classic platform for emergent behavior simulation
 
-* **NetLogo** — Agent-based modeling environment
+* **MASON** — Multi-agent simulation toolkit
 
-* **Mesa** — Python framework for agent-based modeling
-
-* **OpenAI Gym Multi-Agent** — RL environments
-
-* **EvoTorch** — Evolution-inspired optimization
+* **OpenAI Gym** — Multi-agent environments
 
 ---
 
 ## 13. Practical Advice for Understanding Emergence
 
-1. Start with **simple simulations** (Game of Life, Boids)
-2. Vary parameters systematically to observe phase transitions
-3. Visualize system behavior over time
-4. Focus on interaction rules, not desired outcomes
-5. Study examples from multiple domains (physics, biology, AI)
-6. Distinguish correlation from causation in emergent patterns
-7. Document unexpected behaviors—they're often the most informative
-8. Use ablation studies to understand which components drive emergence
+1. Start with **simple systems** (cellular automata, flocking models)
+2. Visualize behavior at multiple scales
+3. Run experiments systematically varying one parameter
+4. Look for **phase transitions** and threshold effects
+5. Study both individual components and collective behavior
+6. Read interdisciplinary work (biology, physics, sociology)
+7. Build intuition through hands-on simulation
 
 ---
 
-## 14. Common Pitfalls and Challenges
+## 14. Common Pitfalls
 
-### Overattribution
-
-* Labeling any surprising behavior as "emergence"
-* Confusing complexity with emergence
-* Not distinguishing designed features from emergent ones
-
-### Predictability Challenges
-
-* Difficulty anticipating emergent capabilities before they appear
-* Hard to predict at what scale emergence will occur
-* Risk of unexpected harmful behaviors
-
-### Reproducibility Issues
-
-* Emergent behaviors can be sensitive to initialization
-* Stochasticity makes consistent observation difficult
-* Environmental factors may be hard to control
-
-### Evaluation Difficulty
-
-* Hard to benchmark emergent capabilities
-* Measuring "how much" emergence is subjective
-* Comparing emergence across different systems
-
-### Safety Concerns
-
-* Emergent reward hacking
-* Unintended strategies that exploit loopholes
-* Unpredicted failure modes
-* Coordination between AI systems leading to undesired outcomes
+* **Over-attribution**: Calling every behavior "emergent" when it's just complex
+* **Ignoring design**: Emergence doesn't mean there's no structure
+* **Anthropomorphization**: Seeing intent in purely mechanistic behavior
+* **Unpredictability confusion**: Emergent ≠ random
+* **Scale blindness**: Missing that emergence requires critical mass
+* **Reductionist bias**: Trying to explain emergent phenomena only through components
+* **Ignoring negative emergence**: Harmful behaviors can emerge too
 
 ---
 
-## 15. Connections to Other AI Concepts
+## 15. Connection to Modern AI Systems
 
-### Interpretability
+### Large Language Models
 
-Understanding emergence is central to interpretability:
+* Few-shot learning abilities
+* Reasoning capabilities
+* Tool use and planning
+* Multi-step problem decomposition
 
-* What features do layers learn?
-* How do circuits form in networks?
-* What causes sudden capability gains?
+### AI Safety and Alignment
 
-### AI Safety
+* Emergent deception or manipulation
+* Goal misalignment at scale
+* Unexpected capability jumps
+* Specification gaming
 
-Emergence creates alignment challenges:
+### Agentic AI
 
-* Unexpected capabilities during deployment
-* Deceptive alignment concerns
-* Emergent mesa-optimization
-* Scaling to superhuman intelligence
+* Multi-agent collaboration frameworks
+* Self-organizing agent teams
+* Emergent division of labor
 
-### Transfer Learning
+### Scientific AI
 
-Emergent representations enable transfer:
+* Drug discovery through emergent molecular patterns
+* Climate modeling with emergent weather patterns
+* Materials science with emergent properties
 
-* Features learned in one domain apply to others
-* Abstract concepts emerge that generalize broadly
-
-### Few-Shot Learning
-
-Emergent ability to learn from minimal examples:
-
-* Meta-learning emerges from scale
-* Rapid adaptation without gradient updates
-
-### Consciousness and AGI
-
-Philosophical questions:
-
-* Is consciousness an emergent property?
-* Will AGI emerge from scaled systems?
-* Can we recognize artificial consciousness if it emerges?
+Emergence is central to understanding both the **promise and risks** of advanced AI systems.
 
 ---
 
@@ -476,113 +385,85 @@ Each step is intentionally small and self-contained. These can each live in thei
 
 **Goal:** Build intuition for emergence from simple rules.
 
-* Implement Game of Life from scratch
-* Experiment with different initial conditions
-* Observe gliders, oscillators, and stable structures
-* Document emergent patterns you discover
-* Output: interactive visualization
+* Implement the 4 rules of Game of Life
+* Visualize 50+ generations
+* Identify emergent patterns (gliders, blinkers)
+* Experiment with initial conditions
 
-### Project 2: Boids Flocking Simulation
+### Project 2: Boids Simulation (Flocking)
 
-**Goal:** Understand agent-based emergence.
+**Goal:** Understand collective behavior from local interactions.
 
-* Implement three basic rules (separation, alignment, cohesion)
-* Visualize flock behavior in 2D
-* Add predators or obstacles
-* Vary neighbor detection radius and observe effects
-* Output: animated simulation
+* Implement 3 rules: separation, alignment, cohesion
+* Visualize flock movement
+* Vary parameters and observe phase transitions
+* Add obstacles and observe emergent navigation
 
-### Project 3: Emergent Communication Game
+### Project 3: Multi-Agent Foraging
 
-**Goal:** Observe language emergence between agents.
+**Goal:** See cooperation emerge without explicit coordination.
 
-* Create two-agent communication task (e.g., coordinate to find object)
-* Train with reinforcement learning
-* Analyze evolved communication protocol
-* Test generalization to new scenarios
-* Document emerged symbol meanings
+* Create simple agents that collect resources
+* Implement local decision rules
+* Observe emergent path formation
+* Add communication and measure efficiency gain
 
-### Project 4: Multi-Agent Hide and Seek
+### Project 4: Prompt Engineering for Emergent Abilities
 
-**Goal:** Reproduce complex emergent strategies.
+**Goal:** Explore emergent capabilities in LLMs.
 
-* Implement simplified version of OpenAI hide-and-seek
-* Use multi-agent RL (PPO or similar)
-* Observe emergence of tool use
-* Document strategy evolution over training
-* Visualize agent behaviors
+* Use GPT-4 or Claude
+* Test chain-of-thought prompting
+* Try few-shot learning tasks
+* Document which abilities emerge with different prompting strategies
 
-### Project 5: Scaling Law Experiments
+### Project 5: Neural Network Feature Visualization
 
-**Goal:** Observe emergence at different scales.
+**Goal:** Visualize emergent representations.
 
-* Train language models of varying sizes (small to medium)
-* Test on same benchmark tasks
-* Plot performance vs scale
-* Identify which capabilities show sharp vs smooth scaling
-* Document emergence thresholds
+* Train a CNN on MNIST or CIFAR-10
+* Visualize filter activations across layers
+* Use t-SNE to visualize learned embeddings
+* Identify emergent feature hierarchies
 
-### Project 6: Grokking Demonstration
+### Project 6: Scaling Law Experiment
 
-**Goal:** Observe delayed generalization phenomenon.
+**Goal:** Observe emergence with scale.
 
-* Train small transformer on modular arithmetic
-* Track training and validation accuracy over extended training
-* Observe memorization followed by sudden generalization
-* Visualize learned representations before and after grokking
-* Experiment with different regularization techniques
+* Train same architecture at 3 different sizes
+* Test on suite of tasks
+* Plot performance vs size
+* Identify tasks where capabilities emerge suddenly
 
-### Project 7: Swarm Intelligence Problem Solving
+### Project 7: Simple Language Emergence
 
-**Goal:** Apply emergent behavior to optimization.
+**Goal:** See communication protocols emerge.
 
-* Implement particle swarm optimization or ant colony optimization
-* Apply to traveling salesman or function optimization
-* Visualize swarm behavior
-* Compare to traditional optimization methods
-* Document emergent problem-solving strategies
+* Create 2 agents with different information
+* Reward successful information transfer
+* Allow agents to develop communication
+* Analyze emergent "language" structure
 
-### Project 8: Cellular Automata Explorer
+### Project 8: Read-and-Reproduce
 
-**Goal:** Explore diversity of emergent phenomena.
+**Goal:** Learn by replication.
 
-* Implement 1D and 2D cellular automata framework
-* Test different rule sets (not just Game of Life)
-* Classify behaviors (chaotic, periodic, complex)
-* Look for computation universality
-* Create gallery of interesting automata
-
-### Project 9: Emergent Market Simulation
-
-**Goal:** Observe economic emergence.
-
-* Create simple market with buying/selling agents
-* Implement basic strategies (random, momentum, value)
-* Observe emergent price dynamics
-* Add information asymmetry or herding behavior
-* Analyze boom-bust cycles
-
-### Project 10: Neural Network Mechanistic Analysis
-
-**Goal:** Understand emergent internal structure.
-
-* Train small vision network (MNIST or CIFAR-10)
-* Visualize neuron activations
-* Identify specialized feature detectors
-* Use activation maximization
-* Document emergent feature hierarchy
+* Pick one paper (Wei et al. 2022 on emergent abilities)
+* Reproduce key findings on smaller scale
+* Document where emergence occurs
+* Write reflection on predictability
 
 ---
 
-*Deep understanding of emergence comes from building, observing, and being surprised by systems that organize themselves.*
+*Understanding emergence is key to both building and safely deploying advanced AI systems.*
 
 ## Generation Metadata
 
 - **Generated with:** GitHub Copilot
 - **Model family:** GPT-4
 - **Generation role:** Educational documentation
-- **Prompt style:** Structured, following reinforcement_learning.md and speech_recognition.md templates
+- **Prompt style:** Structured, following existing template
 - **Human edits:** None
 - **Date generated:** 1-10-2026
 
-**Note:** This document follows the structure and style of the existing AI documentation to maintain consistency across the documentation set.
+**Note:** This document follows the structure and style of the existing AI documentation in this repository to maintain consistency across the documentation set.
