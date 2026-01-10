@@ -13,7 +13,7 @@ jobs:
     if: |
       github.event.issue.pull_request &&
       github.event.comment.user.login == 'pertrai1' &&
-      contains(github.event.comment.body, '@research-reviewer review') &&
+      contains(github.event.comment.body, '@research-reviewer summary') &&
       github.repository == 'pertrai1/ai-projects'
     steps:
       - name: Verify User Permissions
