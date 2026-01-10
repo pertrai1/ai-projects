@@ -459,8 +459,8 @@ Each step is intentionally small and self-contained. These can each live in thei
 
 ## Generation Metadata
 
-- **Generated with:** GitHub Copilot
-- **Model family:** GPT-4
+- **Generated with:** ChatGPT
+- **Model family:** GPT-4o
 - **Generation role:** Educational documentation
 - **Prompt style:** Structured, following existing template
 - **Human edits:** None
