@@ -273,6 +273,7 @@ A CLI tool for comparing Chain-of-Thought (CoT) prompting strategies and analyzi
 Comprehensive documentation on AI and Machine Learning topics is available in the [docs](./docs) directory, including:
 
 - [Agents](./docs/artificial-intelligence/agents.md) - AI agent systems, architectures, and modern LLM-based agents
+- [Large Language Models](./docs/artificial-intelligence/large_language_models.md) - LLM fundamentals, architectures, training, and applications
 - [Reinforcement Learning](./docs/artificial-intelligence/reinforcement_learning.md) - RL fundamentals, algorithms, and applications
 - [Speech Recognition](./docs/artificial-intelligence/speech_recognition.md) - ASR systems from traditional to modern approaches
 - [Emergent Behavior](./docs/artificial-intelligence/emergent_behavior.md) - Complex patterns arising in AI systems
