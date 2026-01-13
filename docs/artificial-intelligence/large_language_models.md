@@ -14,6 +14,8 @@ The core idea is simple:
 
 LLMs are particularly well-suited for problems involving **natural language understanding**, **text generation**, **few-shot learning**, and **complex reasoning tasks**.
 
+![Mindmap](../mindmaps/llm-mindmap.png)
+
 ---
 
 ## 2. Core Concepts
