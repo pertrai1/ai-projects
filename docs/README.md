@@ -23,7 +23,7 @@ Each of the subtopics below will have a separate document that will have specifi
 - Linear Regression
 - Principal Component Analysis
 - Support Vector Machines
-- Decision Trees
+- [Decision Trees](./machine-learning/decision_trees.md)
 
 ## Neural Networks - is a tool
 
