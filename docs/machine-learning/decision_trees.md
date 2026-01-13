@@ -584,7 +584,7 @@ Each step is intentionally small and self-contained. These can each live in thei
 
 ## Generation Metadata
 
-- **Generated with:** GitHub Copilot
+- **Generated with:** Claude (GitHub Copilot Workspace)
 - **Model family:** Claude 3.5 Sonnet
 - **Generation role:** Educational documentation / Research Assistant Agent
 - **Prompt style:** Structured, following reinforcement_learning.md and speech_recognition.md templates
