@@ -1,0 +1,102 @@
+name: Daily LLM Learning Issue
+
+on:
+  schedule:
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  create-learning-issue:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          npm install xml2js
+
+      - name: Generate topic from arXiv
+        id: topic
+        run: |
+          # Run the script and capture output
+          node scripts/generate-llm-learning-topic.js > topic.json
+
+          # Parse JSON and set outputs
+          echo "TOPIC=$(jq -r '.TOPIC' topic.json)" >> $GITHUB_OUTPUT
+          echo "PAPER_TITLE=$(jq -r '.PAPER_TITLE' topic.json)" >> $GITHUB_OUTPUT
+          echo "PAPER_URL=$(jq -r '.PAPER_URL' topic.json)" >> $GITHUB_OUTPUT
+          echo "PAPER_DATE=$(jq -r '.PAPER_DATE' topic.json)" >> $GITHUB_OUTPUT
+          echo "BUCKET=$(jq -r '.BUCKET' topic.json)" >> $GITHUB_OUTPUT
+          echo "FOCUS=$(jq -r '.FOCUS' topic.json)" >> $GITHUB_OUTPUT
+          echo "CONCEPT=$(jq -r '.CONCEPT' topic.json)" >> $GITHUB_OUTPUT
+          echo "RESEARCH_QUESTION=$(jq -r '.RESEARCH_QUESTION' topic.json)" >> $GITHUB_OUTPUT
+          echo "SYSTEM_TYPE=$(jq -r '.SYSTEM_TYPE' topic.json)" >> $GITHUB_OUTPUT
+          echo "CONFIDENCE=$(jq -r '.CONFIDENCE' topic.json)" >> $GITHUB_OUTPUT
+          echo "DATE=$(jq -r '.DATE' topic.json)" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Issue
+        uses: actions/github-script@v7
+        env:
+          TOPIC: ${{ steps.topic.outputs.TOPIC }}
+          PAPER_TITLE: ${{ steps.topic.outputs.PAPER_TITLE }}
+          PAPER_URL: ${{ steps.topic.outputs.PAPER_URL }}
+          PAPER_DATE: ${{ steps.topic.outputs.PAPER_DATE }}
+          BUCKET: ${{ steps.topic.outputs.BUCKET }}
+          FOCUS: ${{ steps.topic.outputs.FOCUS }}
+          CONCEPT: ${{ steps.topic.outputs.CONCEPT }}
+          RESEARCH_QUESTION: ${{ steps.topic.outputs.RESEARCH_QUESTION }}
+          SYSTEM_TYPE: ${{ steps.topic.outputs.SYSTEM_TYPE }}
+          CONFIDENCE: ${{ steps.topic.outputs.CONFIDENCE }}
+          DATE: ${{ steps.topic.outputs.DATE }}
+        with:
+          script: |
+            const fs = require('fs');
+
+            // Read the template
+            let template = fs.readFileSync('.github/ISSUE_TEMPLATES/daily-learning-llm.md', 'utf8');
+
+            // Strip frontmatter (everything between the first two ---)
+            template = template.replace(/^---[\s\S]*?---\n/, '');
+
+            // Replace all template variables using environment variables
+            const replacements = {
+              'TOPIC': process.env.TOPIC,
+              'PAPER_TITLE': process.env.PAPER_TITLE,
+              'PAPER_URL': process.env.PAPER_URL,
+              'PAPER_DATE': process.env.PAPER_DATE,
+              'BUCKET': process.env.BUCKET,
+              'FOCUS': process.env.FOCUS,
+              'CONCEPT': process.env.CONCEPT,
+              'RESEARCH_QUESTION': process.env.RESEARCH_QUESTION,
+              'SYSTEM_TYPE': process.env.SYSTEM_TYPE,
+              'CONFIDENCE': process.env.CONFIDENCE,
+              'DATE': process.env.DATE
+            };
+
+            for (const [key, value] of Object.entries(replacements)) {
+              const regex = new RegExp(`{{ env.${key} }}`, 'g');
+              template = template.replace(regex, value);
+            }
+
+            // Create the issue
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Active Recall Session: ${process.env.BUCKET} — ${process.env.FOCUS}`,
+              body: template,
+              labels: ['daily-learning', 'llm', 'agents'],
+              assignees: ['pertrai1']
+            });
+
+            console.log(`Created issue #${issue.data.number}`);
