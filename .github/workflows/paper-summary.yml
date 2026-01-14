@@ -1,0 +1,214 @@
+name: Paper Summary Bot
+
+on:
+  issue_comment:
+    types: [created]
+  schedule:
+    - cron: '0 12 * * *' # Run daily at 7 AM EST (12 PM UTC)
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to summarize (optional, for testing)'
+        required: false
+        type: number
+
+permissions:
+  issues: write
+  contents: read
+
+concurrency:
+  group: paper-summary-${{ github.event.issue.number || 'scheduled' }}
+  cancel-in-progress: true
+
+jobs:
+  summarize:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'issue_comment' &&
+       github.actor == 'pertrai1' &&
+       contains(github.event.comment.body, 'summary') &&
+       contains(github.event.comment.body, '@learning-review-bot')) ||
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Initialize skip flag
+        run: echo "SKIP=false" >> $GITHUB_ENV
+
+      - name: Get issue number
+        id: issue-number
+        run: |
+          if [ "${{ github.event_name }}" == "issue_comment" ]; then
+            echo "ISSUE_NUMBER=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ -n "${{ inputs.issue_number }}" ]; then
+            echo "ISSUE_NUMBER=${{ inputs.issue_number }}" >> $GITHUB_OUTPUT
+          else
+            echo "ISSUE_NUMBER=" >> $GITHUB_OUTPUT
+          fi
+
+      # For comment trigger: process the current issue
+      - name: Fetch issue details (comment trigger or manual)
+        if: github.event_name == 'issue_comment' || (github.event_name == 'workflow_dispatch' && inputs.issue_number != '')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ISSUE_NUM="${{ steps.issue-number.outputs.ISSUE_NUMBER }}"
+          gh issue view "$ISSUE_NUM" \
+            --json body,comments,labels,createdAt \
+            > issue.json
+
+      # For scheduled trigger: find issues that need summaries
+      - name: Find issues needing summaries (scheduled)
+        id: find-issues
+        if: github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get all open issues with 'daily-learning' and 'llm' labels
+          gh issue list \
+            --label "daily-learning,llm" \
+            --state open \
+            --json number,createdAt,body,comments,labels \
+            --limit 100 \
+            > all-issues.json
+
+          # Filter issues older than 3 days without a summary comment
+          node << 'EOF'
+          const fs = require('fs');
+          const issues = JSON.parse(fs.readFileSync('all-issues.json', 'utf8'));
+          const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+
+          const needsSummary = issues.filter(issue => {
+            const createdAt = new Date(issue.createdAt);
+            const isOldEnough = createdAt < threeDaysAgo;
+            const hasSummary = issue.comments.some(c => 
+              c.body && c.body.includes('Paper Summary')
+            );
+            return isOldEnough && !hasSummary;
+          });
+
+          if (needsSummary.length > 0) {
+            // Process the oldest issue
+            const oldestIssue = needsSummary.sort((a, b) => 
+              new Date(a.createdAt) - new Date(b.createdAt)
+            )[0];
+            
+            console.log(`Found issue #${oldestIssue.number} needing summary`);
+            fs.writeFileSync('issue.json', JSON.stringify(oldestIssue, null, 2));
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `ISSUE_NUMBER=${oldestIssue.number}\n`);
+          } else {
+            console.log('No issues need summaries');
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'ISSUE_NUMBER=\n');
+          }
+          EOF
+
+      - name: Skip if no issue to process
+        id: check-issue
+        run: |
+          if [ "${{ github.event_name }}" == "schedule" ] && [ ! -f "issue.json" ]; then
+            echo "No issue to process"
+            echo "SKIP=true" >> $GITHUB_ENV
+          fi
+
+      - name: Exit if no issue
+        if: env.SKIP == 'true'
+        run: |
+          echo "No issues need summaries. Exiting."
+          exit 0
+
+      - name: Check for existing summary
+        run: |
+          if jq -e '.comments[]?.body | select(. != null) | contains("Paper Summary")' issue.json > /dev/null 2>&1; then
+            echo "Summary already exists. Exiting."
+            echo "SKIP=true" >> $GITHUB_ENV
+          fi
+
+      - name: Exit if already summarized
+        if: env.SKIP == 'true'
+        run: |
+          echo "Issue already has a summary."
+          exit 0
+
+      - name: Check arXiv availability
+        run: |
+          curl -f --max-time 10 https://arxiv.org/ > /dev/null || exit 1
+
+      - name: Extract paper URL from issue
+        id: extract-url
+        run: |
+          PAPER_URL=$(jq -r '.body' issue.json | grep -oP 'https?://arxiv\.org/abs/[0-9]{4}\.[0-9]{4,5}(v[0-9]+)?' | head -1)
+
+          if [ -z "$PAPER_URL" ]; then
+            echo "No arXiv paper URL found in issue body"
+            echo "SKIP=true" >> $GITHUB_ENV
+            echo "PAPER_URL=" >> $GITHUB_OUTPUT
+          else
+            echo "Found paper URL: $PAPER_URL"
+            echo "PAPER_URL=$PAPER_URL" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Exit if no paper URL
+        if: env.SKIP == 'true'
+        run: |
+          echo "No paper URL found. Cannot generate summary."
+          exit 0
+
+      - name: Check daily summary limit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get count of summaries posted today
+          TODAY=$(date -u +%Y-%m-%d)
+          COUNT=$(gh api "/repos/${{ github.repository }}/issues/comments?since=${TODAY}T00:00:00Z&per_page=100" \
+            --jq "[.[] | select(.body | contains(\"Paper Summary\")) | select(.created_at | startswith(\"$TODAY\"))] | length")
+
+          if [ "$COUNT" -ge 3 ]; then
+            echo "Daily summary limit reached (${COUNT}/3)."
+            echo "SKIP=true" >> $GITHUB_ENV
+          fi
+
+      - name: Exit if daily limit reached
+        if: env.SKIP == 'true'
+        run: |
+          echo "Skipping due to daily rate limit."
+          exit 0
+
+      - name: Generate paper summary
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          node scripts/summarize-paper.js "${{ steps.extract-url.outputs.PAPER_URL }}" > summary.md
+
+      - name: Post summary to issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ISSUE_NUM="${{ steps.issue-number.outputs.ISSUE_NUMBER }}"
+          if [ -z "$ISSUE_NUM" ]; then
+            ISSUE_NUM=$(jq -r '.number' issue.json)
+          fi
+
+          gh issue comment "$ISSUE_NUM" --body-file summary.md
+
+      - name: Summary complete
+        run: |
+          echo "✅ Successfully generated and posted paper summary"
+
+      - name: Notify failure
+        if: failure() && github.event_name == 'issue_comment'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment "${{ github.event.issue.number }}" --body "⚠️ Failed to generate paper summary. Please check the workflow logs for details."
