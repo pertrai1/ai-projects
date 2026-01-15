@@ -18,6 +18,10 @@ One-shot learning is particularly well-suited for problems involving **rare even
 
 ## 2. Core Concepts
 
+### Class
+
+A category or label that groups similar objects, concepts, or patterns together. For example, in image recognition, "cat", "dog", and "bird" are different classes. In one-shot learning, the model must learn to recognize new classes from just one or a few examples, unlike traditional machine learning which requires many examples per class.
+
 ### Few-Shot Learning
 
 The broader family that includes one-shot (1 example), few-shot (2-5 examples), and zero-shot (0 examples, only descriptions) learning.
