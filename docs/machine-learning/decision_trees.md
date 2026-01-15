@@ -6,17 +6,19 @@
 
 **Decision Trees** are a supervised machine learning algorithm used for both **classification** and **regression** tasks. They learn a hierarchical set of if-then-else decision rules from data to predict the value of a target variable. The model is represented as a tree structure where:
 
-* Internal nodes represent tests on features (attributes)
-* Branches represent the outcome of tests
-* Leaf nodes represent class labels (classification) or continuous values (regression)
+- Internal nodes represent tests on features (attributes)
+- Branches represent the outcome of tests
+- Leaf nodes represent class labels (classification) or continuous values (regression)
 
 The core idea is simple:
 
-* Split the dataset based on feature values that best separate the data
-* Recursively partition the data into smaller, more homogeneous subsets
-* Stop when a stopping criterion is met (e.g., pure nodes, max depth)
+- Split the dataset based on feature values that best separate the data
+- Recursively partition the data into smaller, more homogeneous subsets
+- Stop when a stopping criterion is met (e.g., pure nodes, max depth)
 
 Decision Trees are particularly well-suited for problems involving **interpretable rules**, **non-linear relationships**, and **mixed data types** (categorical and numerical).
+
+![Mindmap](../mindmaps/decision-trees.png)
 
 ---
 
@@ -83,22 +85,22 @@ Removing branches to reduce tree complexity and improve generalization.
 
 Predict discrete class labels. Leaf nodes contain class predictions (e.g., "spam" or "not spam").
 
-* Output: categorical variable
-* Common algorithms: ID3, C4.5, CART (classification mode)
-* Evaluation: accuracy, precision, recall, F1-score
+- Output: categorical variable
+- Common algorithms: ID3, C4.5, CART (classification mode)
+- Evaluation: accuracy, precision, recall, F1-score
 
 ### Regression Trees
 
 Predict continuous values. Leaf nodes contain numerical predictions (e.g., house prices).
 
-* Output: continuous variable
-* Common algorithms: CART (regression mode), M5
-* Evaluation: MSE, MAE, R²
+- Output: continuous variable
+- Common algorithms: CART (regression mode), M5
+- Evaluation: MSE, MAE, R²
 
 ### Binary Trees vs Multi-way Trees
 
-* **Binary Trees**: Each node has at most two children (CART)
-* **Multi-way Trees**: Nodes can have more than two children (ID3, C4.5)
+- **Binary Trees**: Each node has at most two children (CART)
+- **Multi-way Trees**: Nodes can have more than two children (ID3, C4.5)
 
 ---
 
@@ -118,9 +120,9 @@ Gini = 1 - Σ(p_i)²
 
 Where p_i is the proportion of class i in the node.
 
-* Range: [0, 0.5] for binary classification
-* Lower is better (0 = pure node)
-* Computationally efficient
+- Range: [0, 0.5] for binary classification
+- Lower is better (0 = pure node)
+- Computationally efficient
 
 **Entropy / Information Gain (ID3, C4.5)**
 
@@ -131,9 +133,9 @@ Entropy = -Σ(p_i * log2(p_i))
 Information Gain = Entropy(parent) - Σ(weight_i * Entropy(child_i))
 ```
 
-* Range: [0, log2(k)] where k is number of classes
-* Lower entropy means more homogeneous nodes
-* Maximizes information gain at each split
+- Range: [0, log2(k)] where k is number of classes
+- Lower entropy means more homogeneous nodes
+- Maximizes information gain at each split
 
 **Gain Ratio (C4.5)**
 
@@ -143,7 +145,7 @@ Normalized version of information gain that reduces bias toward features with ma
 Gain Ratio = Information Gain / Split Information
 ```
 
-* Addresses multi-valued attribute bias in information gain
+- Addresses multi-valued attribute bias in information gain
 
 ### For Regression
 
@@ -155,7 +157,7 @@ Measures how much the split reduces variance in the target variable:
 Variance Reduction = Var(parent) - Σ(weight_i * Var(child_i))
 ```
 
-* Maximizes reduction in mean squared error
+- Maximizes reduction in mean squared error
 
 **Mean Squared Error (MSE)**
 
@@ -165,8 +167,8 @@ Measures average squared difference from the mean:
 MSE = (1/n) * Σ(y_i - ȳ)²
 ```
 
-* Lower MSE means more homogeneous nodes
-* Directly optimizes regression loss
+- Lower MSE means more homogeneous nodes
+- Directly optimizes regression loss
 
 ---
 
@@ -176,21 +178,21 @@ MSE = (1/n) * Σ(y_i - ȳ)²
 
 **Developed by:** Ross Quinlan (1986)
 
-* Uses information gain for splitting
-* Only handles categorical features
-* Multi-way splits based on all attribute values
-* No pruning mechanism
-* Prone to overfitting
+- Uses information gain for splitting
+- Only handles categorical features
+- Multi-way splits based on all attribute values
+- No pruning mechanism
+- Prone to overfitting
 
 ### C4.5 (Successor to ID3)
 
 **Developed by:** Ross Quinlan (1993)
 
-* Uses gain ratio to handle bias
-* Handles continuous and categorical features
-* Supports missing values
-* Includes post-pruning
-* Can handle both classification and numerical targets
+- Uses gain ratio to handle bias
+- Handles continuous and categorical features
+- Supports missing values
+- Includes post-pruning
+- Can handle both classification and numerical targets
 
 ### C5.0
 
@@ -200,18 +202,18 @@ Commercial successor to C4.5 with improved speed and memory efficiency.
 
 **Developed by:** Breiman, Friedman, Olshen, Stone (1984)
 
-* Binary splits only
-* Uses Gini impurity (classification) or MSE (regression)
-* Handles both classification and regression
-* Built-in cost-complexity pruning
-* Most commonly used (scikit-learn default)
+- Binary splits only
+- Uses Gini impurity (classification) or MSE (regression)
+- Handles both classification and regression
+- Built-in cost-complexity pruning
+- Most commonly used (scikit-learn default)
 
 ### CHAID (Chi-squared Automatic Interaction Detection)
 
-* Uses chi-squared tests for splitting
-* Multi-way splits
-* Primarily for categorical targets
-* Automatic feature interaction detection
+- Uses chi-squared tests for splitting
+- Multi-way splits
+- Primarily for categorical targets
+- Automatic feature interaction detection
 
 ---
 
@@ -253,8 +255,8 @@ Pruning removes parts of the tree that provide little predictive power, improvin
 
 Stop tree growth early based on stopping criteria. Prevents overfitting during construction.
 
-* Advantage: Fast, simple
-* Disadvantage: May stop too early (horizon effect)
+- Advantage: Fast, simple
+- Disadvantage: May stop too early (horizon effect)
 
 ### Post-pruning (Backward Pruning)
 
@@ -268,8 +270,8 @@ Uses a complexity parameter (α) to balance tree size and accuracy:
 Cost = Error + α * |leaves|
 ```
 
-* Larger α leads to smaller trees
-* Cross-validation selects optimal α
+- Larger α leads to smaller trees
+- Cross-validation selects optimal α
 
 **Reduced Error Pruning**
 
@@ -283,41 +285,41 @@ Estimates error rate with statistical correction. Prunes if estimated error is l
 
 ## 9. Advantages of Decision Trees
 
-* **Interpretability**: Easy to understand and visualize
-* **No feature scaling required**: Works with raw features
-* **Handles mixed data types**: Both categorical and numerical
-* **Captures non-linear relationships**: Without explicit transformations
-* **Feature importance**: Automatically identifies important features
-* **Missing value handling**: Many implementations support missing data
-* **Fast prediction**: O(log n) for balanced trees
-* **Minimal data preparation**: No need for normalization or encoding
+- **Interpretability**: Easy to understand and visualize
+- **No feature scaling required**: Works with raw features
+- **Handles mixed data types**: Both categorical and numerical
+- **Captures non-linear relationships**: Without explicit transformations
+- **Feature importance**: Automatically identifies important features
+- **Missing value handling**: Many implementations support missing data
+- **Fast prediction**: O(log n) for balanced trees
+- **Minimal data preparation**: No need for normalization or encoding
 
 ---
 
 ## 10. Disadvantages of Decision Trees
 
-* **Overfitting**: Easily creates overly complex trees that memorize training data
-* **Instability**: Small data changes can produce very different trees
-* **Greedy algorithm**: Local optimization may miss global optimum
-* **Bias toward features with many values**: Can prefer splitting on high-cardinality features
-* **Not ideal for linear relationships**: Other algorithms may be more efficient
-* **Class imbalance sensitivity**: Can bias toward majority classes
-* **No online learning**: Must rebuild tree for new data
+- **Overfitting**: Easily creates overly complex trees that memorize training data
+- **Instability**: Small data changes can produce very different trees
+- **Greedy algorithm**: Local optimization may miss global optimum
+- **Bias toward features with many values**: Can prefer splitting on high-cardinality features
+- **Not ideal for linear relationships**: Other algorithms may be more efficient
+- **Class imbalance sensitivity**: Can bias toward majority classes
+- **No online learning**: Must rebuild tree for new data
 
 ---
 
 ## 11. Common Applications
 
-* **Medical Diagnosis**: Symptom-based disease prediction
-* **Credit Scoring**: Loan approval decisions
-* **Customer Segmentation**: Market analysis and targeting
-* **Fraud Detection**: Identifying suspicious transactions
-* **Churn Prediction**: Customer retention analysis
-* **Quality Control**: Manufacturing defect detection
-* **Risk Assessment**: Insurance and financial services
-* **Species Classification**: Biological taxonomy
-* **Recommendation Systems**: Rule-based filtering
-* **Game AI**: Decision-making in games
+- **Medical Diagnosis**: Symptom-based disease prediction
+- **Credit Scoring**: Loan approval decisions
+- **Customer Segmentation**: Market analysis and targeting
+- **Fraud Detection**: Identifying suspicious transactions
+- **Churn Prediction**: Customer retention analysis
+- **Quality Control**: Manufacturing defect detection
+- **Risk Assessment**: Insurance and financial services
+- **Species Classification**: Biological taxonomy
+- **Recommendation Systems**: Rule-based filtering
+- **Game AI**: Decision-making in games
 
 Decision Trees are especially powerful when **interpretability matters** and when **rules need to be explained** to stakeholders.
 
@@ -327,38 +329,38 @@ Decision Trees are especially powerful when **interpretability matters** and whe
 
 ### Foundational Papers
 
-* **Classification and Regression Trees (CART)** — Breiman, Friedman, Olshen, Stone (1984)
+- **Classification and Regression Trees (CART)** — Breiman, Friedman, Olshen, Stone (1984)
   - The definitive CART algorithm monograph
 
-* **Induction of Decision Trees** — Quinlan (1986)
+- **Induction of Decision Trees** — Quinlan (1986)
   - Introduced ID3 algorithm and information gain
 
-* **C4.5: Programs for Machine Learning** — Quinlan (1993)
+- **C4.5: Programs for Machine Learning** — Quinlan (1993)
   - Improved ID3 with gain ratio and pruning
 
 ### Modern Developments
 
-* **Random Forests** — Breiman (2001)
+- **Random Forests** — Breiman (2001)
   - Ensemble method combining multiple decision trees
 
-* **Gradient Boosting Machines** — Friedman (2001)
+- **Gradient Boosting Machines** — Friedman (2001)
   - Sequential ensemble building on tree residuals
 
-* **XGBoost: A Scalable Tree Boosting System** — Chen & Guestrin (2016)
+- **XGBoost: A Scalable Tree Boosting System** — Chen & Guestrin (2016)
   - High-performance gradient boosting implementation
 
-* **LightGBM: A Highly Efficient Gradient Boosting Decision Tree** — Ke et al. (2017)
+- **LightGBM: A Highly Efficient Gradient Boosting Decision Tree** — Ke et al. (2017)
   - Fast gradient boosting with histogram-based splitting
 
 ### Books
 
-* **The Elements of Statistical Learning** — Hastie, Tibshirani, Friedman
+- **The Elements of Statistical Learning** — Hastie, Tibshirani, Friedman
   - Chapter 9 covers tree-based methods comprehensively
 
-* **Pattern Recognition and Machine Learning** — Bishop
+- **Pattern Recognition and Machine Learning** — Bishop
   - Section 14.4 on tree-based models
 
-* **Introduction to Data Mining** — Tan, Steinbach, Kumar
+- **Introduction to Data Mining** — Tan, Steinbach, Kumar
   - Chapter 4 on classification with extensive tree coverage
 
 ---
@@ -367,51 +369,51 @@ Decision Trees are especially powerful when **interpretability matters** and whe
 
 ### Courses
 
-* **Stanford CS229 – Machine Learning**
+- **Stanford CS229 – Machine Learning**
   - Lecture on Decision Trees and Ensemble Methods
 
-* **Andrew Ng's Machine Learning Course (Coursera)**
+- **Andrew Ng's Machine Learning Course (Coursera)**
   - Practical introduction to decision trees
 
-* **Fast.ai – Introduction to Machine Learning for Coders**
+- **Fast.ai – Introduction to Machine Learning for Coders**
   - Practical tree-based modeling with random forests
 
-* **MIT 6.034 – Artificial Intelligence**
+- **MIT 6.034 – Artificial Intelligence**
   - Decision tree learning and information theory
 
 ### Tutorials & Guides
 
-* **Scikit-learn Decision Tree Documentation**
+- **Scikit-learn Decision Tree Documentation**
   - Comprehensive guide with examples
 
-* **StatQuest – Decision Trees**
+- **StatQuest – Decision Trees**
   - Intuitive video explanations by Josh Starmer
 
-* **Towards Data Science – Decision Trees Explained**
+- **Towards Data Science – Decision Trees Explained**
   - Practical tutorials and case studies
 
 ### Libraries & Tooling
 
-* **scikit-learn (Python)**
+- **scikit-learn (Python)**
   - DecisionTreeClassifier, DecisionTreeRegressor
   - Most popular implementation
 
-* **XGBoost**
+- **XGBoost**
   - Extreme gradient boosting with tree base learners
 
-* **LightGBM**
+- **LightGBM**
   - Fast gradient boosting framework
 
-* **CatBoost**
+- **CatBoost**
   - Gradient boosting with categorical feature support
 
-* **rpart (R)**
+- **rpart (R)**
   - Recursive partitioning for classification and regression
 
-* **dtreeviz (Python)**
+- **dtreeviz (Python)**
   - Beautiful decision tree visualization
 
-* **graphviz**
+- **graphviz**
   - Tree structure visualization
 
 ---
@@ -433,16 +435,16 @@ Decision Trees are especially powerful when **interpretability matters** and whe
 
 ## 15. Common Pitfalls
 
-* **No hyperparameter tuning**: Using default parameters often leads to overfitting
-* **Ignoring class imbalance**: Majority class dominates predictions
-* **Deep trees on small datasets**: Leads to severe overfitting
-* **Forgetting to prune**: Full trees rarely generalize well
-* **Using trees for linear problems**: Logistic regression may be more efficient
-* **Not checking feature importance**: Missing insights about data
-* **Assuming stability**: Small data changes can drastically alter trees
-* **No validation set**: Training error is misleadingly low
-* **Ignoring feature scaling implications**: While not required, understanding when it matters helps
-* **Treating all features equally**: Some features may need engineering
+- **No hyperparameter tuning**: Using default parameters often leads to overfitting
+- **Ignoring class imbalance**: Majority class dominates predictions
+- **Deep trees on small datasets**: Leads to severe overfitting
+- **Forgetting to prune**: Full trees rarely generalize well
+- **Using trees for linear problems**: Logistic regression may be more efficient
+- **Not checking feature importance**: Missing insights about data
+- **Assuming stability**: Small data changes can drastically alter trees
+- **No validation set**: Training error is misleadingly low
+- **Ignoring feature scaling implications**: While not required, understanding when it matters helps
+- **Treating all features equally**: Some features may need engineering
 
 ---
 
@@ -450,22 +452,22 @@ Decision Trees are especially powerful when **interpretability matters** and whe
 
 ### Ensemble Methods
 
-* **Random Forests**: Bagging multiple trees to reduce variance
-* **Gradient Boosting**: Sequential trees correcting previous errors
-* **AdaBoost**: Weighted ensemble of weak tree learners
+- **Random Forests**: Bagging multiple trees to reduce variance
+- **Gradient Boosting**: Sequential trees correcting previous errors
+- **AdaBoost**: Weighted ensemble of weak tree learners
 
 ### Modern Applications
 
-* **XGBoost in Competitions**: Dominates Kaggle and structured data competitions
-* **LightGBM in Production**: Fast training and inference at scale
-* **CatBoost**: Handles categorical features without encoding
-* **Interpretable AI**: SHAP and LIME for explaining tree predictions
+- **XGBoost in Competitions**: Dominates Kaggle and structured data competitions
+- **LightGBM in Production**: Fast training and inference at scale
+- **CatBoost**: Handles categorical features without encoding
+- **Interpretable AI**: SHAP and LIME for explaining tree predictions
 
 ### Integration with Deep Learning
 
-* **Neural Decision Trees**: Differentiable tree structures in neural networks
-* **Deep Forest**: Cascade forest as alternative to deep neural networks
-* **Hybrid Models**: Trees for feature engineering, neural networks for prediction
+- **Neural Decision Trees**: Differentiable tree structures in neural networks
+- **Deep Forest**: Cascade forest as alternative to deep neural networks
+- **Hybrid Models**: Trees for feature engineering, neural networks for prediction
 
 Decision Trees remain a foundational algorithm and the basis for many state-of-the-art ensemble methods in production machine learning systems.
 
@@ -479,108 +481,108 @@ Each step is intentionally small and self-contained. These can each live in thei
 
 **Goal:** Understand the core algorithm by implementing it.
 
-* Dataset: Simple 2D binary classification (e.g., make_classification)
-* Implement Gini impurity calculation
-* Implement binary splitting logic
-* Build tree recursively with max_depth stopping
-* Visualize decision boundary with matplotlib
-* Compare to scikit-learn implementation
+- Dataset: Simple 2D binary classification (e.g., make_classification)
+- Implement Gini impurity calculation
+- Implement binary splitting logic
+- Build tree recursively with max_depth stopping
+- Visualize decision boundary with matplotlib
+- Compare to scikit-learn implementation
 
 ### Project 2: Visual Decision Tree Explorer
 
 **Goal:** Build intuition for how trees partition feature space.
 
-* Use iris or wine dataset
-* Train trees with different max_depth values (1, 2, 5, 10)
-* Plot 2D decision boundaries
-* Visualize tree structure with graphviz
-* Observe overfitting as depth increases
+- Use iris or wine dataset
+- Train trees with different max_depth values (1, 2, 5, 10)
+- Plot 2D decision boundaries
+- Visualize tree structure with graphviz
+- Observe overfitting as depth increases
 
 ### Project 3: Feature Importance Analysis
 
 **Goal:** Learn which features matter most.
 
-* Load a multi-feature dataset (e.g., credit card fraud)
-* Train decision tree classifier
-* Extract and plot feature importances
-* Compare top features to domain knowledge
-* Remove low-importance features and retrain
+- Load a multi-feature dataset (e.g., credit card fraud)
+- Train decision tree classifier
+- Extract and plot feature importances
+- Compare top features to domain knowledge
+- Remove low-importance features and retrain
 
 ### Project 4: Hyperparameter Tuning Experiment
 
 **Goal:** Master tree regularization parameters.
 
-* Dataset: Medium-sized classification problem
-* Grid search over: max_depth, min_samples_split, min_samples_leaf
-* Use cross-validation to find optimal parameters
-* Plot validation curves
-* Compare overfitting vs underfitting regimes
+- Dataset: Medium-sized classification problem
+- Grid search over: max_depth, min_samples_split, min_samples_leaf
+- Use cross-validation to find optimal parameters
+- Plot validation curves
+- Compare overfitting vs underfitting regimes
 
 ### Project 5: Regression Tree for House Prices
 
 **Goal:** Apply trees to continuous targets.
 
-* Dataset: Housing prices (Boston or California housing)
-* Train DecisionTreeRegressor
-* Visualize predicted vs actual values
-* Compare different splitting criteria
-* Analyze leaf node distributions
+- Dataset: Housing prices (Boston or California housing)
+- Train DecisionTreeRegressor
+- Visualize predicted vs actual values
+- Compare different splitting criteria
+- Analyze leaf node distributions
 
 ### Project 6: Handling Imbalanced Data
 
 **Goal:** Learn techniques for skewed class distributions.
 
-* Create imbalanced dataset (90% class 0, 10% class 1)
-* Train baseline tree and observe bias
-* Apply class_weight='balanced'
-* Use SMOTE or undersampling
-* Compare precision-recall curves
+- Create imbalanced dataset (90% class 0, 10% class 1)
+- Train baseline tree and observe bias
+- Apply class_weight='balanced'
+- Use SMOTE or undersampling
+- Compare precision-recall curves
 
 ### Project 7: Comparison with Ensemble Methods
 
 **Goal:** See how single trees compare to ensembles.
 
-* Same dataset, compare performance of:
+- Same dataset, compare performance of:
   - Single Decision Tree
   - Random Forest
   - Gradient Boosting (XGBoost or LightGBM)
-* Measure accuracy and training time
-* Analyze feature importance from each
-* Understand when ensembles are worth the complexity
+- Measure accuracy and training time
+- Analyze feature importance from each
+- Understand when ensembles are worth the complexity
 
 ### Project 8: Interpretable Medical Decision Tree
 
 **Goal:** Build an explainable model for healthcare.
 
-* Dataset: Heart disease or diabetes dataset
-* Train a shallow tree (max_depth=3 or 4)
-* Export tree rules as if-then statements
-* Visualize tree with patient-friendly labels
-* Write a report explaining the model to non-technical stakeholders
+- Dataset: Heart disease or diabetes dataset
+- Train a shallow tree (max_depth=3 or 4)
+- Export tree rules as if-then statements
+- Visualize tree with patient-friendly labels
+- Write a report explaining the model to non-technical stakeholders
 
 ### Project 9: Real-time Prediction API
 
 **Goal:** Deploy a tree model as a web service.
 
-* Train and save a decision tree model with joblib
-* Build a FastAPI or Flask endpoint
-* Accept JSON input and return predictions
-* Add model versioning
-* Test with sample requests
+- Train and save a decision tree model with joblib
+- Build a FastAPI or Flask endpoint
+- Accept JSON input and return predictions
+- Add model versioning
+- Test with sample requests
 
 ### Project 10: Decision Tree for Time Series Features
 
 **Goal:** Apply trees to temporal data.
 
-* Dataset: Stock prices or weather data
-* Engineer lag features and rolling statistics
-* Train tree on engineered features
-* Validate on test period (no shuffling!)
-* Compare to naive baseline
+- Dataset: Stock prices or weather data
+- Engineer lag features and rolling statistics
+- Train tree on engineered features
+- Validate on test period (no shuffling!)
+- Compare to naive baseline
 
 ---
 
-*Deep understanding of Decision Trees comes from implementing the algorithm, visualizing the splits, and experimenting with regularization.*
+_Deep understanding of Decision Trees comes from implementing the algorithm, visualizing the splits, and experimenting with regularization._
 
 ## Generation Metadata
 
