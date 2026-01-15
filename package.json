@@ -1,0 +1,23 @@
+{
+  "name": "ai-projects",
+  "version": "1.0.0",
+  "description": "A collection of machine learning and artificial intelligence projects demonstrating various AI techniques and applications.",
+  "homepage": "https://github.com/pertrai1/ai-projects#readme",
+  "bugs": {
+    "url": "https://github.com/pertrai1/ai-projects/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pertrai1/ai-projects.git"
+  },
+  "license": "MIT",
+  "author": "Rob Simpson",
+  "type": "module",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
