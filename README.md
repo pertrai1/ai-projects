@@ -277,6 +277,7 @@ Comprehensive documentation on AI and Machine Learning topics is available in th
 - [Reinforcement Learning](./docs/artificial-intelligence/reinforcement_learning.md) - RL fundamentals, algorithms, and applications
 - [Speech Recognition](./docs/artificial-intelligence/speech_recognition.md) - ASR systems from traditional to modern approaches
 - [Emergent Behavior](./docs/artificial-intelligence/emergent_behavior.md) - Complex patterns arising in AI systems
+- [Decision Trees](./docs/machine-learning/decision_trees.md) - Tree-based learning algorithms for classification and regression
 
 See the full [documentation index](./docs/README.md) for all topics.
 
