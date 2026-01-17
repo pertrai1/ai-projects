@@ -63,7 +63,7 @@ Each of the subtopics below will have a separate document that will have specifi
 - Transfer Learning
 - N-Shot Learning
 - Zero-Shot Learning (ZSL)
-- One-Shot Learning (OSL)
+- [One-Shot Learning (OSL)](artificial-intelligence/one_shot_learning.md)
 - Reinforcement Learning with Human Feedback (RLHF)
 - LoRA (Low-Rank Adaptation)
 - Ensemble Models
