@@ -277,6 +277,7 @@ Comprehensive documentation on AI and Machine Learning topics is available in th
 - [One-Shot Learning](./docs/artificial-intelligence/one_shot_learning.md) - Learning from single examples using meta-learning and similarity metrics
 - [Reinforcement Learning](./docs/artificial-intelligence/reinforcement_learning.md) - RL fundamentals, algorithms, and applications
 - [Speech Recognition](./docs/artificial-intelligence/speech_recognition.md) - ASR systems from traditional to modern approaches
+- [Zero-Shot Learning](./docs/artificial-intelligence/zero_shot_learning.md) - Learning new tasks without training examples using semantic knowledge transfer
 - [Emergent Behavior](./docs/artificial-intelligence/emergent_behavior.md) - Complex patterns arising in AI systems
 - [Decision Trees](./docs/machine-learning/decision_trees.md) - Tree-based learning algorithms for classification and regression
 
