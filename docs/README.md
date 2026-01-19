@@ -14,7 +14,7 @@ Each of the subtopics below will have a separate document that will have specifi
 
 ## Machine Learning - is a strategy
 
-- Supervised Learning
+- [Supervised Learning](./machine-learning/supervised_learning.md)
 - Unsupervised Learning
 - Hypothesis Testing
 - K-means Clustering
