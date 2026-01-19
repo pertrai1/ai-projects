@@ -62,7 +62,7 @@ Each of the subtopics below will have a separate document that will have specifi
 - BigGAN
 - Transfer Learning
 - N-Shot Learning
-- Zero-Shot Learning (ZSL)
+- [Zero-Shot Learning (ZSL)](./artificial-intelligence/zero_shot_learning.md)
 - [One-Shot Learning (OSL)](artificial-intelligence/one_shot_learning.md)
 - Reinforcement Learning with Human Feedback (RLHF)
 - LoRA (Low-Rank Adaptation)

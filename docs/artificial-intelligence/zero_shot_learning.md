@@ -6,6 +6,8 @@
 
 **Zero-Shot Learning (ZSL)** is a machine learning paradigm where a model learns to recognize or classify objects, concepts, or patterns from classes it has never seen during training. Unlike traditional supervised learning that requires labeled examples for every class, and even one-shot learning that needs at least one example, zero-shot learning can classify completely novel categories using only semantic descriptions, attributes, or learned relationships between concepts.
 
+![Mindmap](../mindmaps/zero-shot-learning-mindmap.png)
+
 The core idea is simple:
 
 - The model is trained on a set of "seen" classes with labeled examples
@@ -1124,7 +1126,7 @@ Each step is intentionally small and self-contained. These can each live in thei
 
 - **Dataset:** Animals with Attributes 2 (AwA2)
 - **Task:** Classify 10 unseen animal classes using 85 attributes
-- **Approach:** 
+- **Approach:**
   - Train attribute classifiers on 40 seen classes
   - Use Direct Attribute Prediction (DAP) for unseen classes
   - Compare with Indirect Attribute Prediction (IAP)
