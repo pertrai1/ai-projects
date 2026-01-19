@@ -1,6 +1,6 @@
 ---
 name: Daily Learning (LLM/Agents)
-about: Structured paper reading — dynamically sourced from recent arXiv research
+about: Structured paper reading — dynamically sourced from arXiv and ACL Anthology
 title: "Paper Review: {{ env.FOCUS }}"
 labels: ["daily-learning", "llm", "agents"]
 assignees: ["pertrai1"]
@@ -17,6 +17,7 @@ date: {{ env.DATE }}
 ## Paper
 
 **Title:** [{{ env.PAPER_TITLE }}]({{ env.PAPER_URL }})
+**Source:** {{ env.PAPER_SOURCE }}
 **Published:** {{ env.PAPER_DATE }}
 **Date:** {{ env.DATE }}
 

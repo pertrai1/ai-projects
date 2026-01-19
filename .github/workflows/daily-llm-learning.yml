@@ -2,7 +2,7 @@ name: Daily LLM Learning Issue
 
 on:
   schedule:
-    - cron: '0 12 * * *'
+    - cron: "0 12 * * *"
   workflow_dispatch:
 
 permissions:
@@ -20,13 +20,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Install dependencies
         run: |
           npm install xml2js
 
-      - name: Generate topic from arXiv
+      - name: Generate topic from arXiv or ACL Anthology
         id: topic
         run: |
           # Run the script and capture output
@@ -37,6 +37,7 @@ jobs:
           echo "PAPER_TITLE=$(jq -r '.PAPER_TITLE' topic.json)" >> $GITHUB_OUTPUT
           echo "PAPER_URL=$(jq -r '.PAPER_URL' topic.json)" >> $GITHUB_OUTPUT
           echo "PAPER_DATE=$(jq -r '.PAPER_DATE' topic.json)" >> $GITHUB_OUTPUT
+          echo "PAPER_SOURCE=$(jq -r '.PAPER_SOURCE' topic.json)" >> $GITHUB_OUTPUT
           echo "BUCKET=$(jq -r '.BUCKET' topic.json)" >> $GITHUB_OUTPUT
           echo "FOCUS=$(jq -r '.FOCUS' topic.json)" >> $GITHUB_OUTPUT
           echo "CONCEPT=$(jq -r '.CONCEPT' topic.json)" >> $GITHUB_OUTPUT
@@ -52,6 +53,7 @@ jobs:
           PAPER_TITLE: ${{ steps.topic.outputs.PAPER_TITLE }}
           PAPER_URL: ${{ steps.topic.outputs.PAPER_URL }}
           PAPER_DATE: ${{ steps.topic.outputs.PAPER_DATE }}
+          PAPER_SOURCE: ${{ steps.topic.outputs.PAPER_SOURCE }}
           BUCKET: ${{ steps.topic.outputs.BUCKET }}
           FOCUS: ${{ steps.topic.outputs.FOCUS }}
           CONCEPT: ${{ steps.topic.outputs.CONCEPT }}
@@ -75,6 +77,7 @@ jobs:
               'PAPER_TITLE': process.env.PAPER_TITLE,
               'PAPER_URL': process.env.PAPER_URL,
               'PAPER_DATE': process.env.PAPER_DATE,
+              'PAPER_SOURCE': process.env.PAPER_SOURCE,
               'BUCKET': process.env.BUCKET,
               'FOCUS': process.env.FOCUS,
               'CONCEPT': process.env.CONCEPT,
