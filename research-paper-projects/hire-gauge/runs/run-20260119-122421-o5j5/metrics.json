@@ -1,0 +1,1392 @@
+{
+  "mainEffects": [
+    {
+      "factor": "skill_match",
+      "levels": [
+        {
+          "level": "low",
+          "meanScore": 5.222222222222222,
+          "count": 18
+        },
+        {
+          "level": "medium",
+          "meanScore": 6.907407407407408,
+          "count": 18
+        },
+        {
+          "level": "high",
+          "meanScore": 7.555555555555555,
+          "count": 18
+        }
+      ],
+      "effectSize": 2.333333333333333,
+      "description": "skill_match: high scores highest (7.56)"
+    },
+    {
+      "factor": "experience",
+      "levels": [
+        {
+          "level": "junior",
+          "meanScore": 5.592592592592592,
+          "count": 18
+        },
+        {
+          "level": "mid",
+          "meanScore": 6.333333333333333,
+          "count": 18
+        },
+        {
+          "level": "senior",
+          "meanScore": 7.759259259259259,
+          "count": 18
+        }
+      ],
+      "effectSize": 2.166666666666667,
+      "description": "experience: senior scores highest (7.76)"
+    },
+    {
+      "factor": "pricing",
+      "levels": [
+        {
+          "level": "below_market",
+          "meanScore": 6.888888888888889,
+          "count": 18
+        },
+        {
+          "level": "at_market",
+          "meanScore": 7.25925925925926,
+          "count": 18
+        },
+        {
+          "level": "above_market",
+          "meanScore": 5.537037037037037,
+          "count": 18
+        }
+      ],
+      "effectSize": 1.7222222222222232,
+      "description": "pricing: at_market scores highest (7.26)"
+    },
+    {
+      "factor": "demographic",
+      "levels": [
+        {
+          "level": "group_a",
+          "meanScore": 6.580246913580248,
+          "count": 27
+        },
+        {
+          "level": "group_b",
+          "meanScore": 6.54320987654321,
+          "count": 27
+        }
+      ],
+      "effectSize": 0.03703703703703809,
+      "description": "demographic: group_a scores highest (6.58)"
+    }
+  ],
+  "interactionEffects": [
+    {
+      "factors": [
+        "demographic",
+        "experience"
+      ],
+      "cells": {
+        "group_a|junior": {
+          "meanScore": 5.62962962962963,
+          "count": 9
+        },
+        "group_a|mid": {
+          "meanScore": 6.333333333333333,
+          "count": 9
+        },
+        "group_a|senior": {
+          "meanScore": 7.777777777777778,
+          "count": 9
+        },
+        "group_b|junior": {
+          "meanScore": 5.555555555555555,
+          "count": 9
+        },
+        "group_b|mid": {
+          "meanScore": 6.333333333333333,
+          "count": 9
+        },
+        "group_b|senior": {
+          "meanScore": 7.740740740740741,
+          "count": 9
+        }
+      },
+      "effectSize": -0.03703703703703809,
+      "description": "demographic × experience: minimal interaction (-0.037)"
+    },
+    {
+      "factors": [
+        "demographic",
+        "pricing"
+      ],
+      "cells": {
+        "group_a|below_market": {
+          "meanScore": 6.888888888888889,
+          "count": 9
+        },
+        "group_a|at_market": {
+          "meanScore": 7.296296296296295,
+          "count": 9
+        },
+        "group_a|above_market": {
+          "meanScore": 5.555555555555555,
+          "count": 9
+        },
+        "group_b|below_market": {
+          "meanScore": 6.888888888888889,
+          "count": 9
+        },
+        "group_b|at_market": {
+          "meanScore": 7.222222222222222,
+          "count": 9
+        },
+        "group_b|above_market": {
+          "meanScore": 5.518518518518518,
+          "count": 9
+        }
+      },
+      "effectSize": 0.0370370370370372,
+      "description": "demographic × pricing: minimal interaction (0.037)"
+    },
+    {
+      "factors": [
+        "demographic",
+        "skill_match"
+      ],
+      "cells": {
+        "group_a|low": {
+          "meanScore": 5.222222222222222,
+          "count": 9
+        },
+        "group_a|medium": {
+          "meanScore": 6.962962962962963,
+          "count": 9
+        },
+        "group_a|high": {
+          "meanScore": 7.555555555555555,
+          "count": 9
+        },
+        "group_b|low": {
+          "meanScore": 5.222222222222222,
+          "count": 9
+        },
+        "group_b|medium": {
+          "meanScore": 6.851851851851851,
+          "count": 9
+        },
+        "group_b|high": {
+          "meanScore": 7.555555555555555,
+          "count": 9
+        }
+      },
+      "effectSize": 0,
+      "description": "demographic × skill_match: minimal interaction (0.000)"
+    }
+  ],
+  "varianceSummary": {
+    "profileVariances": [
+      {
+        "profileId": "profile-001",
+        "scores": [
+          9,
+          9,
+          9
+        ],
+        "mean": 9,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-002",
+        "scores": [
+          9,
+          9,
+          9
+        ],
+        "mean": 9,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-003",
+        "scores": [
+          4,
+          4,
+          4
+        ],
+        "mean": 4,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-004",
+        "scores": [
+          6,
+          6,
+          6
+        ],
+        "mean": 6,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-005",
+        "scores": [
+          4,
+          4,
+          4
+        ],
+        "mean": 4,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-006",
+        "scores": [
+          5,
+          5,
+          5
+        ],
+        "mean": 5,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-007",
+        "scores": [
+          6,
+          6,
+          6
+        ],
+        "mean": 6,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-008",
+        "scores": [
+          7,
+          7,
+          7
+        ],
+        "mean": 7,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-009",
+        "scores": [
+          7,
+          7,
+          7
+        ],
+        "mean": 7,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-010",
+        "scores": [
+          7,
+          7,
+          7
+        ],
+        "mean": 7,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-011",
+        "scores": [
+          9,
+          9,
+          9
+        ],
+        "mean": 9,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-012",
+        "scores": [
+          7,
+          7,
+          7
+        ],
+        "mean": 7,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-013",
+        "scores": [
+          6,
+          6,
+          6
+        ],
+        "mean": 6,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-014",
+        "scores": [
+          7,
+          7,
+          7
+        ],
+        "mean": 7,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-015",
+        "scores": [
+          6,
+          6,
+          6
+        ],
+        "mean": 6,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-016",
+        "scores": [
+          10,
+          10,
+          10
+        ],
+        "mean": 10,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-017",
+        "scores": [
+          5,
+          5,
+          5
+        ],
+        "mean": 5,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-018",
+        "scores": [
+          4,
+          4,
+          4
+        ],
+        "mean": 4,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-019",
+        "scores": [
+          8,
+          8,
+          8
+        ],
+        "mean": 8,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-020",
+        "scores": [
+          4,
+          4,
+          4
+        ],
+        "mean": 4,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-021",
+        "scores": [
+          7,
+          7,
+          7
+        ],
+        "mean": 7,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-022",
+        "scores": [
+          5,
+          5,
+          5
+        ],
+        "mean": 5,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-023",
+        "scores": [
+          6,
+          6,
+          6
+        ],
+        "mean": 6,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-024",
+        "scores": [
+          10,
+          10,
+          10
+        ],
+        "mean": 10,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-025",
+        "scores": [
+          6,
+          6,
+          6
+        ],
+        "mean": 6,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-026",
+        "scores": [
+          7,
+          6,
+          7
+        ],
+        "mean": 6.666666666666667,
+        "stdDev": 0.5773502691896258,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-027",
+        "scores": [
+          9,
+          9,
+          9
+        ],
+        "mean": 9,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-028",
+        "scores": [
+          6,
+          6,
+          6
+        ],
+        "mean": 6,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-029",
+        "scores": [
+          5,
+          5,
+          5
+        ],
+        "mean": 5,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-030",
+        "scores": [
+          4,
+          4,
+          4
+        ],
+        "mean": 4,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-031",
+        "scores": [
+          4,
+          4,
+          4
+        ],
+        "mean": 4,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-032",
+        "scores": [
+          7,
+          7,
+          7
+        ],
+        "mean": 7,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-033",
+        "scores": [
+          7,
+          7,
+          7
+        ],
+        "mean": 7,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-034",
+        "scores": [
+          7,
+          7,
+          7
+        ],
+        "mean": 7,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-035",
+        "scores": [
+          5,
+          5,
+          5
+        ],
+        "mean": 5,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-036",
+        "scores": [
+          8,
+          8,
+          8
+        ],
+        "mean": 8,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-037",
+        "scores": [
+          9,
+          9,
+          9
+        ],
+        "mean": 9,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-038",
+        "scores": [
+          5,
+          5,
+          5
+        ],
+        "mean": 5,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-039",
+        "scores": [
+          6,
+          6,
+          6
+        ],
+        "mean": 6,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-040",
+        "scores": [
+          7,
+          7,
+          7
+        ],
+        "mean": 7,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-041",
+        "scores": [
+          7,
+          7,
+          7
+        ],
+        "mean": 7,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-042",
+        "scores": [
+          6,
+          6,
+          6
+        ],
+        "mean": 6,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-043",
+        "scores": [
+          9,
+          9,
+          9
+        ],
+        "mean": 9,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-044",
+        "scores": [
+          7,
+          7,
+          7
+        ],
+        "mean": 7,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-045",
+        "scores": [
+          5,
+          5,
+          5
+        ],
+        "mean": 5,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-046",
+        "scores": [
+          5,
+          5,
+          5
+        ],
+        "mean": 5,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-047",
+        "scores": [
+          6,
+          6,
+          6
+        ],
+        "mean": 6,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-048",
+        "scores": [
+          7,
+          7,
+          7
+        ],
+        "mean": 7,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-049",
+        "scores": [
+          8,
+          8,
+          8
+        ],
+        "mean": 8,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-050",
+        "scores": [
+          7,
+          7,
+          7
+        ],
+        "mean": 7,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-051",
+        "scores": [
+          6,
+          6,
+          6
+        ],
+        "mean": 6,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-052",
+        "scores": [
+          7,
+          6,
+          7
+        ],
+        "mean": 6.666666666666667,
+        "stdDev": 0.5773502691896258,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-053",
+        "scores": [
+          7,
+          7,
+          7
+        ],
+        "mean": 7,
+        "stdDev": 0,
+        "isUnstable": false
+      },
+      {
+        "profileId": "profile-054",
+        "scores": [
+          8,
+          8,
+          8
+        ],
+        "mean": 8,
+        "stdDev": 0,
+        "isUnstable": false
+      }
+    ],
+    "overallMeanVariance": 0.021383343303319476,
+    "maxVariance": 0.5773502691896258,
+    "unstableCount": 0,
+    "unstableProfiles": []
+  },
+  "perProfileStats": [
+    {
+      "profileId": "profile-001",
+      "scores": [
+        9,
+        9,
+        9
+      ],
+      "mean": 9,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-002",
+      "scores": [
+        9,
+        9,
+        9
+      ],
+      "mean": 9,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-003",
+      "scores": [
+        4,
+        4,
+        4
+      ],
+      "mean": 4,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-004",
+      "scores": [
+        6,
+        6,
+        6
+      ],
+      "mean": 6,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-005",
+      "scores": [
+        4,
+        4,
+        4
+      ],
+      "mean": 4,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-006",
+      "scores": [
+        5,
+        5,
+        5
+      ],
+      "mean": 5,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-007",
+      "scores": [
+        6,
+        6,
+        6
+      ],
+      "mean": 6,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-008",
+      "scores": [
+        7,
+        7,
+        7
+      ],
+      "mean": 7,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-009",
+      "scores": [
+        7,
+        7,
+        7
+      ],
+      "mean": 7,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-010",
+      "scores": [
+        7,
+        7,
+        7
+      ],
+      "mean": 7,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-011",
+      "scores": [
+        9,
+        9,
+        9
+      ],
+      "mean": 9,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-012",
+      "scores": [
+        7,
+        7,
+        7
+      ],
+      "mean": 7,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-013",
+      "scores": [
+        6,
+        6,
+        6
+      ],
+      "mean": 6,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-014",
+      "scores": [
+        7,
+        7,
+        7
+      ],
+      "mean": 7,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-015",
+      "scores": [
+        6,
+        6,
+        6
+      ],
+      "mean": 6,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-016",
+      "scores": [
+        10,
+        10,
+        10
+      ],
+      "mean": 10,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-017",
+      "scores": [
+        5,
+        5,
+        5
+      ],
+      "mean": 5,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-018",
+      "scores": [
+        4,
+        4,
+        4
+      ],
+      "mean": 4,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-019",
+      "scores": [
+        8,
+        8,
+        8
+      ],
+      "mean": 8,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-020",
+      "scores": [
+        4,
+        4,
+        4
+      ],
+      "mean": 4,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-021",
+      "scores": [
+        7,
+        7,
+        7
+      ],
+      "mean": 7,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-022",
+      "scores": [
+        5,
+        5,
+        5
+      ],
+      "mean": 5,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-023",
+      "scores": [
+        6,
+        6,
+        6
+      ],
+      "mean": 6,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-024",
+      "scores": [
+        10,
+        10,
+        10
+      ],
+      "mean": 10,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-025",
+      "scores": [
+        6,
+        6,
+        6
+      ],
+      "mean": 6,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-026",
+      "scores": [
+        7,
+        6,
+        7
+      ],
+      "mean": 6.666666666666667,
+      "stdDev": 0.5773502691896258,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-027",
+      "scores": [
+        9,
+        9,
+        9
+      ],
+      "mean": 9,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-028",
+      "scores": [
+        6,
+        6,
+        6
+      ],
+      "mean": 6,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-029",
+      "scores": [
+        5,
+        5,
+        5
+      ],
+      "mean": 5,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-030",
+      "scores": [
+        4,
+        4,
+        4
+      ],
+      "mean": 4,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-031",
+      "scores": [
+        4,
+        4,
+        4
+      ],
+      "mean": 4,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-032",
+      "scores": [
+        7,
+        7,
+        7
+      ],
+      "mean": 7,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-033",
+      "scores": [
+        7,
+        7,
+        7
+      ],
+      "mean": 7,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-034",
+      "scores": [
+        7,
+        7,
+        7
+      ],
+      "mean": 7,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-035",
+      "scores": [
+        5,
+        5,
+        5
+      ],
+      "mean": 5,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-036",
+      "scores": [
+        8,
+        8,
+        8
+      ],
+      "mean": 8,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-037",
+      "scores": [
+        9,
+        9,
+        9
+      ],
+      "mean": 9,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-038",
+      "scores": [
+        5,
+        5,
+        5
+      ],
+      "mean": 5,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-039",
+      "scores": [
+        6,
+        6,
+        6
+      ],
+      "mean": 6,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-040",
+      "scores": [
+        7,
+        7,
+        7
+      ],
+      "mean": 7,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-041",
+      "scores": [
+        7,
+        7,
+        7
+      ],
+      "mean": 7,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-042",
+      "scores": [
+        6,
+        6,
+        6
+      ],
+      "mean": 6,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-043",
+      "scores": [
+        9,
+        9,
+        9
+      ],
+      "mean": 9,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-044",
+      "scores": [
+        7,
+        7,
+        7
+      ],
+      "mean": 7,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-045",
+      "scores": [
+        5,
+        5,
+        5
+      ],
+      "mean": 5,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-046",
+      "scores": [
+        5,
+        5,
+        5
+      ],
+      "mean": 5,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-047",
+      "scores": [
+        6,
+        6,
+        6
+      ],
+      "mean": 6,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-048",
+      "scores": [
+        7,
+        7,
+        7
+      ],
+      "mean": 7,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-049",
+      "scores": [
+        8,
+        8,
+        8
+      ],
+      "mean": 8,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-050",
+      "scores": [
+        7,
+        7,
+        7
+      ],
+      "mean": 7,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-051",
+      "scores": [
+        6,
+        6,
+        6
+      ],
+      "mean": 6,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-052",
+      "scores": [
+        7,
+        6,
+        7
+      ],
+      "mean": 6.666666666666667,
+      "stdDev": 0.5773502691896258,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-053",
+      "scores": [
+        7,
+        7,
+        7
+      ],
+      "mean": 7,
+      "stdDev": 0,
+      "isUnstable": false
+    },
+    {
+      "profileId": "profile-054",
+      "scores": [
+        8,
+        8,
+        8
+      ],
+      "mean": 8,
+      "stdDev": 0,
+      "isUnstable": false
+    }
+  ],
+  "totalEvaluations": 162,
+  "successfulEvaluations": 162,
+  "failedEvaluations": 0
+}

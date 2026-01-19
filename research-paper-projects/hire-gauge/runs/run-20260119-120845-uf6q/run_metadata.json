@@ -1,0 +1,19 @@
+{
+  "runId": "run-20260119-120845-uf6q",
+  "timestamp": "2026-01-19T17:08:45.535Z",
+  "model": {
+    "provider": "openai",
+    "name": "gpt-4o-mini",
+    "temperature": 0
+  },
+  "promptVersion": "v1",
+  "seed": 42,
+  "repetitions": 3,
+  "mode": "scoring",
+  "profileCount": 54,
+  "gitCommit": "4a4eb332f94131fc99b65bedc29cf66b55c68440",
+  "thresholds": {
+    "max_interaction_magnitude": 0.5,
+    "max_profile_variance": 1.5
+  }
+}

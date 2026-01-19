@@ -29,6 +29,7 @@ While many of these projects are production-inspired and follow real-world engin
 - [FairEval-CLI](#faireval-cli) - Calibrated pairwise LLM evaluation mitigating positional bias
 - [Zero-Shot Task Router](#zero-shot-task-router) - Prompt-conditioned zero-shot task induction experiments
 - [Chain-of-Thought Prompt Comparator](#chain-of-thought-prompt-comparator) - A CLI tool for comparing Chain-of-Thought (CoT) prompting strategies
+- [HireGauge](./research-paper-projects/hire-gauge) - LLM hiring decision evaluation with factorial experiments and bias detection
 
 ### Upcoming Projects - Currently have roadmap and/or concept mapped out
 

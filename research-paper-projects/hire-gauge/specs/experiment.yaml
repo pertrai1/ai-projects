@@ -1,0 +1,36 @@
+version: "1.0"
+seed: 42
+repetitions: 3
+mode: scoring
+prompt_version: v1
+
+factors:
+  experience:
+    levels:
+      - junior
+      - mid
+      - senior
+  skill_match:
+    levels:
+      - low
+      - medium
+      - high
+  pricing:
+    levels:
+      - below_market
+      - at_market
+      - above_market
+  demographic:
+    levels:
+      - group_a
+      - group_b
+
+thresholds:
+  max_interaction_magnitude: 0.5
+  max_profile_variance: 1.5
+
+model:
+  provider: openai
+  name: gpt-4o-mini
+  temperature: 0
+  max_retries: 3
