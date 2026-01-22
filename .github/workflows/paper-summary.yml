@@ -3,12 +3,10 @@ name: Paper Summary Bot
 on:
   issue_comment:
     types: [created]
-  schedule:
-    - cron: '0 12 * * *' # Run daily at 7 AM EST (12 PM UTC)
   workflow_dispatch:
     inputs:
       issue_number:
-        description: 'Issue number to summarize (optional, for testing)'
+        description: "Issue number to summarize (optional, for testing)"
         required: false
         type: number
 
@@ -38,8 +36,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -151,9 +149,10 @@ jobs:
           PAPER_URL=$(jq -r '.body' issue.json | grep -oP 'https?://arxiv\.org/abs/[0-9]{4}\.[0-9]{4,5}(v[0-9]+)?' | head -1)
 
           if [ -z "$PAPER_URL" ]; then
-            echo "No arXiv paper URL found in issue body"
+            echo "No valid arXiv paper URL found in issue body." >&2
             echo "SKIP=true" >> $GITHUB_ENV
             echo "PAPER_URL=" >> $GITHUB_OUTPUT
+            exit 1
           else
             echo "Found paper URL: $PAPER_URL"
             echo "PAPER_URL=$PAPER_URL" >> $GITHUB_OUTPUT

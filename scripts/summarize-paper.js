@@ -171,7 +171,8 @@ ${paperText}
  */
 async function main() {
   try {
-    if (process.argv.length < 3) {
+    if (process.argv.length < 3 || !isValidUrl(process.argv[2])) {
+      console.error('Error: A valid paper URL must be provided.');
       console.error('Usage: node summarize-paper.js <paper_url>');
       console.error(
         'Example: node summarize-paper.js http://arxiv.org/abs/2601.00698v1'
