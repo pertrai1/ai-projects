@@ -8,14 +8,16 @@
 
 The core idea is elegant:
 
-* Instead of processing sequences step-by-step (like RNNs), transformers process entire sequences simultaneously
-* **Self-attention** allows each position to attend to all other positions, weighing their relevance
-* **Positional encodings** inject sequence order information without recurrence
-* The architecture scales exceptionally well with data and compute
+- Instead of processing sequences step-by-step (like RNNs), transformers process entire sequences simultaneously
+- **Self-attention** allows each position to attend to all other positions, weighing their relevance
+- **Positional encodings** inject sequence order information without recurrence
+- The architecture scales exceptionally well with data and compute
 
 Transformers are particularly well-suited for **sequence-to-sequence tasks**, **language understanding**, **generation**, and increasingly, **computer vision** and **multimodal learning**.
 
 Since their introduction, transformers have become the foundation of virtually all state-of-the-art NLP systems and are expanding into vision (ViT), speech, protein folding (AlphaFold), and even reinforcement learning.
+
+![Mindmap](../mindmaps/transformers-mindmap.png)
 
 ---
 
@@ -100,10 +102,11 @@ This architecture enabled unprecedented parallelization during training while ma
 **Examples:** BERT, RoBERTa, ALBERT, DeBERTa
 
 **Use cases:**
-* Text classification
-* Named entity recognition
-* Question answering (reading comprehension)
-* Sentence similarity
+
+- Text classification
+- Named entity recognition
+- Question answering (reading comprehension)
+- Sentence similarity
 
 **How they work:** Bidirectional context—each token sees all other tokens. Trained with masked language modeling (MLM).
 
@@ -112,10 +115,11 @@ This architecture enabled unprecedented parallelization during training while ma
 **Examples:** GPT, GPT-2, GPT-3, GPT-4, LLaMA, Mistral, Gemini
 
 **Use cases:**
-* Text generation
-* Code generation
-* Conversation
-* Few-shot learning
+
+- Text generation
+- Code generation
+- Conversation
+- Few-shot learning
 
 **How they work:** Autoregressive generation—each token sees only previous tokens. Trained with next-token prediction.
 
@@ -124,9 +128,10 @@ This architecture enabled unprecedented parallelization during training while ma
 **Examples:** T5, BART, mT5, FLAN-T5
 
 **Use cases:**
-* Translation
-* Summarization
-* Text-to-text tasks
+
+- Translation
+- Summarization
+- Text-to-text tasks
 
 **How they work:** Full transformer architecture. Encoder processes input bidirectionally, decoder generates output autoregressively.
 
@@ -135,9 +140,10 @@ This architecture enabled unprecedented parallelization during training while ma
 **Examples:** ViT, DeiT, Swin Transformer, BEiT
 
 **Use cases:**
-* Image classification
-* Object detection
-* Semantic segmentation
+
+- Image classification
+- Object detection
+- Semantic segmentation
 
 **How they work:** Images are split into patches, flattened, and treated as tokens. Position embeddings indicate spatial location.
 
@@ -146,9 +152,10 @@ This architecture enabled unprecedented parallelization during training while ma
 **Examples:** CLIP, DALL-E, Flamingo, GPT-4 Vision
 
 **Use cases:**
-* Image-text matching
-* Visual question answering
-* Image generation from text
+
+- Image-text matching
+- Visual question answering
+- Image generation from text
 
 **How they work:** Process multiple modalities (text, images, audio) with shared or modality-specific encoders.
 
@@ -159,16 +166,18 @@ This architecture enabled unprecedented parallelization during training while ma
 **Machine Translation: "The cat sat" → "Le chat s'est assis"**
 
 **Without transformers (RNN approach):**
-* Process "The" → hidden state h1
-* Process "cat" with h1 → hidden state h2
-* Process "sat" with h2 → hidden state h3
-* Problem: By h3, information about "The" may be faded
+
+- Process "The" → hidden state h1
+- Process "cat" with h1 → hidden state h2
+- Process "sat" with h2 → hidden state h3
+- Problem: By h3, information about "The" may be faded
 
 **With transformers:**
-* All words processed simultaneously
-* "sat" directly attends to "The" and "cat" with learned weights
-* Attention weights might show: "sat" strongly attends to "cat" (the subject)
-* Decoder generates French words while attending to relevant English words
+
+- All words processed simultaneously
+- "sat" directly attends to "The" and "cat" with learned weights
+- Attention weights might show: "sat" strongly attends to "cat" (the subject)
+- Decoder generates French words while attending to relevant English words
 
 **Key insight:** No sequential bottleneck. Every word can directly access every other word, with the model learning which connections matter.
 
@@ -192,10 +201,11 @@ Attention(Q, K, V) = softmax(QK^T / √d_k) V
 4. **Weighted sum**: Multiply attention weights by values
 
 **Dimensions:**
-* Q: (sequence_length, d_k)
-* K: (sequence_length, d_k)  
-* V: (sequence_length, d_v)
-* Output: (sequence_length, d_v)
+
+- Q: (sequence_length, d_k)
+- K: (sequence_length, d_k)
+- V: (sequence_length, d_v)
+- Output: (sequence_length, d_v)
 
 ### Multi-Head Attention
 
@@ -208,27 +218,31 @@ where head_i = Attention(QW_i^Q, KW_i^K, VW_i^V)
 ```
 
 **Why multiple heads?**
-* Different heads learn different relationships (syntax, semantics, coreference)
-* Head 1 might capture subject-verb relationships
-* Head 2 might capture pronoun-antecedent links
-* Head 3 might capture positional patterns
+
+- Different heads learn different relationships (syntax, semantics, coreference)
+- Head 1 might capture subject-verb relationships
+- Head 2 might capture pronoun-antecedent links
+- Head 3 might capture positional patterns
 
 **Typical configuration:**
-* 8 heads for base models
-* 12-16 heads for large models
-* Each head has d_model/h dimensions (512/8 = 64 in original paper)
+
+- 8 heads for base models
+- 12-16 heads for large models
+- Each head has d_model/h dimensions (512/8 = 64 in original paper)
 
 ### Self-Attention vs Cross-Attention
 
 **Self-Attention:**
-* Q, K, V all come from the same sequence
-* Used in encoder and decoder
-* Allows tokens to attend to other tokens in same sequence
+
+- Q, K, V all come from the same sequence
+- Used in encoder and decoder
+- Allows tokens to attend to other tokens in same sequence
 
 **Cross-Attention:**
-* Q comes from decoder, K and V from encoder
-* Used in encoder-decoder architecture
-* Allows decoder to focus on relevant parts of input
+
+- Q comes from decoder, K and V from encoder
+- Used in encoder-decoder architecture
+- Allows decoder to focus on relevant parts of input
 
 ### Masked Self-Attention
 
@@ -257,35 +271,36 @@ PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
 ```
 
 **Properties:**
-* Fixed (not learned)
-* Unique for each position
-* Allows model to learn relative positions
-* Can generalize to longer sequences than seen during training
+
+- Fixed (not learned)
+- Unique for each position
+- Allows model to learn relative positions
+- Can generalize to longer sequences than seen during training
 
 ### Learned Positional Embeddings
 
 **Examples:** BERT, GPT
 
-* Embeddings learned during training
-* One embedding per position up to max_sequence_length
-* Cannot generalize beyond training length
-* Often performs slightly better empirically
+- Embeddings learned during training
+- One embedding per position up to max_sequence_length
+- Cannot generalize beyond training length
+- Often performs slightly better empirically
 
 ### Relative Positional Encodings
 
 **Examples:** Transformer-XL, T5
 
-* Encode relative distances between tokens
-* More flexible for variable-length sequences
-* Better generalization to longer sequences
+- Encode relative distances between tokens
+- More flexible for variable-length sequences
+- Better generalization to longer sequences
 
 ### Rotary Position Embedding (RoPE)
 
 **Examples:** GPT-Neo, LLaMA, PaLM
 
-* Encodes position by rotating query and key vectors
-* Naturally incorporates relative position information
-* Excellent length extrapolation properties
+- Encodes position by rotating query and key vectors
+- Naturally incorporates relative position information
+- Excellent length extrapolation properties
 
 ---
 
@@ -294,60 +309,70 @@ PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
 ### Pre-training Objectives
 
 **Masked Language Modeling (MLM) - BERT-style:**
-* Randomly mask 15% of tokens
-* Model predicts masked tokens using bidirectional context
-* Example: "The [MASK] sat on the mat" → predict "cat"
+
+- Randomly mask 15% of tokens
+- Model predicts masked tokens using bidirectional context
+- Example: "The [MASK] sat on the mat" → predict "cat"
 
 **Causal Language Modeling (CLM) - GPT-style:**
-* Predict next token given previous tokens
-* Trained left-to-right autoregressively
-* Example: "The cat sat" → predict "on"
+
+- Predict next token given previous tokens
+- Trained left-to-right autoregressively
+- Example: "The cat sat" → predict "on"
 
 **Sequence-to-Sequence (Seq2Seq) - T5-style:**
-* Frame all tasks as text-to-text
-* Input: "translate English to French: The cat"
-* Output: "Le chat"
+
+- Frame all tasks as text-to-text
+- Input: "translate English to French: The cat"
+- Output: "Le chat"
 
 **Span Corruption - T5 variation:**
-* Mask spans of consecutive tokens
-* Model predicts entire span
-* More efficient than single-token masking
+
+- Mask spans of consecutive tokens
+- Model predicts entire span
+- More efficient than single-token masking
 
 ### Fine-tuning Strategies
 
 **Full Fine-tuning:**
-* Update all model parameters
-* Requires significant compute
-* Best performance on target task
+
+- Update all model parameters
+- Requires significant compute
+- Best performance on target task
 
 **Parameter-Efficient Fine-tuning (PEFT):**
-* LoRA: Add low-rank adaptation matrices
-* Adapter layers: Insert small modules between layers
-* Prefix tuning: Optimize continuous prompts
-* Only update small fraction of parameters
+
+- LoRA: Add low-rank adaptation matrices
+- Adapter layers: Insert small modules between layers
+- Prefix tuning: Optimize continuous prompts
+- Only update small fraction of parameters
 
 **Few-Shot / In-Context Learning:**
-* No parameter updates
-* Provide examples in the prompt
-* Model learns from context alone
-* Used in GPT-3, GPT-4
+
+- No parameter updates
+- Provide examples in the prompt
+- Model learns from context alone
+- Used in GPT-3, GPT-4
 
 ### Training Challenges
 
 **Computational Cost:**
-* Attention is O(n²) in sequence length
-* Memory grows quadratically
-* Solutions: gradient checkpointing, mixed precision, efficient attention
+
+- Attention is O(n²) in sequence length
+- Memory grows quadratically
+- Solutions: gradient checkpointing, mixed precision, efficient attention
 
 **Optimization:**
-* Learning rate warmup critical
-* Layer normalization placement matters (pre-norm vs post-norm)
-* Gradient clipping prevents instability
+
+- Learning rate warmup critical
+- Layer normalization placement matters (pre-norm vs post-norm)
+- Gradient clipping prevents instability
 
 **Data Requirements:**
-* Pre-training requires massive datasets (hundreds of GBs to TBs)
-* Fine-tuning can work with thousands of examples
-* Few-shot learning needs minimal data
+
+- Pre-training requires massive datasets (hundreds of GBs to TBs)
+- Fine-tuning can work with thousands of examples
+- Few-shot learning needs minimal data
 
 ---
 
@@ -355,47 +380,47 @@ PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
 
 ### Natural Language Processing
 
-* **Machine Translation**: State-of-the-art for all language pairs
-* **Text Summarization**: Abstractive and extractive
-* **Question Answering**: Reading comprehension, open-domain QA
-* **Text Generation**: Creative writing, code generation, dialogue
-* **Sentiment Analysis**: Opinion mining, emotion detection
-* **Named Entity Recognition**: Extracting entities from text
+- **Machine Translation**: State-of-the-art for all language pairs
+- **Text Summarization**: Abstractive and extractive
+- **Question Answering**: Reading comprehension, open-domain QA
+- **Text Generation**: Creative writing, code generation, dialogue
+- **Sentiment Analysis**: Opinion mining, emotion detection
+- **Named Entity Recognition**: Extracting entities from text
 
 ### Computer Vision
 
-* **Image Classification**: ViT matches or exceeds CNNs
-* **Object Detection**: DETR (Detection Transformer)
-* **Semantic Segmentation**: Segformer, SegViT
-* **Image Generation**: Dall-E, Stable Diffusion (uses UNet with attention)
+- **Image Classification**: ViT matches or exceeds CNNs
+- **Object Detection**: DETR (Detection Transformer)
+- **Semantic Segmentation**: Segformer, SegViT
+- **Image Generation**: Dall-E, Stable Diffusion (uses UNet with attention)
 
 ### Speech and Audio
 
-* **Speech Recognition**: Wav2Vec 2.0, Whisper
-* **Text-to-Speech**: Transformer-TTS
-* **Music Generation**: Music Transformer
-* **Audio Classification**: AST (Audio Spectrogram Transformer)
+- **Speech Recognition**: Wav2Vec 2.0, Whisper
+- **Text-to-Speech**: Transformer-TTS
+- **Music Generation**: Music Transformer
+- **Audio Classification**: AST (Audio Spectrogram Transformer)
 
 ### Code and Programming
 
-* **Code Completion**: GitHub Copilot, CodeT5
-* **Code Translation**: Converting between languages
-* **Bug Detection**: Finding vulnerabilities
-* **Documentation Generation**: Docstring generation
+- **Code Completion**: GitHub Copilot, CodeT5
+- **Code Translation**: Converting between languages
+- **Bug Detection**: Finding vulnerabilities
+- **Documentation Generation**: Docstring generation
 
 ### Multimodal Applications
 
-* **Image Captioning**: Describing images in natural language
-* **Visual Question Answering**: Answering questions about images
-* **Text-to-Image Generation**: DALL-E, Stable Diffusion
-* **Video Understanding**: Video transformers for action recognition
+- **Image Captioning**: Describing images in natural language
+- **Visual Question Answering**: Answering questions about images
+- **Text-to-Image Generation**: DALL-E, Stable Diffusion
+- **Video Understanding**: Video transformers for action recognition
 
 ### Scientific Applications
 
-* **Protein Structure Prediction**: AlphaFold 2 uses attention
-* **Drug Discovery**: Molecule generation and property prediction
-* **Weather Forecasting**: Pangu-Weather (transformer for meteorology)
-* **Mathematical Reasoning**: Solving equations, theorem proving
+- **Protein Structure Prediction**: AlphaFold 2 uses attention
+- **Drug Discovery**: Molecule generation and property prediction
+- **Weather Forecasting**: Pangu-Weather (transformer for meteorology)
+- **Mathematical Reasoning**: Solving equations, theorem proving
 
 ---
 
@@ -403,91 +428,91 @@ PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
 
 ### Foundational Papers
 
-* **Attention is All You Need** — Vaswani et al. (2017)  
-  *The paper that introduced transformers. Essential reading.*
+- **Attention is All You Need** — Vaswani et al. (2017)  
+  _The paper that introduced transformers. Essential reading._
 
-* **Attention Mechanisms in Neural Networks** — Bahdanau et al. (2014)  
-  *Pre-transformer attention for seq2seq models.*
+- **Attention Mechanisms in Neural Networks** — Bahdanau et al. (2014)  
+  _Pre-transformer attention for seq2seq models._
 
 ### Encoder Models (BERT Family)
 
-* **BERT: Pre-training of Deep Bidirectional Transformers** — Devlin et al. (2018)  
-  *Introduced masked language modeling and bidirectional pre-training.*
+- **BERT: Pre-training of Deep Bidirectional Transformers** — Devlin et al. (2018)  
+  _Introduced masked language modeling and bidirectional pre-training._
 
-* **RoBERTa: A Robustly Optimized BERT Pretraining Approach** — Liu et al. (2019)  
-  *Improved BERT with better training procedures.*
+- **RoBERTa: A Robustly Optimized BERT Pretraining Approach** — Liu et al. (2019)  
+  _Improved BERT with better training procedures._
 
-* **ALBERT: A Lite BERT for Self-supervised Learning** — Lan et al. (2019)  
-  *Parameter-efficient variant of BERT.*
+- **ALBERT: A Lite BERT for Self-supervised Learning** — Lan et al. (2019)  
+  _Parameter-efficient variant of BERT._
 
-* **DeBERTa: Decoding-enhanced BERT with Disentangled Attention** — He et al. (2020)  
-  *State-of-the-art encoder with improved attention.*
+- **DeBERTa: Decoding-enhanced BERT with Disentangled Attention** — He et al. (2020)  
+  _State-of-the-art encoder with improved attention._
 
 ### Decoder Models (GPT Family)
 
-* **Improving Language Understanding by Generative Pre-Training** — Radford et al. (2018)  
-  *GPT-1: First large-scale generative pre-training.*
+- **Improving Language Understanding by Generative Pre-Training** — Radford et al. (2018)  
+  _GPT-1: First large-scale generative pre-training._
 
-* **Language Models are Unsupervised Multitask Learners** — Radford et al. (2019)  
-  *GPT-2: Demonstrated zero-shot task transfer.*
+- **Language Models are Unsupervised Multitask Learners** — Radford et al. (2019)  
+  _GPT-2: Demonstrated zero-shot task transfer._
 
-* **Language Models are Few-Shot Learners** — Brown et al. (2020)  
-  *GPT-3 (175B parameters): Few-shot learning emergence.*
+- **Language Models are Few-Shot Learners** — Brown et al. (2020)  
+  _GPT-3 (175B parameters): Few-shot learning emergence._
 
-* **LLaMA: Open and Efficient Foundation Language Models** — Touvron et al. (2023)  
-  *Efficient open-source models (7B-65B).*
+- **LLaMA: Open and Efficient Foundation Language Models** — Touvron et al. (2023)  
+  _Efficient open-source models (7B-65B)._
 
 ### Encoder-Decoder Models
 
-* **Exploring the Limits of Transfer Learning with T5** — Raffel et al. (2019)  
-  *Text-to-text framework, comprehensive study of transfer learning.*
+- **Exploring the Limits of Transfer Learning with T5** — Raffel et al. (2019)  
+  _Text-to-text framework, comprehensive study of transfer learning._
 
-* **BART: Denoising Sequence-to-Sequence Pre-training** — Lewis et al. (2019)  
-  *Combines BERT and GPT ideas for seq2seq.*
+- **BART: Denoising Sequence-to-Sequence Pre-training** — Lewis et al. (2019)  
+  _Combines BERT and GPT ideas for seq2seq._
 
 ### Vision Transformers
 
-* **An Image is Worth 16x16 Words: Transformers for Image Recognition** — Dosovitskiy et al. (2020)  
-  *ViT: First pure transformer for vision, matches CNNs.*
+- **An Image is Worth 16x16 Words: Transformers for Image Recognition** — Dosovitskiy et al. (2020)  
+  _ViT: First pure transformer for vision, matches CNNs._
 
-* **Swin Transformer: Hierarchical Vision Transformer** — Liu et al. (2021)  
-  *Efficient transformer with shifted windows.*
+- **Swin Transformer: Hierarchical Vision Transformer** — Liu et al. (2021)  
+  _Efficient transformer with shifted windows._
 
-* **Masked Autoencoders Are Scalable Vision Learners** — He et al. (2021)  
-  *Self-supervised learning for vision transformers.*
+- **Masked Autoencoders Are Scalable Vision Learners** — He et al. (2021)  
+  _Self-supervised learning for vision transformers._
 
 ### Efficient Transformers
 
-* **Reformer: The Efficient Transformer** — Kitaev et al. (2020)  
-  *Locality-sensitive hashing for efficient attention.*
+- **Reformer: The Efficient Transformer** — Kitaev et al. (2020)  
+  _Locality-sensitive hashing for efficient attention._
 
-* **Linformer: Self-Attention with Linear Complexity** — Wang et al. (2020)  
-  *Linear-complexity attention approximation.*
+- **Linformer: Self-Attention with Linear Complexity** — Wang et al. (2020)  
+  _Linear-complexity attention approximation._
 
-* **FlashAttention: Fast and Memory-Efficient Exact Attention** — Dao et al. (2022)  
-  *IO-aware attention algorithm, 2-4x faster.*
+- **FlashAttention: Fast and Memory-Efficient Exact Attention** — Dao et al. (2022)  
+  _IO-aware attention algorithm, 2-4x faster._
 
 ### Multimodal
 
-* **CLIP: Learning Transferable Visual Models From Natural Language** — Radford et al. (2021)  
-  *Contrastive image-text pre-training.*
+- **CLIP: Learning Transferable Visual Models From Natural Language** — Radford et al. (2021)  
+  _Contrastive image-text pre-training._
 
-* **Flamingo: a Visual Language Model for Few-Shot Learning** — Alayrac et al. (2022)  
-  *State-of-the-art vision-language model.*
+- **Flamingo: a Visual Language Model for Few-Shot Learning** — Alayrac et al. (2022)  
+  _State-of-the-art vision-language model._
 
 ### Books
 
-* **Natural Language Processing with Transformers** — Tunstall, von Werra, Wolf (2022)  
-  *Comprehensive guide to transformers with Hugging Face.*
+- **Natural Language Processing with Transformers** — Tunstall, von Werra, Wolf (2022)  
+  _Comprehensive guide to transformers with Hugging Face._
 
-* **Deep Learning** — Goodfellow, Bengio, Courville (2016)  
-  *Chapter 12 covers attention mechanisms (foundational context).*
+- **Deep Learning** — Goodfellow, Bengio, Courville (2016)  
+  _Chapter 12 covers attention mechanisms (foundational context)._
 
-* **Speech and Language Processing** — Jurafsky & Martin (3rd ed.)  
-  *Covers transformers in NLP context.*
+- **Speech and Language Processing** — Jurafsky & Martin (3rd ed.)  
+  _Covers transformers in NLP context._
 
-* **Dive into Deep Learning** — Zhang et al. (2023)  
-  *Interactive book with transformer chapters.*
+- **Dive into Deep Learning** — Zhang et al. (2023)  
+  _Interactive book with transformer chapters._
 
 ---
 
@@ -495,79 +520,79 @@ PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
 
 ### Courses
 
-* **Stanford CS224N – Natural Language Processing with Deep Learning**  
+- **Stanford CS224N – Natural Language Processing with Deep Learning**  
   Comprehensive NLP course covering transformers extensively.
 
-* **Stanford CS25 – Transformers United**  
+- **Stanford CS25 – Transformers United**  
   Course entirely dedicated to transformers across domains.
 
-* **Hugging Face NLP Course**  
+- **Hugging Face NLP Course**  
   Free, hands-on course using Transformers library.
 
-* **Fast.ai – Practical Deep Learning for Coders**  
+- **Fast.ai – Practical Deep Learning for Coders**  
   Includes transformers for NLP and vision.
 
-* **DeepLearning.AI – Natural Language Processing Specialization**  
+- **DeepLearning.AI – Natural Language Processing Specialization**  
   Covers attention and transformer architectures.
 
-* **MIT 6.S191 – Introduction to Deep Learning**  
+- **MIT 6.S191 – Introduction to Deep Learning**  
   Includes transformer lectures with code.
 
 ### Tutorials & Guides
 
-* **The Illustrated Transformer** — Jay Alammar  
+- **The Illustrated Transformer** — Jay Alammar  
   Visual, intuitive explanation of transformer mechanics.
 
-* **The Annotated Transformer** — Harvard NLP  
+- **The Annotated Transformer** — Harvard NLP  
   Line-by-line implementation with explanations.
 
-* **Attention is All You Need** — Paper walkthrough by Yannic Kilcher  
+- **Attention is All You Need** — Paper walkthrough by Yannic Kilcher  
   Detailed video explanation of the original paper.
 
-* **Hugging Face Documentation**  
+- **Hugging Face Documentation**  
   Extensive guides, tutorials, and model documentation.
 
-* **LLM Visualization** — Brendan Bycroft  
+- **LLM Visualization** — Brendan Bycroft  
   Interactive 3D visualization of GPT architecture.
 
 ### Libraries & Frameworks
 
-* **Hugging Face Transformers**  
+- **Hugging Face Transformers**  
   The standard library for transformer models (100k+ stars).
 
-* **PyTorch**  
+- **PyTorch**  
   Primary framework for transformer research.
 
-* **TensorFlow / JAX**  
+- **TensorFlow / JAX**  
   Alternative frameworks with strong transformer support.
 
-* **fairseq (Meta)**  
+- **fairseq (Meta)**  
   Research library with many transformer variants.
 
-* **Axolotl**  
+- **Axolotl**  
   Fine-tuning framework for LLMs.
 
-* **vLLM**  
+- **vLLM**  
   High-performance inference for LLMs.
 
-* **LangChain**  
+- **LangChain**  
   Framework for building LLM applications.
 
-* **BERTopic**  
+- **BERTopic**  
   Topic modeling with transformers.
 
 ### Datasets
 
-* **Hugging Face Datasets**  
+- **Hugging Face Datasets**  
   50,000+ datasets for NLP, vision, audio.
 
-* **The Pile**  
+- **The Pile**  
   800GB diverse text dataset for LLM training.
 
-* **Common Crawl**  
+- **Common Crawl**  
   Massive web corpus used for GPT, LLaMA.
 
-* **ImageNet**  
+- **ImageNet**  
   Image dataset for vision transformer pre-training.
 
 ---
@@ -613,19 +638,19 @@ PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
 
 ### Key Intuitions to Develop
 
-* **Attention is learnable routing**: Each token learns where to look for information
-* **Self-attention is all-to-all**: Unlike RNNs, no information bottleneck
-* **Multi-head = multiple perspectives**: Different heads capture different patterns
-* **Positional encoding is crucial**: Order information must be explicitly added
-* **Residual connections enable depth**: Deep transformers need skip connections
+- **Attention is learnable routing**: Each token learns where to look for information
+- **Self-attention is all-to-all**: Unlike RNNs, no information bottleneck
+- **Multi-head = multiple perspectives**: Different heads capture different patterns
+- **Positional encoding is crucial**: Order information must be explicitly added
+- **Residual connections enable depth**: Deep transformers need skip connections
 
 ### Common Misconceptions
 
-* Transformers don't always outperform other architectures on small data
-* Bigger models don't always mean better performance for all tasks
-* Pre-training requires massive compute, but fine-tuning is accessible
-* Attention weights aren't always interpretable as "importance"
-* Transformers aren't inherently better at long-range dependencies (due to O(n²) complexity)
+- Transformers don't always outperform other architectures on small data
+- Bigger models don't always mean better performance for all tasks
+- Pre-training requires massive compute, but fine-tuning is accessible
+- Attention weights aren't always interpretable as "importance"
+- Transformers aren't inherently better at long-range dependencies (due to O(n²) complexity)
 
 ---
 
@@ -633,38 +658,38 @@ PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
 
 ### Architecture Design
 
-* **Too many attention heads**: More isn't always better; 8-12 is often optimal
-* **Insufficient warmup**: Learning rate warmup critical for stable training
-* **Wrong normalization placement**: Pre-norm generally more stable than post-norm
-* **Forgetting dropout**: Transformers overfit easily; dropout essential
+- **Too many attention heads**: More isn't always better; 8-12 is often optimal
+- **Insufficient warmup**: Learning rate warmup critical for stable training
+- **Wrong normalization placement**: Pre-norm generally more stable than post-norm
+- **Forgetting dropout**: Transformers overfit easily; dropout essential
 
 ### Training Issues
 
-* **Gradient explosion**: Use gradient clipping (max norm 1.0)
-* **Memory constraints**: Use gradient checkpointing, mixed precision (fp16/bf16)
-* **Slow convergence**: Ensure proper learning rate schedule (warmup + decay)
-* **Vanishing attention**: Some heads may become redundant or collapse
+- **Gradient explosion**: Use gradient clipping (max norm 1.0)
+- **Memory constraints**: Use gradient checkpointing, mixed precision (fp16/bf16)
+- **Slow convergence**: Ensure proper learning rate schedule (warmup + decay)
+- **Vanishing attention**: Some heads may become redundant or collapse
 
 ### Data and Preprocessing
 
-* **Inadequate tokenization**: Use BPE, WordPiece, or SentencePiece
-* **Sequence length mismatches**: Pad/truncate consistently
-* **Ignoring special tokens**: [CLS], [SEP], [PAD], [MASK] are crucial
-* **Data leakage**: Ensure train/validation/test splits are clean
+- **Inadequate tokenization**: Use BPE, WordPiece, or SentencePiece
+- **Sequence length mismatches**: Pad/truncate consistently
+- **Ignoring special tokens**: [CLS], [SEP], [PAD], [MASK] are crucial
+- **Data leakage**: Ensure train/validation/test splits are clean
 
 ### Inference and Deployment
 
-* **Not using KV caching**: Recomputing keys/values is wasteful
-* **Inefficient batching**: Dynamic batching improves throughput
-* **Ignoring quantization**: INT8/INT4 quantization reduces model size
-* **Token limit surprises**: Models have maximum sequence lengths
+- **Not using KV caching**: Recomputing keys/values is wasteful
+- **Inefficient batching**: Dynamic batching improves throughput
+- **Ignoring quantization**: INT8/INT4 quantization reduces model size
+- **Token limit surprises**: Models have maximum sequence lengths
 
 ### Interpretability
 
-* **Over-interpreting attention**: Attention ≠ explanation or causation
-* **Assuming attention is uniform**: Different layers learn different patterns
-* **Ignoring intermediate representations**: Hidden states contain valuable information
-* **Forgetting about embeddings**: Poor embeddings doom the model
+- **Over-interpreting attention**: Attention ≠ explanation or causation
+- **Assuming attention is uniform**: Different layers learn different patterns
+- **Ignoring intermediate representations**: Hidden states contain valuable information
+- **Forgetting about embeddings**: Poor embeddings doom the model
 
 ---
 
@@ -672,46 +697,46 @@ PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
 
 ### Large Language Models (LLMs)
 
-* **GPT-4, Claude, Gemini**: All transformer-based
-* **Scaling laws**: Performance improves predictably with size and data
-* **Emergent abilities**: Chain-of-thought, few-shot learning appear at scale
-* **Alignment**: RLHF fine-tunes transformers to be helpful and harmless
+- **GPT-4, Claude, Gemini**: All transformer-based
+- **Scaling laws**: Performance improves predictably with size and data
+- **Emergent abilities**: Chain-of-thought, few-shot learning appear at scale
+- **Alignment**: RLHF fine-tunes transformers to be helpful and harmless
 
 ### Foundation Models
 
-* **Transfer learning**: Pre-train once, fine-tune for many tasks
-* **Multimodal foundation models**: Text + vision + audio in one model
-* **Domain-specific models**: BioGPT (medicine), CodeGen (programming)
-* **Open-source movement**: LLaMA, Mistral, Falcon democratize access
+- **Transfer learning**: Pre-train once, fine-tune for many tasks
+- **Multimodal foundation models**: Text + vision + audio in one model
+- **Domain-specific models**: BioGPT (medicine), CodeGen (programming)
+- **Open-source movement**: LLaMA, Mistral, Falcon democratize access
 
 ### Agent Systems
 
-* **LLM-powered agents**: Use transformers for reasoning and planning
-* **Tool use**: Transformers learn to call APIs, use calculators, search
-* **Multi-agent systems**: Multiple LLMs collaborating
-* **Retrieval-augmented generation (RAG)**: Combine transformers with search
+- **LLM-powered agents**: Use transformers for reasoning and planning
+- **Tool use**: Transformers learn to call APIs, use calculators, search
+- **Multi-agent systems**: Multiple LLMs collaborating
+- **Retrieval-augmented generation (RAG)**: Combine transformers with search
 
 ### Efficient AI
 
-* **Quantization**: INT8, INT4 models (GPTQ, AWQ, GGUF)
-* **Pruning**: Remove unnecessary weights
-* **Distillation**: Smaller models learn from larger ones
-* **LoRA**: Adapt models with minimal parameters (0.1-1% of original)
+- **Quantization**: INT8, INT4 models (GPTQ, AWQ, GGUF)
+- **Pruning**: Remove unnecessary weights
+- **Distillation**: Smaller models learn from larger ones
+- **LoRA**: Adapt models with minimal parameters (0.1-1% of original)
 
 ### Specialized Transformers
 
-* **Vision**: Segment Anything Model (SAM) for segmentation
-* **Code**: AlphaCode, CodeLlama for competitive programming
-* **Science**: ESMFold for protein structure, GNoME for materials
-* **Reasoning**: Models trained specifically for math and logic
+- **Vision**: Segment Anything Model (SAM) for segmentation
+- **Code**: AlphaCode, CodeLlama for competitive programming
+- **Science**: ESMFold for protein structure, GNoME for materials
+- **Reasoning**: Models trained specifically for math and logic
 
 ### Ethical and Safety Considerations
 
-* **Bias**: Transformers inherit biases from training data
-* **Misinformation**: Capable of generating convincing but false content
-* **Privacy**: Models may memorize training data
-* **Environmental impact**: Training large models consumes significant energy
-* **Alignment**: Ensuring models behave as intended remains challenging
+- **Bias**: Transformers inherit biases from training data
+- **Misinformation**: Capable of generating convincing but false content
+- **Privacy**: Models may memorize training data
+- **Environmental impact**: Training large models consumes significant energy
+- **Alignment**: Ensuring models behave as intended remains challenging
 
 ---
 
@@ -723,116 +748,116 @@ Each project is designed to build understanding progressively, from basic concep
 
 **Goal:** Understand how attention mechanisms work at a fundamental level.
 
-* Use a pre-trained model (BERT or GPT-2) from Hugging Face
-* Extract attention weights for a sample sentence
-* Visualize attention patterns using matplotlib or bertviz
-* Identify which tokens attend to which tokens
-* Compare attention patterns across different layers
-* **Learning outcome:** Intuition for what attention captures
+- Use a pre-trained model (BERT or GPT-2) from Hugging Face
+- Extract attention weights for a sample sentence
+- Visualize attention patterns using matplotlib or bertviz
+- Identify which tokens attend to which tokens
+- Compare attention patterns across different layers
+- **Learning outcome:** Intuition for what attention captures
 
 ### Project 2: Implement Minimal Transformer from Scratch
 
 **Goal:** Deeply understand transformer mechanics.
 
-* Implement scaled dot-product attention in NumPy/PyTorch
-* Build multi-head attention layer
-* Add positional encoding (sinusoidal)
-* Create a 2-layer transformer encoder
-* Train on simple task (character-level language modeling)
-* **Learning outcome:** Mastery of core components
+- Implement scaled dot-product attention in NumPy/PyTorch
+- Build multi-head attention layer
+- Add positional encoding (sinusoidal)
+- Create a 2-layer transformer encoder
+- Train on simple task (character-level language modeling)
+- **Learning outcome:** Mastery of core components
 
 ### Project 3: Fine-tune BERT for Text Classification
 
 **Goal:** Learn practical transfer learning workflow.
 
-* Choose a dataset (IMDB reviews, AG News, or tweet sentiment)
-* Load pre-trained BERT from Hugging Face
-* Add classification head
-* Fine-tune with appropriate hyperparameters
-* Evaluate and compare with baseline (logistic regression on TF-IDF)
-* **Learning outcome:** Understanding of fine-tuning process
+- Choose a dataset (IMDB reviews, AG News, or tweet sentiment)
+- Load pre-trained BERT from Hugging Face
+- Add classification head
+- Fine-tune with appropriate hyperparameters
+- Evaluate and compare with baseline (logistic regression on TF-IDF)
+- **Learning outcome:** Understanding of fine-tuning process
 
 ### Project 4: Build a Simple Chatbot with GPT-2
 
 **Goal:** Experiment with autoregressive generation.
 
-* Fine-tune GPT-2 on conversational dataset (DailyDialog or PersonaChat)
-* Implement sampling strategies (temperature, top-k, top-p)
-* Create a simple CLI chat interface
-* Experiment with prompts and context windows
-* Add conversation history management
-* **Learning outcome:** Generation techniques and prompt engineering
+- Fine-tune GPT-2 on conversational dataset (DailyDialog or PersonaChat)
+- Implement sampling strategies (temperature, top-k, top-p)
+- Create a simple CLI chat interface
+- Experiment with prompts and context windows
+- Add conversation history management
+- **Learning outcome:** Generation techniques and prompt engineering
 
 ### Project 5: Vision Transformer for Image Classification
 
 **Goal:** Apply transformers beyond text.
 
-* Use a ViT model from Hugging Face or timm
-* Fine-tune on CIFAR-10 or custom image dataset
-* Compare with CNN baseline (ResNet)
-* Visualize attention maps on images
-* Experiment with patch sizes and model variants
-* **Learning outcome:** Understanding transformers in computer vision
+- Use a ViT model from Hugging Face or timm
+- Fine-tune on CIFAR-10 or custom image dataset
+- Compare with CNN baseline (ResNet)
+- Visualize attention maps on images
+- Experiment with patch sizes and model variants
+- **Learning outcome:** Understanding transformers in computer vision
 
 ### Project 6: Implement LoRA Fine-tuning
 
 **Goal:** Learn parameter-efficient fine-tuning.
 
-* Use PEFT library from Hugging Face
-* Apply LoRA to a mid-size model (GPT-2 medium or BERT-large)
-* Fine-tune on domain-specific task
-* Compare full fine-tuning vs LoRA (parameters, memory, performance)
-* Experiment with rank (r) and alpha hyperparameters
-* **Learning outcome:** Efficient adaptation techniques
+- Use PEFT library from Hugging Face
+- Apply LoRA to a mid-size model (GPT-2 medium or BERT-large)
+- Fine-tune on domain-specific task
+- Compare full fine-tuning vs LoRA (parameters, memory, performance)
+- Experiment with rank (r) and alpha hyperparameters
+- **Learning outcome:** Efficient adaptation techniques
 
 ### Project 7: Build a RAG (Retrieval-Augmented Generation) System
 
 **Goal:** Combine transformers with external knowledge.
 
-* Set up a vector database (FAISS or ChromaDB)
-* Embed documents using sentence transformers
-* Implement retrieval mechanism
-* Use LLM (GPT-3.5 or open-source) to generate answers from retrieved context
-* Build a question-answering system over your own documents
-* **Learning outcome:** Production-ready LLM applications
+- Set up a vector database (FAISS or ChromaDB)
+- Embed documents using sentence transformers
+- Implement retrieval mechanism
+- Use LLM (GPT-3.5 or open-source) to generate answers from retrieved context
+- Build a question-answering system over your own documents
+- **Learning outcome:** Production-ready LLM applications
 
 ### Project 8: Efficient Transformer Inference
 
 **Goal:** Optimize model deployment.
 
-* Take a GPT-2 or BERT model
-* Apply quantization (INT8 using bitsandbytes or ONNX)
-* Implement KV caching for autoregressive generation
-* Measure inference speed and memory usage
-* Compare with original model performance
-* **Learning outcome:** Deployment optimization techniques
+- Take a GPT-2 or BERT model
+- Apply quantization (INT8 using bitsandbytes or ONNX)
+- Implement KV caching for autoregressive generation
+- Measure inference speed and memory usage
+- Compare with original model performance
+- **Learning outcome:** Deployment optimization techniques
 
 ### Project 9: Multimodal Project - Image Captioning
 
 **Goal:** Work with multiple modalities.
 
-* Use CLIP or BLIP model
-* Build an image captioning system
-* Try both zero-shot and fine-tuned approaches
-* Implement beam search for better captions
-* Create a simple web interface (Gradio or Streamlit)
-* **Learning outcome:** Multimodal transformer applications
+- Use CLIP or BLIP model
+- Build an image captioning system
+- Try both zero-shot and fine-tuned approaches
+- Implement beam search for better captions
+- Create a simple web interface (Gradio or Streamlit)
+- **Learning outcome:** Multimodal transformer applications
 
 ### Project 10: Reproduce a Paper Result
 
 **Goal:** Deep learning through replication.
 
-* Choose an accessible paper (e.g., "The Annotated Transformer")
-* Implement the method from scratch
-* Train on the same or similar dataset
-* Try to reproduce reported metrics
-* Document differences and challenges
-* Write a blog post about your experience
-* **Learning outcome:** Research skills and deeper understanding
+- Choose an accessible paper (e.g., "The Annotated Transformer")
+- Implement the method from scratch
+- Train on the same or similar dataset
+- Try to reproduce reported metrics
+- Document differences and challenges
+- Write a blog post about your experience
+- **Learning outcome:** Research skills and deeper understanding
 
 ---
 
-*True transformer mastery comes from implementation, experimentation, and learning from both successes and failures.*
+_True transformer mastery comes from implementation, experimentation, and learning from both successes and failures._
 
 ## Generation Metadata
 
@@ -842,9 +867,9 @@ Each project is designed to build understanding progressively, from basic concep
 - **Prompt style:** Structured documentation following established standards
 - **Primary Sources:** 45+ academic papers, 8 books, 12 courses, 15+ technical resources
 - **Key References:**
-  - Vaswani, A., et al. (2017). "Attention is All You Need." *NeurIPS 2017*
+  - Vaswani, A., et al. (2017). "Attention is All You Need." _NeurIPS 2017_
   - Devlin, J., et al. (2018). "BERT: Pre-training of Deep Bidirectional Transformers"
-  - Brown, T., et al. (2020). "Language Models are Few-Shot Learners." *NeurIPS 2020*
+  - Brown, T., et al. (2020). "Language Models are Few-Shot Learners." _NeurIPS 2020_
 - **Research Methodology:**
   - Literature review: Comprehensive survey of transformer papers (2017-2024)
   - Source verification: Cross-referenced papers, textbooks, and course materials
