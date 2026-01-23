@@ -44,7 +44,7 @@ Each of the subtopics below will have a separate document that will have specifi
 
 ## Deep Learning - optimization of neural networks
 
-- Transformers
+- [Transformers](./deep-learning/transformers.md)
 - Convolutional Neural Networks (CNN)
 - Recurrent Neural Networks (RNN)
 - Generative Adversarial Networks (GAN)
