@@ -52,7 +52,7 @@ Each of the subtopics below will have a separate document that will have specifi
 
 - [Large Language Models (LLM)](./artificial-intelligence/large_language_models.md)
 - Foundation Models
-- Retrieval-Augmented Generation (RAG)
+- [Retrieval-Augmented Generation (RAG)](./artificial-intelligence/retrieval_augmented_generation.md)
 - Generative Adversarial Networks (GAN)
 - BigGAN
 - Transfer Learning
