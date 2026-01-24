@@ -10,7 +10,7 @@ Each of the subtopics below will have a separate document that will have specifi
 - [Augmented Programming](./artificial-intelligence/augmented_programming.md)
 - [Agents](./artificial-intelligence/agents.md)
 - [Algorithm Building](./artificial-intelligence/algorithm_building.md)
-- AI Ethics
+- [AI Ethics](./artificial-intelligence/ai_ethics.md)
 
 ## Machine Learning - is a strategy
 
