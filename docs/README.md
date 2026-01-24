@@ -33,12 +33,6 @@ Each of the subtopics below will have a separate document that will have specifi
 - Hopfield Networks
 - Boltzmann Machines
 - Liquid State Machines
-- Convolutional Neural Networks
-- Recurrent Neural Networks
-- Generative Adversarial Networks
-- Transformers
-- Autoencoders
-- Long Short-Term Memory Networks
 - Radial Basis Function Networks
 - Self-Organizing Maps
 
@@ -58,6 +52,7 @@ Each of the subtopics below will have a separate document that will have specifi
 
 - [Large Language Models (LLM)](./artificial-intelligence/large_language_models.md)
 - Foundation Models
+- Retrieval-Augmented Generation (RAG)
 - Generative Adversarial Networks (GAN)
 - BigGAN
 - Transfer Learning
@@ -67,4 +62,18 @@ Each of the subtopics below will have a separate document that will have specifi
 - Reinforcement Learning with Human Feedback (RLHF)
 - LoRA (Low-Rank Adaptation)
 - Ensemble Models
-- Agents
+
+## AI/ML Engineering & Operations - building production AI systems
+
+- Model Evaluations & Benchmarking
+- Spec-Driven Development
+- Prompt Engineering
+- Model Testing & Validation
+- AI/ML CI/CD
+- Model Monitoring & Observability
+- A/B Testing for AI Systems
+- Model Versioning & Management
+- Deployment Strategies
+- Fine-tuning Methodologies
+- Dataset Management
+- Bias Detection & Mitigation
