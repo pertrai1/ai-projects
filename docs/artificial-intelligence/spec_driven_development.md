@@ -3843,7 +3843,7 @@ Always explain confidence score in reasoning field.
 ```typescript
 function calculateConfidence(query: string, schema: Schema): number {
   // Extract tables and columns from query
-  const queryt tables = extractTables(query);
+  const queryTables = extractTables(query);
   const queryColumns = extractColumns(query);
   
   // Check schema coverage
