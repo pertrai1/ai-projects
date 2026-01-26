@@ -11,7 +11,7 @@ The core idea is simple:
 - The model is shown N examples (typically 1-10) of each new class
 - The model must generalize to recognize future instances of those classes
 - Learning happens through meta-learning, transfer learning, or similarity-based comparison
-- The model learns "how to learn quickly" from limited data
+- The model learns efficient adaptation mechanisms for new tasks with minimal data
 
 N-Shot Learning is particularly well-suited for problems involving **rapid adaptation**, **personalized systems**, **rare event detection**, **medical diagnosis with limited labeled data**, and scenarios where **data collection is expensive, time-consuming, or impractical**.
 
@@ -85,7 +85,7 @@ N-Shot learning fundamentally reframes the machine learning problem from memoriz
 5. Classify new instances by comparison or rapid fine-tuning
 6. Can handle new classes without full retraining
 
-**The Key Insight:** Instead of learning to classify specific classes, learn a meta-algorithm that can quickly learn any new classification task from just a few examples. The model learns the learning process itself.
+**The Key Insight:** Instead of learning to classify specific classes, learn a meta-algorithm that can quickly learn any new classification task from just a few examples. The model learns task-agnostic learning strategies that generalize across diverse problems.
 
 **Training Process:**
 
@@ -613,7 +613,7 @@ Automatically discovering architectures optimized for few-shot:
 **Meta-Learning: From Theory to Algorithms**
 - Authors: Chelsea Finn, Sergey Levine (online book)
 - Theoretical foundations and practical algorithms
-- Free online: [http://metalearning.ml](http://metalearning.ml)
+- Free online: [https://metalearning.ml](https://metalearning.ml)
 
 **Deep Learning**
 - Authors: Goodfellow, Bengio, Courville
