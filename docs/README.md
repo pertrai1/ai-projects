@@ -66,7 +66,7 @@ Each of the subtopics below will have a separate document that will have specifi
 ## AI/ML Engineering & Operations - building production AI systems
 
 - Model Evaluations & Benchmarking
-- Spec-Driven Development
+- [Spec-Driven Development](./ai-ml-engineering/spec_driven_development.md)
 - Prompt Engineering
 - Model Testing & Validation
 - AI/ML CI/CD
