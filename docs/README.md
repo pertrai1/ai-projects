@@ -18,7 +18,7 @@ Each of the subtopics below will have a separate document that will have specifi
 - Unsupervised Learning
 - Hypothesis Testing
 - K-means Clustering
-- K-Nearest Neighbors
+- [K-Nearest Neighbors](./machine-learning/k_nearest_neighbors.md)
 - Logistic Regression
 - Linear Regression
 - Principal Component Analysis
