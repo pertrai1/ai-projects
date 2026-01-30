@@ -1,0 +1,52 @@
+[
+  {
+    "query": "Where is the validateToken function defined?",
+    "expectedIntent": "LOCATION",
+    "description": "Explicit location query"
+  },
+  {
+    "query": "Where is query-router.ts?",
+    "expectedIntent": "LOCATION",
+    "description": "File location query"
+  },
+  {
+    "query": "How does the authentication system work?",
+    "expectedIntent": "ARCHITECTURE",
+    "description": "High-level architecture query"
+  },
+  {
+    "query": "How is the retry logic implemented?",
+    "expectedIntent": "IMPLEMENTATION",
+    "description": "Specific implementation detail"
+  },
+  {
+    "query": "What does the auth module depend on?",
+    "expectedIntent": "DEPENDENCY",
+    "description": "Explicit dependency query"
+  },
+  {
+    "query": "How do I use the vector store API?",
+    "expectedIntent": "USAGE",
+    "description": "Usage/API query"
+  },
+  {
+    "query": "Why would the ingestion fail with a timeout?",
+    "expectedIntent": "DEBUGGING",
+    "description": "Error/debugging query"
+  },
+  {
+    "query": "What is the difference between semantic and fixed chunking?",
+    "expectedIntent": "COMPARISON",
+    "description": "Comparison query"
+  },
+  {
+    "query": "Show me an example of the embedder",
+    "expectedIntent": "USAGE",
+    "description": "Example request"
+  },
+  {
+    "query": "Tell me about this codebase",
+    "expectedIntent": "GENERAL",
+    "description": "General open-ended query"
+  }
+]

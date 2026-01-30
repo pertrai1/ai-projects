@@ -1,0 +1,82 @@
+[
+  {
+    "query": "Where is the validateToken function defined?",
+    "expected": "LOCATION",
+    "predicted": "LOCATION",
+    "correct": true,
+    "confidence": 0.95,
+    "duration": 1
+  },
+  {
+    "query": "Where is query-router.ts?",
+    "expected": "LOCATION",
+    "predicted": "LOCATION",
+    "correct": true,
+    "confidence": 0.95,
+    "duration": 0
+  },
+  {
+    "query": "How does the authentication system work?",
+    "expected": "ARCHITECTURE",
+    "predicted": "ARCHITECTURE",
+    "correct": true,
+    "confidence": 0.9,
+    "duration": 0
+  },
+  {
+    "query": "How is the retry logic implemented?",
+    "expected": "IMPLEMENTATION",
+    "predicted": "IMPLEMENTATION",
+    "correct": true,
+    "confidence": 0.85,
+    "duration": 0
+  },
+  {
+    "query": "What does the auth module depend on?",
+    "expected": "DEPENDENCY",
+    "predicted": "DEPENDENCY",
+    "correct": true,
+    "confidence": 0.9,
+    "duration": 0
+  },
+  {
+    "query": "How do I use the vector store API?",
+    "expected": "USAGE",
+    "predicted": "USAGE",
+    "correct": true,
+    "confidence": 0.85,
+    "duration": 0
+  },
+  {
+    "query": "Why would the ingestion fail with a timeout?",
+    "expected": "DEBUGGING",
+    "predicted": "DEBUGGING",
+    "correct": true,
+    "confidence": 0.8,
+    "duration": 0
+  },
+  {
+    "query": "What is the difference between semantic and fixed chunking?",
+    "expected": "COMPARISON",
+    "predicted": "DEBUGGING",
+    "correct": false,
+    "confidence": 0.8,
+    "duration": 0
+  },
+  {
+    "query": "Show me an example of the embedder",
+    "expected": "USAGE",
+    "predicted": "USAGE",
+    "correct": true,
+    "confidence": 0.85,
+    "duration": 0
+  },
+  {
+    "query": "Tell me about this codebase",
+    "expected": "GENERAL",
+    "predicted": "GENERAL",
+    "correct": true,
+    "confidence": 0.7,
+    "duration": 0
+  }
+]

@@ -15,6 +15,7 @@ import { ASTParser } from './parser/ast-parser.js';
 import { readFile } from './utils/file-discovery.js';
 import { globalLogger, LogLevel } from './utils/logger.js';
 import { runPhase1Experiment } from './commands/phase-1-experiment.js';
+import { phase2Experiment } from './commands/phase-2-experiment.js';
 
 const program = new Command();
 
@@ -30,7 +31,7 @@ program
   .command('discover <path>')
   .description('Discover code files in a directory')
   .option('-v, --verbose', 'Show detailed output')
-  .action((path, options) => {
+  .action((path: string, options: any) => {
     if (options.verbose) {
       globalLogger.setMinLevel(LogLevel.DEBUG);
     }
@@ -70,7 +71,7 @@ program
 program
   .command('analyze <path>')
   .description('Analyze code structure of a file')
-  .action((filePath) => {
+  .action((filePath: string) => {
     globalLogger.info(`Analyzing ${filePath}...`);
 
     try {
@@ -115,7 +116,7 @@ program
   .command('ingest <path>')
   .description('Ingest a codebase to build vector index')
   .option('-o, --output <path>', 'Output index path')
-  .action((path) => {
+  .action((path: string) => {
     globalLogger.info(`Ingesting codebase from ${path}...`);
     console.log('\n⚠ Ingest command not yet implemented (Phase 1)');
     console.log('  This phase will:');
@@ -131,13 +132,15 @@ program
 program
   .command('experiment <phase> <path>')
   .description('Run experiments for a specific phase')
-  .action(async (phase, path) => {
+  .action(async (phase: string, path: string) => {
     try {
       if (phase === 'phase-1') {
         await runPhase1Experiment(path);
+      } else if (phase === 'phase-2') {
+        await phase2Experiment(path);
       } else {
         console.error(`✗ Unknown phase: ${phase}`);
-        console.log('Available phases: phase-1 (chunking strategies)');
+        console.log('Available phases: phase-1 (chunking), phase-2 (intent)');
         process.exit(1);
       }
     } catch (error) {
@@ -153,7 +156,7 @@ program
 program
   .command('ask <query>')
   .description('Ask a question about the codebase')
-  .action((query) => {
+  .action((query: string) => {
     console.log('\n⚠ Ask command not yet implemented (Phase 2+)');
     console.log(`  Query: "${query}"`);
     console.log('  This phase will:');

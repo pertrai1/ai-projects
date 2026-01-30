@@ -84,16 +84,20 @@ export class VectorStore {
   }
 
   /**
-   * Search for similar chunks
+   * Search for similar chunks with optional filtering
    */
-  async search(query: string, k: number = 10): Promise<SearchResults> {
+  async search(
+    query: string, 
+    k: number = 10, 
+    filter?: (chunk: CodeChunk) => boolean
+  ): Promise<SearchResults> {
     const startTime = Date.now();
 
     // Embed query
     const queryEmbedding = await this.embedder.embed(query);
 
     // Search
-    const candidates = this.branchAndBound(queryEmbedding, k);
+    const candidates = this.branchAndBound(queryEmbedding, k, filter);
 
     const searchTime = Date.now() - startTime;
 
@@ -122,12 +126,18 @@ export class VectorStore {
    */
   private branchAndBound(
     queryEmbedding: EmbeddingVector,
-    k: number
+    k: number,
+    filter?: (chunk: CodeChunk) => boolean
   ): Array<{ chunk: CodeChunk; score: number }> {
     const candidates: Array<{ chunk: CodeChunk; score: number }> = [];
 
     // Compute similarity to all indexed chunks
     for (const entry of this.chunks.values()) {
+      // Apply filter if provided
+      if (filter && !filter(entry.chunk)) {
+        continue;
+      }
+
       const score = Embedder.cosineSimilarity(queryEmbedding, entry.embedding);
       candidates.push({
         chunk: entry.chunk,
