@@ -8,7 +8,7 @@ interface TestCase {
   description: string;
 }
 
-export async function phase2Experiment(_codebasePath: string) {
+export async function phase2Experiment() {
   console.log('Running Phase 2 Experiment: Intent Classification');
   console.log('------------------------------------------------');
 

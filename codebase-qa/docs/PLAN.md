@@ -224,31 +224,23 @@ Tasks:
 
 **THIS IS YOUR CORE LEARNING PHASE** - Focus on understanding how retrieval parameters affect answer quality
 
-Tasks:
-1. Define retrieval parameters per intent:
-   ```
-   ARCHITECTURE: k=15, expand_query=true, include_module_overview=true
-   IMPLEMENTATION: k=8, expand_query=false, exact_function_match=true
-   DEPENDENCY: k=5, filter_by_imports=true
-   USAGE: k=10, boost_examples=true
-   DEBUGGING: k=12, include_error_paths=true
-   LOCATION: k=3, exact_name_match=true
-   ```
-2. Implement adaptive retriever:
-   - Load intent from query router
-   - Apply strategy to retrieval call
-   - Validate parameter choices in specs
-3. Implement context expansion:
-   - For ARCHITECTURE: Add file structure overview
-   - For IMPLEMENTATION: Add function signature + full implementation
-   - For DEPENDENCY: Add import statements
-   - For DEBUGGING: Add error handlers
-4. Add result post-processing:
-   - Rank by relevance to query intent
-   - Boost results that match multiple signals (code similarity + semantic similarity)
-   - Deduplicate overlapping chunks
-5. Create spec file for retrieval strategies
-6. Run ablation study: Test impact of k, query expansion, and filtering on retrieval quality
+#### Completed Tasks
+1. ✅ **Define Retrieval Strategies Spec**: Created `specs/retrieval-strategies.yaml` to define and externalize our retrieval logic, making it easy to tune.
+2. ✅ **Implement Core Adaptive Retriever**: Built the `AdaptiveRetriever` to load the strategies and dynamically apply the `k` parameter based on the classified query intent.
+3. ✅ **Initial Experiment**: Created the `phase-3-experiment` to verify that the dynamic `k` selection works as expected.
+
+#### Next Steps
+1. ⬜️ **Implement Context Expansion**: The next layer of intelligence. After getting our initial chunks, we'll fetch more context based on the intent.
+   - For `ARCHITECTURE`: Add file structure overview.
+   - For `IMPLEMENTATION`: Add the full function/class implementation.
+   - For `DEPENDENCY`: Add the relevant import statements.
+   - For `DEBUGGING`: Add surrounding error-handling blocks (`try...catch`).
+2. ⬜️ **Implement Result Post-Processing**: After retrieval, we need to refine the results.
+   - Rank results based on relevance to the specific query intent.
+   - Boost scores for results that match multiple signals (e.g., boost test files for a `USAGE` query).
+   - Deduplicate overlapping chunks to provide a cleaner context.
+3. ⬜️ **Conduct Full Ablation Study**:
+   - Systematically test the impact of each parameter (`k`, query expansion, filters) on retrieval quality to understand what *really* works.
 
 **Output**: Adaptive retrieval system that responds differently to different query types
 

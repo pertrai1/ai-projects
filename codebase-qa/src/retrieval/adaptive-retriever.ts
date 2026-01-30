@@ -1,118 +1,77 @@
 /**
  * Adaptive Retriever (Phase 3)
  * 
- * The core engine of "Smart Retrieval".
+ * The core engine of "Smart Retrieval". It dynamically adjusts retrieval
+ * parameters based on the classified query intent. This moves beyond a
+ * one-size-fits-all search to a more nuanced, context-aware approach.
  * 
  * TEACHING CONCEPT:
- * In a standard RAG, you always search with `k=10` and no filters.
- * In Adaptive RAG, we change parameters based on intent.
- * 
- * - Need a definition? -> Strict filter, low k
- * - Need examples? -> Filter for .test.ts or 'example', medium k
- * - Need architecture? -> No filter, high k
+ * This module demonstrates how to operationalize intent-based routing. Instead
+ * of hardcoding `k=10`, we load a configuration file (a "spec") that maps
+ * intents like 'ARCHITECTURE' or 'LOCATION' to specific parameters. This makes
+ * the system's logic transparent, configurable, and easy to experiment with.
  */
 
 import { VectorStore, SearchResults } from '../vector-store/vector-store.js';
-import { QueryIntent, QueryIntentType, CodeChunk } from '../types/index.js';
+import { QueryIntent, RetrievalStrategies, RetrievalStrategy } from '../types/index.js';
+import { loadRetrievalStrategies } from '../utils/spec-loader.js';
 
-export interface RetrievalConfig {
-  k: number;
-  minScore: number;
-  filter?: (chunk: CodeChunk) => boolean;
-  strategyName: string;
-}
+// Define a default strategy for fallback cases.
+const DEFAULT_STRATEGY: RetrievalStrategy = {
+  k: 10,
+  description: "A fallback strategy for general queries.",
+};
 
 export class AdaptiveRetriever {
   private vectorStore: VectorStore;
+  private strategies: RetrievalStrategies;
 
-  constructor(vectorStore: VectorStore) {
+  /**
+   * The constructor is private because loading strategies is an async operation.
+   * Use the static `create` method to instantiate the retriever.
+   */
+  private constructor(vectorStore: VectorStore, strategies: RetrievalStrategies) {
     this.vectorStore = vectorStore;
+    this.strategies = strategies;
   }
 
   /**
-   * Execute retrieval based on intent
+   * Asynchronously creates and initializes an AdaptiveRetriever instance.
+   * This pattern is used to handle the async loading of strategies before
+   * the retriever is ready to be used.
+   *
+   * @param vectorStore The vector store instance to search against.
+   * @returns A promise that resolves to a new AdaptiveRetriever instance.
+   */
+  public static async create(vectorStore: VectorStore): Promise<AdaptiveRetriever> {
+    const strategies = await loadRetrievalStrategies();
+    return new AdaptiveRetriever(vectorStore, strategies);
+  }
+
+  /**
+   * Execute retrieval based on the query's classified intent.
+   * It looks up the appropriate strategy from the loaded specs, applies
+   * its parameters to the search, and performs any post-processing.
    */
   async retrieve(query: string, intent: QueryIntent): Promise<SearchResults> {
-    const config = this.getStrategyForIntent(intent);
+    // 1. Select the strategy based on the intent, with a fallback to the default.
+    const strategy = this.strategies[intent.type] || DEFAULT_STRATEGY;
     
-    console.log(`[AdaptiveRetriever] Strategy: ${config.strategyName} (k=${config.k})`);
+    console.log(`[AdaptiveRetriever] Intent: '${intent.type}'. Using strategy: '${strategy.description}' (k=${strategy.k})`);
+
+    // 2. TODO: Implement filter logic based on strategy flags.
+    // For now, we only use `k`. The other flags from the YAML are placeholders
+    // for future enhancements.
     
-    // Execute search with adaptive parameters
-    const results = await this.vectorStore.search(query, config.k, config.filter);
+    // 3. Execute the search with the adaptive 'k' parameter.
+    const results = await this.vectorStore.search(query, strategy.k);
     
-    // Post-processing (filtering by score)
-    const filteredResults = results.results.filter(r => r.relevanceScore >= config.minScore);
-    
+    // 4. TODO: Implement post-processing and context expansion.
+
+    // For now, we return the direct results.
     return {
       ...results,
-      results: filteredResults,
-      strategy: 'hybrid' // indicating we used smart logic
+      strategy: 'hybrid', // Indicate a smart strategy was used
     };
-  }
-
-  /**
-   * THE BRAIN: Mapping Intent -> Search Strategy
-   */
-  private getStrategyForIntent(intent: QueryIntent): RetrievalConfig {
-    switch (intent.type) {
-      case 'LOCATION':
-        return {
-          k: 3, // Very focused
-          minScore: 0.85, // High precision required
-          strategyName: 'Targeted Lookup',
-          // If we have entities, we could filter by them here
-          // For now, we rely on vector similarity + high threshold
-        };
-
-      case 'IMPLEMENTATION':
-        return {
-          k: 8,
-          minScore: 0.7,
-          strategyName: 'Implementation Search',
-          // Prefer source files, avoid tests/mocks
-          filter: (chunk) => !chunk.metadata.filePath.includes('.test.') && !chunk.metadata.filePath.includes('mock')
-        };
-
-      case 'USAGE':
-        return {
-          k: 10,
-          minScore: 0.65,
-          strategyName: 'Usage/Example Search',
-          // Prefer tests and documentation
-          filter: (chunk) => chunk.metadata.filePath.includes('.test.') || chunk.metadata.filePath.endsWith('.md')
-        };
-        
-      case 'ARCHITECTURE':
-        return {
-          k: 20, // Broad context
-          minScore: 0.6,
-          strategyName: 'Broad Architectural Scan',
-          // No filter - get everything
-        };
-        
-      case 'DEBUGGING':
-        return {
-          k: 12,
-          minScore: 0.65,
-          strategyName: 'Error Path Search',
-          // No specific filter, but strategy implies we might look for 'error' keywords in future
-        };
-        
-      case 'DEPENDENCY':
-        return {
-          k: 5,
-          minScore: 0.75,
-          strategyName: 'Dependency Trace',
-          // Prefer files with imports
-          filter: (chunk) => chunk.metadata.imports && chunk.metadata.imports.length > 0
-        };
-
-      default:
-        return {
-          k: 10,
-          minScore: 0.7,
-          strategyName: 'Standard Default'
-        };
-    }
   }
 }

@@ -19,24 +19,24 @@ export interface CodeChunkMetadata {
   endLine: number;
 
   // Scope information
-  scopeName?: string;  // Function/class name this chunk belongs to
+  scopeName?: string; // Function/class name this chunk belongs to
   scopeType?: 'function' | 'class' | 'module' | 'interface' | 'type';
 
   // Code structure
   functionSignature?: string;
-  imports: string[];  // Import statements needed for this chunk
+  imports: string[]; // Import statements needed for this chunk
 
   // Relationships
-  dependencies?: string[];  // Other files/modules this depends on
-  dependents?: string[];   // Files/modules that depend on this
+  dependencies?: string[]; // Other files/modules this depends on
+  dependents?: string[]; // Files/modules that depend on this
 
   // Metadata
   isExported: boolean;
-  documentation?: string;  // JSDoc/comments
+  documentation?: string; // JSDoc/comments
 
   // For retrieval and ranking
   embeddingId?: string;
-  chunkIndex: number;  // Which chunk is this in the file (0-indexed)
+  chunkIndex: number; // Which chunk is this in the file (0-indexed)
 }
 
 /**
@@ -55,23 +55,23 @@ export interface CodeChunk {
  * Different query types need different retrieval strategies
  */
 export type QueryIntentType =
-  | 'ARCHITECTURE'    // How does X system work?
-  | 'IMPLEMENTATION'  // How is feature Y implemented?
-  | 'DEPENDENCY'      // What does module X depend on?
-  | 'USAGE'          // How do I use class X?
-  | 'DEBUGGING'      // Why would Z fail?
-  | 'COMPARISON'     // What's the difference between X and Y?
-  | 'LOCATION'       // Where is function X defined?
-  | 'GENERAL';       // General questions
+  | 'ARCHITECTURE' // How does X system work?
+  | 'IMPLEMENTATION' // How is feature Y implemented?
+  | 'DEPENDENCY' // What does module X depend on?
+  | 'USAGE' // How do I use class X?
+  | 'DEBUGGING' // Why would Z fail?
+  | 'COMPARISON' // What's the difference between X and Y?
+  | 'LOCATION' // Where is function X defined?
+  | 'GENERAL'; // General questions
 
 /**
  * Query intent classification result
  */
 export interface QueryIntent {
   type: QueryIntentType;
-  confidence: number;  // 0-1 confidence score
+  confidence: number; // 0-1 confidence score
   reasoning: string;
-  entities: QueryEntity[];  // Extracted entities from query
+  entities: QueryEntity[]; // Extracted entities from query
   searchStrategy: 'focused' | 'broad' | 'multi-step';
 }
 
@@ -86,16 +86,27 @@ export interface QueryEntity {
 }
 
 /**
- * Retrieval strategy parameters
- * Adaptive parameters based on query intent
+ * Defines the retrieval strategy for a given intent.
+ * This structure is loaded from `retrieval-strategies.yaml`.
  */
 export interface RetrievalStrategy {
-  k: number;  // Number of results to retrieve
-  expandQuery: boolean;  // Whether to expand the query with related terms
-  filters?: RetrievalFilter[];
-  contextWindow: 'narrow' | 'medium' | 'broad';
-  boostSignals?: string[];  // Which signals to boost (e.g., 'examples', 'imports')
+  k: number;
+  expand_query?: boolean;
+  include_module_overview?: boolean;
+  exact_function_match?: boolean;
+  filter_by_imports?: boolean;
+  boost_examples?: boolean;
+  include_error_paths?: boolean;
+  exact_name_match?: boolean;
+  description: string;
 }
+
+/**
+ * A map of intent types to their corresponding retrieval strategies.
+ */
+export type RetrievalStrategies = {
+  [key in QueryIntentType]?: RetrievalStrategy;
+};
 
 /**
  * Filter for retrieval (e.g., filter by imports, file type)
@@ -109,9 +120,9 @@ export interface RetrievalFilter {
  * Retrieved code chunk with relevance score
  */
 export interface RetrievedChunk extends CodeChunk {
-  relevanceScore: number;  // 0-1 score
-  rankingSignals?: Record<string, number>;  // Individual signal scores
-  retrievalMethod?: string;  // 'semantic' | 'keyword' | 'structural'
+  relevanceScore: number; // 0-1 score
+  rankingSignals?: Record<string, number>; // Individual signal scores
+  retrievalMethod?: string; // 'semantic' | 'keyword' | 'structural'
 }
 
 /**
@@ -122,9 +133,9 @@ export interface CodeSnippet {
   filePath: string;
   startLine: number;
   endLine: number;
-  language: string;  // 'typescript', 'javascript', etc.
-  highlighted?: boolean;  // Whether to highlight specific lines
-  highlightLines?: number[];  // Which lines to highlight
+  language: string; // 'typescript', 'javascript', etc.
+  highlighted?: boolean; // Whether to highlight specific lines
+  highlightLines?: number[]; // Which lines to highlight
 }
 
 /**
@@ -133,8 +144,8 @@ export interface CodeSnippet {
 export interface CodeQAResponse {
   content: string;
   citations: Citation[];
-  confidence: number;  // How confident is the system in this answer?
-  reasoning?: string;  // Why was this answer chosen?
+  confidence: number; // How confident is the system in this answer?
+  reasoning?: string; // Why was this answer chosen?
   retrievalMetrics?: {
     chunksRetrieved: number;
     chunksUsed: number;
@@ -152,7 +163,7 @@ export interface Citation {
   startLine: number;
   endLine: number;
   snippet: string;
-  relevance: number;  // How relevant is this citation to the answer?
+  relevance: number; // How relevant is this citation to the answer?
 }
 
 /**
@@ -189,8 +200,8 @@ export interface CodeASTNode {
   name: string;
   startLine: number;
   endLine: number;
-  parent?: string;  // Parent scope
-  children: string[];  // Child nodes
+  parent?: string; // Parent scope
+  children: string[]; // Child nodes
   signature?: string;
   documentation?: string;
   imports: string[];
@@ -207,4 +218,31 @@ export interface FileStructure {
   imports: string[];
   exports: string[];
   dependencies: string[];
+}
+
+/**
+ * Evaluation test case
+ */
+export interface TestCase {
+  id: string;
+  query: string;
+  expectedIntent: QueryIntentType;
+  expectedChunks: {
+    filePath: string;
+    scopeName?: string;
+  }[];
+  expectedAnswer?: string;
+  tags: string[];
+}
+
+/**
+ * Evaluation result
+ */
+export interface EvaluationResult {
+  testCaseId: string;
+  retrievalPrecision: number;
+  retrievalRecall: number;
+  intentAccuracy: number;
+  answerCorrectness?: number;
+  citationAccuracy?: number;
 }

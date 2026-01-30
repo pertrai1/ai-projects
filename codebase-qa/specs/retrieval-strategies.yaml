@@ -1,0 +1,39 @@
+# Retrieval Strategies for Code Q&A
+# Defines parameters for the adaptive retriever based on query intent.
+
+ARCHITECTURE:
+  k: 15
+  expand_query: true
+  include_module_overview: true
+  description: "For broad questions about system design, retrieve more chunks (k=15) and expand the query to find related concepts. Include module overviews for context."
+
+IMPLEMENTATION:
+  k: 8
+  expand_query: false
+  exact_function_match: true
+  description: "For questions about how a specific feature is built, retrieve fewer, more precise chunks (k=8) and prioritize exact matches for function names."
+
+DEPENDENCY:
+  k: 5
+  filter_by_imports: true
+  description: "For questions about dependencies, retrieve a small number of chunks (k=5) and filter results to focus on import/export statements."
+
+USAGE:
+  k: 10
+  boost_examples: true
+  description: "For questions about how to use a class or function, retrieve a moderate number of chunks (k=10) and boost the ranking of examples and test files."
+
+DEBUGGING:
+  k: 12
+  include_error_paths: true
+  description: "For debugging questions, retrieve a larger number of chunks (k=12) and include context around error handling and potential failure paths."
+
+LOCATION:
+  k: 3
+  exact_name_match: true
+  description: "For questions asking for the location of code, retrieve a very small number of chunks (k=3) and require an exact name match."
+
+GENERAL:
+  k: 10
+  expand_query: false
+  description: "A default strategy for general questions, retrieving a moderate number of chunks (k=10) without query expansion."

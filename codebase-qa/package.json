@@ -10,7 +10,8 @@
     "dev": "tsc && node dist/cli.js",
     "test": "node --test dist/**/*.test.js",
     "eval": "node dist/evaluations/eval-runner.js",
-    "ingest": "node dist/scripts/ingest-codebase.js"
+    "ingest": "node dist/scripts/ingest-codebase.js",
+    "experiment": "node dist/cli.js experiment"
   },
   "keywords": [
     "rag",
@@ -24,7 +25,8 @@
   "dependencies": {
     "commander": "^11.1.0",
     "hnswlib-node": "^2.0.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "yaml": "^2.8.2"
   },
   "devDependencies": {
     "@types/node": "^20.10.6",
