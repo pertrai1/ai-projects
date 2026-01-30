@@ -1,0 +1,33 @@
+{
+  "name": "codebase-qa",
+  "version": "0.1.0",
+  "description": "Educational RAG system for code understanding with adaptive retrieval",
+  "main": "dist/cli.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/cli.js",
+    "dev": "tsc && node dist/cli.js",
+    "test": "node --test dist/**/*.test.js",
+    "eval": "node dist/evaluations/eval-runner.js",
+    "ingest": "node dist/scripts/ingest-codebase.js"
+  },
+  "keywords": [
+    "rag",
+    "code-qa",
+    "adaptive-retrieval",
+    "semantic-search",
+    "educational"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^11.1.0",
+    "hnswlib-node": "^2.0.0",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.6",
+    "zod": "^3.22.4"
+  }
+}

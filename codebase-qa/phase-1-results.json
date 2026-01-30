@@ -1,0 +1,71 @@
+[
+  {
+    "strategy": "fixed",
+    "timestamp": "2026-01-30T02:50:53.954Z",
+    "statistics": {
+      "totalChunks": 91,
+      "avgChunkSize": 449,
+      "tokenEfficiency": 8.897145091904576
+    },
+    "retrieval": {
+      "avgSearchTime": 0.25,
+      "metrics": {
+        "precision": 0,
+        "recall": 0,
+        "mrr": 0,
+        "avgRelevanceScore": 0.7715264514662967
+      }
+    },
+    "tradeoffs": {
+      "speedVsQuality": "Fast search, quality TBD",
+      "tokenVsRecall": "Small chunks, many results, high recall risk",
+      "complexity": "Simple, predictable, may split semantic units"
+    }
+  },
+  {
+    "strategy": "semantic",
+    "timestamp": "2026-01-30T02:50:53.957Z",
+    "statistics": {
+      "totalChunks": 29,
+      "avgChunkSize": 454,
+      "tokenEfficiency": 8.782556026650514
+    },
+    "retrieval": {
+      "avgSearchTime": 0,
+      "metrics": {
+        "precision": 0,
+        "recall": 0,
+        "mrr": 0,
+        "avgRelevanceScore": 0.7590322889505282
+      }
+    },
+    "tradeoffs": {
+      "speedVsQuality": "Fast search, quality TBD",
+      "tokenVsRecall": "Small chunks, many results, high recall risk",
+      "complexity": "Semantically correct, variable size, slower to compute"
+    }
+  },
+  {
+    "strategy": "semantic-lookahead",
+    "timestamp": "2026-01-30T02:50:53.958Z",
+    "statistics": {
+      "totalChunks": 29,
+      "avgChunkSize": 521,
+      "tokenEfficiency": 7.661822985468956
+    },
+    "retrieval": {
+      "avgSearchTime": 0,
+      "metrics": {
+        "precision": 0,
+        "recall": 0,
+        "mrr": 0,
+        "avgRelevanceScore": 0.7590322889505282
+      }
+    },
+    "tradeoffs": {
+      "speedVsQuality": "Fast search, quality TBD",
+      "tokenVsRecall": "Moderate chunk size, balanced token usage",
+      "complexity": "Better context, more complex, slowest"
+    }
+  }
+]
