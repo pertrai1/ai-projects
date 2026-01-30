@@ -36,13 +36,13 @@ This is an **educational system** demonstrating how to build production-grade co
 - **Goal**: Split code intelligently
 - **Teaches**: Chunking strategies, token budgets, trade-offs
 - **Key Learning**: Semantic chunking vs fixed chunking impact
-- **Status**: Pending
+- **Status**: ✓ Complete
 
 ### Phase 2: Intent Classification
 - **Goal**: Understand query types
 - **Teaches**: Query routing, entity extraction, intent types
 - **Key Learning**: Why different queries need different strategies
-- **Status**: Pending
+- **Status**: ✓ Complete
 
 ### Phase 3: Adaptive Retrieval ⭐
 - **Goal**: Adjust parameters per intent
