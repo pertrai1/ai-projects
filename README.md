@@ -22,7 +22,11 @@ While many of these projects are production-inspired and follow real-world engin
 - [A11y Remediation Assistant](#a11y-remediation-assistant) - AI-powered accessibility remediation with audit trails
 - [Veridex](#veridex) - Governance-first RAG system with auditability and evaluation
 - [Soil Guard CLI](./soil-guard-cli) - Assistant using parallel input and output validation using LLM Guardrails
-- [Interviewer-as-a-Person](./interviewer-as-a-person) - Realistic mock interview system with voice, video presence, and structured evaluation 
+- [Interviewer-as-a-Person](./interviewer-as-a-person) - Realistic mock interview system with voice, video presence, and structured evaluation
+
+### Current Project
+
+- [Codebase Q&A](./codebase-qa) - Educational RAG system focused on intent-aware, adaptive retrieval
 
 ### Research Paper Projects
 
@@ -36,7 +40,7 @@ While many of these projects are production-inspired and follow real-world engin
 - [A11y Remediation Assistant](#a11y-remediation-assistant) - AI-powered accessibility remediation with audit trails
 - [Veridex](#veridex) - Governance-first RAG system with auditability and evaluation
 - [Soil Guard CLI](./soil-guard-cli) - Assistant using parallel input and output validation using LLM Guardrails
-- [Interviewer-as-a-Person](./interviewer-as-a-person) - Realistic mock interview system with voice, video presence, and structured evaluation 
+- [Interviewer-as-a-Person](./interviewer-as-a-person) - Realistic mock interview system with voice, video presence, and structured evaluation
 
 ## Contributing
 
