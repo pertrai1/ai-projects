@@ -37,7 +37,7 @@ While many of these projects are production-inspired and follow real-world engin
 
 ### Guide Projects
 
-- [Vibe Code a Complete App with Lovable](https://github.com/pertrai1/ai-projects/issues/94) - Job application tracker built with Lovable to learn vibe coding and AI-driven development
+- [Vibe Code a Complete App with Lovable](./happy-job-path-main) - [Project Details](https://github.com/pertrai1/ai-projects/issues/94) - Job application tracker built with Lovable to learn vibe coding and AI-driven development
 
 ### Upcoming Projects - Currently have roadmap and/or concept mapped out
 
