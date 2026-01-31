@@ -35,6 +35,10 @@ While many of these projects are production-inspired and follow real-world engin
 - [Chain-of-Thought Prompt Comparator](#chain-of-thought-prompt-comparator) - A CLI tool for comparing Chain-of-Thought (CoT) prompting strategies
 - [HireGauge](./research-paper-projects/hire-gauge) - LLM hiring decision evaluation with factorial experiments and bias detection
 
+### Guide Projects
+
+- [Vibe Code a Complete App with Lovable](https://github.com/pertrai1/ai-projects/issues/94) - Job application tracker built with Lovable to learn vibe coding and AI-driven development
+
 ### Upcoming Projects - Currently have roadmap and/or concept mapped out
 
 - [A11y Remediation Assistant](#a11y-remediation-assistant) - AI-powered accessibility remediation with audit trails
