@@ -2,7 +2,8 @@
 
 ## Project info
 
-**URL**: [https://happy-job-path.lovable.app](https://happy-job-path.lovable.app)
+**URL**: [https://happy-job-path.lovable.app](https://happy-job-path.lovable.app)  
+**Details and Prompt Used**: [https://github.com/pertrai1/ai-projects/issues/94](https://github.com/pertrai1/ai-projects/issues/94)  
 
 ## How can I edit this code?
 
