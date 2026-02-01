@@ -1,0 +1,6 @@
+[
+  { "query": "How does adaptive retrieval decide k?" },
+  { "query": "Where is the AdaptiveRetriever implemented?" },
+  { "query": "Show me an example of using the embedder" },
+  { "query": "Why would retrieval miss a function when k is small?" }
+]

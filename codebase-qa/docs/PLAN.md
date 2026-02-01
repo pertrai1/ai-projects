@@ -229,18 +229,10 @@ Tasks:
 2. ✅ **Implement Core Adaptive Retriever**: Built the `AdaptiveRetriever` to load the strategies and dynamically apply the `k` parameter based on the classified query intent.
 3. ✅ **Initial Experiment**: Created the `phase-3-experiment` to verify that the dynamic `k` selection works as expected.
 
-#### Next Steps
-1. ⬜️ **Implement Context Expansion**: The next layer of intelligence. After getting our initial chunks, we'll fetch more context based on the intent.
-   - For `ARCHITECTURE`: Add file structure overview.
-   - For `IMPLEMENTATION`: Add the full function/class implementation.
-   - For `DEPENDENCY`: Add the relevant import statements.
-   - For `DEBUGGING`: Add surrounding error-handling blocks (`try...catch`).
-2. ⬜️ **Implement Result Post-Processing**: After retrieval, we need to refine the results.
-   - Rank results based on relevance to the specific query intent.
-   - Boost scores for results that match multiple signals (e.g., boost test files for a `USAGE` query).
-   - Deduplicate overlapping chunks to provide a cleaner context.
-3. ⬜️ **Conduct Full Ablation Study**:
-   - Systematically test the impact of each parameter (`k`, query expansion, filters) on retrieval quality to understand what *really* works.
+#### Completed in Code
+1. ✅ **Context Expansion**: Adaptive retriever now adds module overviews and neighboring error-handling chunks when flags are set.
+2. ✅ **Result Post-Processing**: Strategy-aware re-ranking (exact name, examples, error paths) and deduplication implemented.
+3. ✅ **Initial Ablation Study**: Baseline (k=10) vs adaptive strategies run on local codebase; observations captured in `docs/PHASE-3-REFLECTIONS.md`.
 
 **Output**: Adaptive retrieval system that responds differently to different query types
 
@@ -272,6 +264,8 @@ Tasks:
 
 ### Phase 4: Code-Aware Response Generation
 **Goal**: Generate accurate, traceable answers about code
+
+**Progress**: Scaffolded response synthesizer with mock LLM and citation plumbing; CLI demo (`experiment phase-4`) runs ingest → route → retrieve → synthesize on sample queries.
 
 Tasks:
 1. Implement response synthesizer agent:

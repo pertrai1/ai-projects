@@ -8,6 +8,7 @@ import { QueryRouter } from '../agents/query-router.js';
 import { AdaptiveRetriever } from '../retrieval/adaptive-retriever.js';
 import { VectorStore, SearchResults } from '../vector-store/vector-store.js';
 import { Embedder } from '../vector-store/embedding.js';
+import { CodeChunk } from '../types/index.js';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -18,13 +19,25 @@ import * as path from 'path';
 class MockVectorStore extends VectorStore {
   constructor(embedder: Embedder) {
     super(embedder);
+    this.mockChunks = this.buildMockChunks();
   }
+
+  private mockChunks: CodeChunk[];
 
   // Override the search method to simply log the `k` value and return mock results.
   async search(query: string, k: number): Promise<SearchResults> {
     console.log(`[MockVectorStore] Received search with k=${k}`);
+    
+    // Return a small deterministic set of chunks so we can observe
+    // context expansion and re-ranking in the retriever.
+    const results = this.mockChunks.slice(0, k).map((chunk, idx) => ({
+      ...chunk,
+      relevanceScore: 0.6 - idx * 0.05,
+      retrievalMethod: 'mock',
+    }));
+
     return {
-      results: [],
+      results,
       query,
       searchTime: 0,
       strategy: 'hybrid', // Conforms to the required type
@@ -34,6 +47,66 @@ class MockVectorStore extends VectorStore {
   // Prevent base class methods from being called
   async index(): Promise<void> {}
   async indexBatch(): Promise<void> {}
+
+  getAllChunks() {
+    return this.mockChunks;
+  }
+
+  private buildMockChunks() {
+    return [
+      {
+        id: 'src/auth.ts#login#0',
+        content: 'export function login() { try { authenticate(); } catch (error) { handle(error); } }',
+        metadata: {
+          filePath: 'src/auth.ts',
+          fileName: 'auth.ts',
+          startLine: 1,
+          endLine: 6,
+          scopeName: 'login',
+          scopeType: 'function' as const,
+          functionSignature: 'login(): Promise<void>',
+          imports: ['import { authenticate } from "./client";'],
+          dependencies: ['./client'],
+          isExported: true,
+          chunkIndex: 0,
+        },
+      },
+      {
+        id: 'src/auth.ts#client#1',
+        content: 'export function authenticate() { return true; }',
+        metadata: {
+          filePath: 'src/auth.ts',
+          fileName: 'auth.ts',
+          startLine: 8,
+          endLine: 12,
+          scopeName: 'authenticate',
+          scopeType: 'function' as const,
+          functionSignature: 'authenticate(): boolean',
+          imports: [],
+          dependencies: [],
+          isExported: true,
+          chunkIndex: 1,
+        },
+      },
+      {
+        id: 'tests/auth.spec.ts#login#0',
+        content: 'it("logs in", async () => { await login(); })',
+        metadata: {
+          filePath: 'tests/auth.spec.ts',
+          fileName: 'auth.spec.ts',
+          startLine: 1,
+          endLine: 4,
+          scopeName: 'login test',
+          scopeType: 'function' as const,
+          functionSignature: 'login test',
+          imports: ['import { login } from "../src/auth";'],
+          dependencies: ['../src/auth'],
+          isExported: false,
+          chunkIndex: 0,
+        },
+      },
+    ];
+  }
 }
 
 interface TestCase {
@@ -78,7 +151,15 @@ export async function phase3Experiment() {
     
     // b. Pass query and intent to the retriever
     // The retriever will then use the mock vector store, logging the `k` value.
-    await retriever.retrieve(testCase.query, intent);
+    const retrieval = await retriever.retrieve(testCase.query, intent);
+
+    console.log(`[AdaptiveRetriever] Returned ${retrieval.results.length} chunks after expansion + rerank:`);
+    retrieval.results.slice(0, 3).forEach((chunk, idx) => {
+      console.log(
+        `  ${idx + 1}. ${chunk.metadata.filePath}::${chunk.metadata.scopeName ?? 'N/A'} ` +
+        `(score=${chunk.relevanceScore}, method=${chunk.retrievalMethod})`
+      );
+    });
   }
 
   console.log('\n------------------------------------------------');

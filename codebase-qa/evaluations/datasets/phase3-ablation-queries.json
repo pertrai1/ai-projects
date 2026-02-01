@@ -1,0 +1,10 @@
+[
+  { "query": "How does adaptive retrieval decide k?", "note": "ARCHITECTURE-ish" },
+  { "query": "Where is the AdaptiveRetriever implemented?", "note": "LOCATION" },
+  { "query": "How is chunking with lookahead implemented?", "note": "IMPLEMENTATION" },
+  { "query": "What does the vector store depend on?", "note": "DEPENDENCY" },
+  { "query": "Show me an example of using the embedder", "note": "USAGE" },
+  { "query": "Why would retrieval miss a function when k is small?", "note": "DEBUGGING" },
+  { "query": "What's the difference between semantic and fixed chunking?", "note": "COMPARISON" },
+  { "query": "Where is query-router.ts located?", "note": "LOCATION" }
+]

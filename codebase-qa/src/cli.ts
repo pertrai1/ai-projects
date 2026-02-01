@@ -12,6 +12,9 @@ import { globalLogger, LogLevel } from './utils/logger.js';
 import { runPhase1Experiment } from './commands/phase-1-experiment.js';
 import { phase2Experiment } from './commands/phase-2-experiment.js';
 import { phase3Experiment } from './commands/phase-3-experiment.js';
+import { runPhase3Ablation } from './commands/phase-3-ablation.js';
+import { ingestCodebase } from './scripts/ingest-codebase.js';
+import { runPhase4Demo } from './commands/phase-4-demo.js';
 
 const program = new Command();
 
@@ -69,9 +72,14 @@ program
 program
   .command('ingest <path>')
   .description('Ingest a codebase to build vector index')
-  .action((path: string) => {
+  .action(async (path: string) => {
     globalLogger.info(`Ingesting codebase from ${path}...`);
-    console.log('\n⚠ Ingest command not yet implemented (Phase 1)');
+    try {
+      await ingestCodebase(path);
+    } catch (error) {
+      console.error('✗ Ingestion failed:', error);
+      process.exit(1);
+    }
   });
 
 program
@@ -85,9 +93,13 @@ program
         await phase2Experiment();
       } else if (phase === 'phase-3') {
         await phase3Experiment();
+      } else if (phase === 'phase-3-ablation') {
+        await runPhase3Ablation();
+      } else if (phase === 'phase-4') {
+        await runPhase4Demo();
       } else {
         console.error(`✗ Unknown phase: ${phase}`);
-        console.log('Available phases: phase-1, phase-2, phase-3');
+        console.log('Available phases: phase-1, phase-2, phase-3, phase-3-ablation, phase-4');
         process.exit(1);
       }
     } catch (error) {
