@@ -283,6 +283,7 @@ Comprehensive documentation on AI and Machine Learning topics is available in th
 
 - [Agents](./docs/artificial-intelligence/agents.md) - AI agent systems, architectures, and modern LLM-based agents
 - [Large Language Models](./docs/artificial-intelligence/large_language_models.md) - LLM fundamentals, architectures, training, and applications
+- [LoRA (Low-Rank Adaptation)](./docs/artificial-intelligence/lora.md) - Parameter-efficient fine-tuning for large language models and transformers
 - [N-Shot Learning](./docs/artificial-intelligence/n_shot_learning.md) - Few-shot learning from limited examples using meta-learning and transfer learning
 - [One-Shot Learning](./docs/artificial-intelligence/one_shot_learning.md) - Learning from single examples using meta-learning and similarity metrics
 - [Reinforcement Learning](./docs/artificial-intelligence/reinforcement_learning.md) - RL fundamentals, algorithms, and applications
