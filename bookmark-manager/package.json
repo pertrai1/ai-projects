@@ -17,6 +17,7 @@
     "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
     "bcrypt": "^6.0.0",
+    "linkedom": "^0.18.12",
     "next": "16.1.6",
     "next-auth": "^4.24.13",
     "pg": "^8.18.0",
