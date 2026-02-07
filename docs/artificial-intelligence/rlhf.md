@@ -8,12 +8,14 @@
 
 The core idea is elegant:
 
-* A model generates multiple candidate outputs for the same input
-* Human evaluators compare these outputs and indicate preferences
-* A **reward model** learns to predict human preferences from these comparisons
-* The original model is fine-tuned using reinforcement learning to maximize the learned reward
+- A model generates multiple candidate outputs for the same input
+- Human evaluators compare these outputs and indicate preferences
+- A **reward model** learns to predict human preferences from these comparisons
+- The original model is fine-tuned using reinforcement learning to maximize the learned reward
 
 RLHF is particularly well-suited for tasks where **defining explicit reward functions is difficult**, **human values are subjective**, and **alignment with human intent is critical**. This approach has become foundational in creating helpful, harmless, and honest AI assistants.
+
+![Mindmap](../mindmaps/rlhf-mindmap.png)
 
 ---
 
@@ -94,21 +96,21 @@ The original approach pioneered by OpenAI in InstructGPT. Uses explicit reward m
 
 A simplified alternative that eliminates the reward model and RL loop. Directly optimizes the language model on preference data using a classification-style objective. Simpler, faster, and often equally effective.
 
-* **Pros**: Single training stage, more stable, easier to implement
-* **Cons**: Still requires preference data, less flexible for complex reward structures
+- **Pros**: Single training stage, more stable, easier to implement
+- **Cons**: Still requires preference data, less flexible for complex reward structures
 
 ### Reinforcement Learning from AI Feedback (RLAIF)
 
 Replaces human raters with large AI models that provide feedback. Dramatically reduces cost and scales more easily, but may inherit teacher model biases.
 
-* **Key application**: Self-improvement and bootstrapping in data-scarce domains
+- **Key application**: Self-improvement and bootstrapping in data-scarce domains
 
 ### Constitutional AI (CAI)
 
 Anthropic's approach combining RLHF with explicit written principles ("constitution"). The model critiques its own outputs according to these principles, then learns from self-generated feedback.
 
-* **Advantages**: Transparent alignment goals, reduced human annotation cost
-* **Used in**: Claude models from Anthropic
+- **Advantages**: Transparent alignment goals, reduced human annotation cost
+- **Used in**: Claude models from Anthropic
 
 ### Reward Model Distillation
 
@@ -124,20 +126,20 @@ Continuously collects new human feedback on deployed model outputs, creating a f
 
 **Helpful AI Assistant**:
 
-* **Prompt**: "Explain quantum entanglement to a 10-year-old"
-* **Model generates 4 responses**:
+- **Prompt**: "Explain quantum entanglement to a 10-year-old"
+- **Model generates 4 responses**:
   - Response A: Technical jargon-heavy explanation
   - Response B: Simple analogy using connected magic coins
   - Response C: Dismissive "it's too complex for kids"
   - Response D: Engaging story-based explanation
 
-* **Human evaluator ranks**: D > B > A > C
+- **Human evaluator ranks**: D > B > A > C
 
-* **Reward model learns**: Engaging, age-appropriate explanations score higher than technical or dismissive responses
+- **Reward model learns**: Engaging, age-appropriate explanations score higher than technical or dismissive responses
 
-* **Policy optimization**: Model learns to generate more responses like D and B for similar prompts
+- **Policy optimization**: Model learns to generate more responses like D and B for similar prompts
 
-**Key insight**: The model isn't told *what makes a good explanation*—it learns implicitly from preferences what qualities humans value (engagement, simplicity, appropriateness).
+**Key insight**: The model isn't told _what makes a good explanation_—it learns implicitly from preferences what qualities humans value (engagement, simplicity, appropriateness).
 
 ---
 
@@ -147,9 +149,9 @@ Continuously collects new human feedback on deployed model outputs, creating a f
 
 The most common format. Annotators choose which of two outputs they prefer:
 
-* "Output A is better"
-* "Output B is better"  
-* "Roughly equal" (optional)
+- "Output A is better"
+- "Output B is better"
+- "Roughly equal" (optional)
 
 **Advantages**: Cognitively easier than absolute scoring, more consistent, naturally fits Bradley-Terry modeling.
 
@@ -167,11 +169,11 @@ Separate ratings for different attributes (helpfulness, truthfulness, harmlessne
 
 ### Data Quality Considerations
 
-* **Inter-annotator agreement**: Measure consistency across raters
-* **Annotation guidelines**: Clear, comprehensive instructions reduce noise
-* **Demographic diversity**: Varied annotator backgrounds prevent bias
-* **Edge case coverage**: Include difficult, ambiguous, or adversarial examples
-* **Quality control**: Filter low-quality annotations, use golden examples
+- **Inter-annotator agreement**: Measure consistency across raters
+- **Annotation guidelines**: Clear, comprehensive instructions reduce noise
+- **Demographic diversity**: Varied annotator backgrounds prevent bias
+- **Edge case coverage**: Include difficult, ambiguous, or adversarial examples
+- **Quality control**: Filter low-quality annotations, use golden examples
 
 ### Annotation Platforms
 
@@ -205,24 +207,24 @@ This encourages the model to assign higher scores to preferred outputs.
 
 Common approaches:
 
-* **Regression head**: Add a linear layer to the LLM outputting a scalar reward
-* **Separate model**: Train a dedicated classifier on LLM embeddings
-* **Ensemble methods**: Average multiple reward models to reduce variance
+- **Regression head**: Add a linear layer to the LLM outputting a scalar reward
+- **Separate model**: Train a dedicated classifier on LLM embeddings
+- **Ensemble methods**: Average multiple reward models to reduce variance
 
 ### Challenges
 
-* **Exploitability**: RL optimization may find adversarial inputs that fool the reward model
-* **Distribution shift**: Reward model trained on SFT outputs but evaluated on RL-optimized outputs
-* **Overfitting**: Reward model may memorize training data rather than generalizing
-* **Calibration**: Raw scores may not reflect true preference probabilities
+- **Exploitability**: RL optimization may find adversarial inputs that fool the reward model
+- **Distribution shift**: Reward model trained on SFT outputs but evaluated on RL-optimized outputs
+- **Overfitting**: Reward model may memorize training data rather than generalizing
+- **Calibration**: Raw scores may not reflect true preference probabilities
 
 ### Best Practices
 
-* Use validation sets with held-out annotators
-* Monitor reward model agreement with fresh human judgments
-* Regularize to prevent overconfident predictions
-* Consider adversarial training to improve robustness
-* Use ensembles or uncertainty estimation
+- Use validation sets with held-out annotators
+- Monitor reward model agreement with fresh human judgments
+- Regularize to prevent overconfident predictions
+- Consider adversarial training to improve robustness
+- Use ensembles or uncertainty estimation
 
 ---
 
@@ -232,16 +234,17 @@ Common approaches:
 
 The dominant algorithm for RLHF. PPO is a policy gradient method that:
 
-* Collects trajectories using the current policy
-* Computes advantage estimates (how much better an action is than expected)
-* Updates the policy while constraining changes via a clipped surrogate objective
-* Prevents destructively large updates that harm performance
+- Collects trajectories using the current policy
+- Computes advantage estimates (how much better an action is than expected)
+- Updates the policy while constraining changes via a clipped surrogate objective
+- Prevents destructively large updates that harm performance
 
 **Key hyperparameters**:
-* Learning rate
-* Clipping epsilon (controls max policy change)
-* Number of PPO epochs per batch
-* KL penalty coefficient (controls similarity to reference model)
+
+- Learning rate
+- Clipping epsilon (controls max policy change)
+- Number of PPO epochs per batch
+- KL penalty coefficient (controls similarity to reference model)
 
 ### Trust Region Policy Optimization (TRPO)
 
@@ -260,9 +263,10 @@ total_reward = reward_model(output) - β * KL_divergence(policy || reference_pol
 ```
 
 The KL penalty prevents:
-* **Mode collapse**: Policy generating repetitive, reward-hacking outputs
-* **Forgetting**: Loss of capabilities from the original pretrained model
-* **Distribution shift**: Policy straying too far from where reward model is reliable
+
+- **Mode collapse**: Policy generating repetitive, reward-hacking outputs
+- **Forgetting**: Loss of capabilities from the original pretrained model
+- **Distribution shift**: Policy straying too far from where reward model is reliable
 
 ### Mini-batch RL
 
@@ -310,48 +314,48 @@ Extending beyond text: image generation (DALL-E, Midjourney), video synthesis, a
 
 ### Foundational Work
 
-* **Learning to Summarize from Human Feedback** — Stiennon et al. (OpenAI, 2020)  
+- **Learning to Summarize from Human Feedback** — Stiennon et al. (OpenAI, 2020)  
   First large-scale demonstration of RLHF for language models. Showed summarization quality improvements through human preferences.
 
-* **Training Language Models to Follow Instructions with Human Feedback** — Ouyang et al. (OpenAI, 2022)  
+- **Training Language Models to Follow Instructions with Human Feedback** — Ouyang et al. (OpenAI, 2022)  
   The InstructGPT paper. Established the three-stage RLHF pipeline and demonstrated preference for aligned models over larger unaligned ones.
 
-* **Fine-Tuning Language Models from Human Preferences** — Ziegler et al. (OpenAI, 2019)  
+- **Fine-Tuning Language Models from Human Preferences** — Ziegler et al. (OpenAI, 2019)  
   Early exploration of reward modeling and RL fine-tuning for text generation tasks.
 
 ### Theoretical Foundations
 
-* **Deep Reinforcement Learning from Human Preferences** — Christiano et al. (2017)  
+- **Deep Reinforcement Learning from Human Preferences** — Christiano et al. (2017)  
   Applied human feedback to robotic control and Atari games. Established core RLHF methodology before LLM applications.
 
-* **Recursive Reward Modeling** — Leike et al. (DeepMind, 2018)  
+- **Recursive Reward Modeling** — Leike et al. (DeepMind, 2018)  
   Explored scalable oversight and iterated amplification for aligning advanced AI systems.
 
 ### Modern Developments
 
-* **Constitutional AI: Harmlessness from AI Feedback** — Bai et al. (Anthropic, 2022)  
+- **Constitutional AI: Harmlessness from AI Feedback** — Bai et al. (Anthropic, 2022)  
   Introduced self-critique and AI-generated feedback based on explicit principles. Reduced reliance on human annotation.
 
-* **Direct Preference Optimization** — Rafailov et al. (Stanford, 2023)  
+- **Direct Preference Optimization** — Rafailov et al. (Stanford, 2023)  
   Simplified RLHF by eliminating reward models and RL loops. Achieved comparable results with a single training stage.
 
-* **RLAIF: Scaling Reinforcement Learning from Human Feedback with AI Feedback** — Lee et al. (Google, 2023)  
+- **RLAIF: Scaling Reinforcement Learning from Human Feedback with AI Feedback** — Lee et al. (Google, 2023)  
   Demonstrated AI-generated feedback can match human feedback quality while dramatically reducing costs.
 
 ### Alignment and Safety
 
-* **Training a Helpful and Harmless Assistant with RLHF** — Askell et al. (Anthropic, 2021)  
+- **Training a Helpful and Harmless Assistant with RLHF** — Askell et al. (Anthropic, 2021)  
   Studied tradeoffs between helpfulness and harmlessness. Introduced multi-objective reward modeling.
 
-* **Red Teaming Language Models to Reduce Harms** — Ganguli et al. (Anthropic, 2022)  
+- **Red Teaming Language Models to Reduce Harms** — Ganguli et al. (Anthropic, 2022)  
   Systematic adversarial testing of RLHF models to identify failure modes and improve robustness.
 
 ### Critiques and Limitations
 
-* **Reward Hacking in Reinforcement Learning and RLHF** — Skalse et al. (2024)  
+- **Reward Hacking in Reinforcement Learning and RLHF** — Skalse et al. (2024)  
   Comprehensive analysis of how models exploit reward models, with case studies and mitigation strategies.
 
-* **Open Problems and Fundamental Limitations of RLHF** — Casper et al. (2023)  
+- **Open Problems and Fundamental Limitations of RLHF** — Casper et al. (2023)  
   Critical examination of RLHF's assumptions, failure modes, and theoretical limitations.
 
 ---
@@ -360,60 +364,60 @@ Extending beyond text: image generation (DALL-E, Midjourney), video synthesis, a
 
 ### Courses
 
-* **Stanford XCS234 – Reinforcement Learning**  
+- **Stanford XCS234 – Reinforcement Learning**  
   Advanced course covering RL fundamentals through modern applications including RLHF and DPO for language models.
 
-* **DeepLearning.AI – Reinforcement Learning from Human Feedback**  
+- **DeepLearning.AI – Reinforcement Learning from Human Feedback**  
   Practical course on RLHF implementation with hands-on projects fine-tuning Llama 2 using open-source tools.
 
-* **DataCamp – RLHF for Generative AI**  
+- **DataCamp – RLHF for Generative AI**  
   Beginner-friendly course covering RLHF concepts, human data collection, and model evaluation in Python.
 
-* **Berkeley CS285 – Deep Reinforcement Learning**  
+- **Berkeley CS285 – Deep Reinforcement Learning**  
   Comprehensive graduate-level RL course with lectures on preference learning and policy optimization.
 
 ### Books and Comprehensive Guides
 
-* **RLHF Book** — Nathan Lambert  
+- **RLHF Book** — Nathan Lambert  
   Open-access online book covering RLHF theory, implementation, and best practices. Continuously updated with latest research.
 
-* **Reinforcement Learning: An Introduction** — Sutton & Barto (3rd ed.)  
+- **Reinforcement Learning: An Introduction** — Sutton & Barto (3rd ed.)  
   Classic RL textbook providing theoretical foundations necessary for understanding RLHF algorithms.
 
 ### Tutorials and Blog Posts
 
-* **Hugging Face – Illustrating RLHF**  
+- **Hugging Face – Illustrating RLHF**  
   Accessible visual explanation of RLHF concepts, pipeline stages, and practical considerations for implementation.
 
-* **Chip Huyen – RLHF: Reinforcement Learning from Human Feedback**  
+- **Chip Huyen – RLHF: Reinforcement Learning from Human Feedback**  
   Detailed technical blog post covering RLHF motivation, algorithms, challenges, and industry applications.
 
-* **Anthropic – Constitutional AI Research**  
+- **Anthropic – Constitutional AI Research**  
   Papers and blog posts explaining Constitutional AI methodology, principles, and experimental results.
 
 ### Libraries and Frameworks
 
-* **TRL (Transformer Reinforcement Learning)**  
+- **TRL (Transformer Reinforcement Learning)**  
   Hugging Face's primary library for RLHF. Includes trainers for SFT, reward modeling, PPO, and DPO. Excellent documentation.
 
-* **TRLX**  
+- **TRLX**  
   Scalable RLHF library optimized for large models (30B+ parameters). Supports PPO and ILQL algorithms with distributed training.
 
-* **OpenRLHF**  
+- **OpenRLHF**  
   Industrial-grade RLHF framework for massive-scale training (70B+ parameters) with Ray and DeepSpeed integration.
 
-* **RL4LMs**  
+- **RL4LMs**  
   Modular research library for applying RL to language models. Supports custom reward functions and diverse RL algorithms.
 
-* **Stable-Baselines3**  
+- **Stable-Baselines3**  
   General-purpose RL library with PPO implementation. Useful for understanding core algorithms before applying to LLMs.
 
 ### Papers and Repositories
 
-* **Awesome-RLHF (GitHub)**  
+- **Awesome-RLHF (GitHub)**  
   Curated list of RLHF papers, codebases, datasets, and tutorials. Regularly updated with latest research.
 
-* **InstructGPT Technical Report**  
+- **InstructGPT Technical Report**  
   Detailed methodology, results, and ablation studies from OpenAI's landmark RLHF work.
 
 ---
@@ -518,9 +522,9 @@ Applies RLHF to code generation. Human feedback distinguishes functional, idioma
 
 ### Multimodal RLHF
 
-* **DALL-E 3**: Image generation with human aesthetic preferences
-* **Robotics**: Physical systems learning from human demonstrations and corrections
-* **Video Synthesis**: Coherence and quality judgments for generated video
+- **DALL-E 3**: Image generation with human aesthetic preferences
+- **Robotics**: Physical systems learning from human demonstrations and corrections
+- **Video Synthesis**: Coherence and quality judgments for generated video
 
 ### Agent Systems
 
@@ -544,115 +548,115 @@ Each project is intentionally scoped for completion in hours to days. Build intu
 
 **Goal:** Understand human feedback collection and annotation quality.
 
-* Create synthetic text pairs (simple completions of prompts)
-* Build a web interface for pairwise comparisons
-* Collect preferences from 3-5 friends/colleagues
-* Calculate inter-annotator agreement (Fleiss' kappa or Krippendorff's alpha)
-* Analyze disagreement patterns and edge cases
-* Output: Dataset of preferences with quality metrics
+- Create synthetic text pairs (simple completions of prompts)
+- Build a web interface for pairwise comparisons
+- Collect preferences from 3-5 friends/colleagues
+- Calculate inter-annotator agreement (Fleiss' kappa or Krippendorff's alpha)
+- Analyze disagreement patterns and edge cases
+- Output: Dataset of preferences with quality metrics
 
 ### Project 2: Bradley-Terry Reward Model from Scratch
 
 **Goal:** Implement preference modeling fundamentals.
 
-* Load or create a small preference dataset (100-500 comparisons)
-* Implement Bradley-Terry model in PyTorch
-* Train to predict preference probabilities
-* Evaluate on held-out comparisons
-* Visualize learned reward scores vs human intuition
-* Output: Working reward model with <100 lines of code
+- Load or create a small preference dataset (100-500 comparisons)
+- Implement Bradley-Terry model in PyTorch
+- Train to predict preference probabilities
+- Evaluate on held-out comparisons
+- Visualize learned reward scores vs human intuition
+- Output: Working reward model with <100 lines of code
 
 ### Project 3: RLHF with TRL on Small Model
 
 **Goal:** End-to-end RLHF pipeline with modern tools.
 
-* Use GPT-2 small (124M parameters) or similar
-* Fine-tune on instruction data (SFT stage)
-* Load or create synthetic preference dataset
-* Train reward model using TRL's RewardTrainer
-* Run PPO optimization with PPOTrainer
-* Compare outputs before/after RLHF
-* Track reward curves, KL divergence, and sample quality
+- Use GPT-2 small (124M parameters) or similar
+- Fine-tune on instruction data (SFT stage)
+- Load or create synthetic preference dataset
+- Train reward model using TRL's RewardTrainer
+- Run PPO optimization with PPOTrainer
+- Compare outputs before/after RLHF
+- Track reward curves, KL divergence, and sample quality
 
 ### Project 4: DPO vs RLHF Comparison
 
 **Goal:** Understand algorithmic tradeoffs empirically.
 
-* Same base model and preference data as Project 3
-* Implement DPO training using TRL's DPOTrainer
-* Compare results: training time, stability, output quality
-* Measure perplexity and reward model scores
-* Output: Analysis document with quantitative comparisons
+- Same base model and preference data as Project 3
+- Implement DPO training using TRL's DPOTrainer
+- Compare results: training time, stability, output quality
+- Measure perplexity and reward model scores
+- Output: Analysis document with quantitative comparisons
 
 ### Project 5: Reward Hacking Exploration
 
 **Goal:** Deliberately break RLHF to understand failure modes.
 
-* Take trained RLHF model from Project 3
-* Remove or weaken KL penalty
-* Continue training and observe mode collapse
-* Identify adversarial prompts that exploit reward model
-* Test reward model on out-of-distribution outputs
-* Document exploitation strategies and fixes
+- Take trained RLHF model from Project 3
+- Remove or weaken KL penalty
+- Continue training and observe mode collapse
+- Identify adversarial prompts that exploit reward model
+- Test reward model on out-of-distribution outputs
+- Document exploitation strategies and fixes
 
 ### Project 6: Constitutional AI Mini Implementation
 
 **Goal:** Implement self-critique and principle-based feedback.
 
-* Define 5-10 simple principles (e.g., "Be concise", "Avoid jargon")
-* Use LLM API to generate responses
-* Prompt same LLM to critique responses against principles
-* Convert critiques to preference data
-* Train reward model on AI-generated preferences (RLAIF)
-* Compare to human-labeled preferences
+- Define 5-10 simple principles (e.g., "Be concise", "Avoid jargon")
+- Use LLM API to generate responses
+- Prompt same LLM to critique responses against principles
+- Convert critiques to preference data
+- Train reward model on AI-generated preferences (RLAIF)
+- Compare to human-labeled preferences
 
 ### Project 7: Multi-Objective RLHF
 
 **Goal:** Handle conflicting human preferences.
 
-* Train separate reward models for helpfulness vs harmlessness
-* Implement weighted combination or Pareto optimization
-* Test on prompts with natural tradeoffs (e.g., detailed vs concise)
-* Visualize Pareto frontier of model behaviors
-* Output: Analysis of multi-objective alignment challenges
+- Train separate reward models for helpfulness vs harmlessness
+- Implement weighted combination or Pareto optimization
+- Test on prompts with natural tradeoffs (e.g., detailed vs concise)
+- Visualize Pareto frontier of model behaviors
+- Output: Analysis of multi-objective alignment challenges
 
 ### Project 8: Annotation Interface and Quality Control
 
 **Goal:** Build production-grade annotation tooling.
 
-* Create web app for collecting comparisons at scale
-* Implement annotator qualification tests
-* Add consensus checks and golden examples
-* Track annotator speed, agreement, and consistency
-* Build dashboard visualizing data quality metrics
-* Output: Reusable annotation platform
+- Create web app for collecting comparisons at scale
+- Implement annotator qualification tests
+- Add consensus checks and golden examples
+- Track annotator speed, agreement, and consistency
+- Build dashboard visualizing data quality metrics
+- Output: Reusable annotation platform
 
 ### Project 9: RLHF for Domain-Specific Task
 
 **Goal:** Apply RLHF to specialized domain.
 
-* Choose domain: medical Q&A, legal analysis, code review, etc.
-* Collect 200-500 domain-specific preferences
-* Fine-tune small LLM with domain data (SFT)
-* Train domain-specific reward model
-* Optimize with PPO or DPO
-* Evaluate using domain expert review
-* Compare to general-purpose models
+- Choose domain: medical Q&A, legal analysis, code review, etc.
+- Collect 200-500 domain-specific preferences
+- Fine-tune small LLM with domain data (SFT)
+- Train domain-specific reward model
+- Optimize with PPO or DPO
+- Evaluate using domain expert review
+- Compare to general-purpose models
 
 ### Project 10: Read-and-Reproduce
 
 **Goal:** Deep understanding through replication.
 
-* Pick one paper: InstructGPT, Constitutional AI, or DPO
-* Reproduce key experiment on smaller scale
-* Document every implementation decision
-* Compare results to paper's claims
-* Identify unreported details or hyperparameters
-* Write technical report on reproduction experience
+- Pick one paper: InstructGPT, Constitutional AI, or DPO
+- Reproduce key experiment on smaller scale
+- Document every implementation decision
+- Compare results to paper's claims
+- Identify unreported details or hyperparameters
+- Write technical report on reproduction experience
 
 ---
 
-*Mastery of RLHF comes from understanding both theory and practice—from preference collection through policy optimization to deployment at scale. These projects build intuition for the entire pipeline.*
+_Mastery of RLHF comes from understanding both theory and practice—from preference collection through policy optimization to deployment at scale. These projects build intuition for the entire pipeline._
 
 ---
 
@@ -660,9 +664,10 @@ Each project is intentionally scoped for completion in hours to days. Build intu
 
 **Created:** January 15, 2026  
 **Research Assistant:** AI Documentation Specialist  
-**Primary Sources:** 35+ academic papers, 12 technical blog posts, 8 implementation guides, 5 online courses  
+**Primary Sources:** 35+ academic papers, 12 technical blog posts, 8 implementation guides, 5 online courses
 
 **Key References:**
+
 - Ouyang et al. (2022): "Training language models to follow instructions with human feedback" (InstructGPT paper)
 - Bai et al. (2022): "Constitutional AI: Harmlessness from AI Feedback" (Anthropic)
 - Rafailov et al. (2023): "Direct Preference Optimization: Your Language Model is Secretly a Reward Model" (Stanford)
@@ -670,6 +675,7 @@ Each project is intentionally scoped for completion in hours to days. Build intu
 - Stiennon et al. (2020): "Learning to Summarize from Human Feedback" (OpenAI)
 
 **Research Methodology:**
+
 - Literature review: Comprehensive survey of RLHF papers from 2017-2026, covering foundations, implementations, and modern variants
 - Source verification: Cross-referenced technical details across multiple authoritative sources (OpenAI, Anthropic, Google, Meta research papers)
 - Implementation analysis: Studied open-source codebases (TRL, TRLX, OpenRLHF) to understand practical considerations
@@ -679,8 +685,9 @@ Each project is intentionally scoped for completion in hours to days. Build intu
 Follows the established template from `reinforcement_learning.md` and `speech_recognition.md` with 15 comprehensive sections covering theory, practice, resources, and hands-on projects.
 
 **Content Quality Standards:**
+
 - Progressive complexity from foundational concepts to advanced implementations
-- Balance of theoretical rigor and practical applicability  
+- Balance of theoretical rigor and practical applicability
 - Extensive resource compilation across papers, courses, libraries, and tutorials
 - Actionable learning paths from beginner exercises to production-grade projects
 - Real-world context through modern LLM applications (ChatGPT, Claude, Llama)
@@ -691,4 +698,4 @@ Follows the established template from `reinforcement_learning.md` and `speech_re
 
 ---
 
-*This documentation serves as a comprehensive reference for understanding, implementing, and deploying Reinforcement Learning from Human Feedback across research and production contexts. It reflects the state of RLHF as of early 2026, incorporating both foundational principles and cutting-edge developments.*
+_This documentation serves as a comprehensive reference for understanding, implementing, and deploying Reinforcement Learning from Human Feedback across research and production contexts. It reflects the state of RLHF as of early 2026, incorporating both foundational principles and cutting-edge developments._
