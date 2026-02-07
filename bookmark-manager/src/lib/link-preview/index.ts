@@ -7,10 +7,14 @@ const MAX_RESPONSE_SIZE = 1024 * 1024; // 1MB
 
 // Private IP ranges (CIDR notation)
 const PRIVATE_IP_RANGES = [
-  /^127\./,                          // 127.0.0.0/8 (localhost)
-  /^10\./,                           // 10.0.0.0/8
-  /^172\.(1[6-9]|2[0-9]|3[0-1])\./,  // 172.16.0.0/12
-  /^192\.168\./,                     // 192.168.0.0/16
+  /^127\./, // 127.0.0.0/8 (localhost)
+  /^10\./, // 10.0.0.0/8
+  /^172\.(1[6-9]|2[0-9]|3[0-1])\./, // 172.16.0.0/12
+  /^192\.168\./, // 192.168.0.0/16
+  /^169\.254\./, // 169.254.0.0/16 (link-local)
+  /^100\.(6[4-9]|[7-9]\d|1[0-2]\d)\./, // 100.64.0.0/10 (Carrier-Grade NAT)
+  /^\[?fc[0-9a-f]{2}:/, // fc00::/7 (Unique Local - fc00-fdff)
+  /^\[?fe[89ab][0-9a-f]:/, // fe80::/10 (Link Local - fe80-febf)
 ];
 
 /**
@@ -19,7 +23,10 @@ const PRIVATE_IP_RANGES = [
  * - Cannot target localhost or private IP addresses (SSRF prevention)
  * - Cannot exceed maximum length
  */
-export function validateUrl(urlString: string): { valid: boolean; error?: string } {
+export function validateUrl(urlString: string): {
+  valid: boolean;
+  error?: string;
+} {
   // Check length
   if (urlString.length > MAX_URL_LENGTH) {
     return {
@@ -48,7 +55,11 @@ export function validateUrl(urlString: string): { valid: boolean; error?: string
   }
 
   // Check for localhost
-  if (url.hostname === 'localhost' || url.hostname === '127.0.0.1' || url.hostname === '::1') {
+  if (
+    url.hostname === 'localhost' ||
+    url.hostname === '127.0.0.1' ||
+    url.hostname === '::1'
+  ) {
     return {
       valid: false,
       error: 'Localhost URLs are not allowed',
@@ -78,11 +89,17 @@ export function extractMetadata(html: string): LinkMetadata {
 
     // Try Open Graph tags first
     let title =
-      document.querySelector('meta[property="og:title"]')?.getAttribute('content') || null;
+      document
+        .querySelector('meta[property="og:title"]')
+        ?.getAttribute('content') || null;
     let description =
-      document.querySelector('meta[property="og:description"]')?.getAttribute('content') || null;
-    let thumbnail =
-      document.querySelector('meta[property="og:image"]')?.getAttribute('content') || null;
+      document
+        .querySelector('meta[property="og:description"]')
+        ?.getAttribute('content') || null;
+    const thumbnail =
+      document
+        .querySelector('meta[property="og:image"]')
+        ?.getAttribute('content') || null;
 
     // Fallback to standard HTML tags
     if (!title) {
@@ -90,7 +107,9 @@ export function extractMetadata(html: string): LinkMetadata {
     }
     if (!description) {
       description =
-        document.querySelector('meta[name="description"]')?.getAttribute('content') || null;
+        document
+          .querySelector('meta[name="description"]')
+          ?.getAttribute('content') || null;
     }
 
     return {
@@ -137,6 +156,7 @@ export async function fetchMetadata(url: string): Promise<LinkMetadata> {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; BookmarkManager/1.0)',
       },
+      redirect: 'error', // Disable redirects to prevent SSRF bypass
     });
 
     clearTimeout(timeoutId);
@@ -182,7 +202,7 @@ export async function fetchMetadata(url: string): Promise<LinkMetadata> {
 
     // Extract metadata
     return extractMetadata(html);
-  } catch (error) {
+  } catch {
     // Handle network errors, timeouts, and other failures
     return {
       title: null,

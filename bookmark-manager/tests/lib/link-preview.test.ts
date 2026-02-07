@@ -60,6 +60,30 @@ describe('Link Preview - URL Validation', () => {
     expect(result.error).toContain('Private IP');
   });
 
+  it('rejects link-local IP 169.254.x.x', () => {
+    const result = validateUrl('http://169.254.169.254/latest/meta-data/');
+    expect(result.valid).toBe(false);
+    expect(result.error).toContain('Private IP');
+  });
+
+  it('rejects carrier-grade NAT IP 100.64.x.x', () => {
+    const result = validateUrl('http://100.64.0.1');
+    expect(result.valid).toBe(false);
+    expect(result.error).toContain('Private IP');
+  });
+
+  it('rejects IPv6 link-local addresses', () => {
+    const result = validateUrl('http://[fe80::1]');
+    expect(result.valid).toBe(false);
+    expect(result.error).toContain('Private IP');
+  });
+
+  it('rejects IPv6 unique local addresses', () => {
+    const result = validateUrl('http://[fc00::1]');
+    expect(result.valid).toBe(false);
+    expect(result.error).toContain('Private IP');
+  });
+
   it('rejects URLs exceeding 2048 characters', () => {
     const longUrl = 'http://example.com/' + 'a'.repeat(2100);
     const result = validateUrl(longUrl);

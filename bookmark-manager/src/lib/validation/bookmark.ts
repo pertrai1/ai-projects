@@ -8,10 +8,14 @@ const MAX_URL_LENGTH = 2048;
 
 // Private IP ranges (CIDR notation)
 const PRIVATE_IP_RANGES = [
-  /^127\./,                          // 127.0.0.0/8 (localhost)
-  /^10\./,                           // 10.0.0.0/8
-  /^172\.(1[6-9]|2[0-9]|3[0-1])\./,  // 172.16.0.0/12
-  /^192\.168\./,                     // 192.168.0.0/16
+  /^127\./, // 127.0.0.0/8 (localhost)
+  /^10\./, // 10.0.0.0/8
+  /^172\.(1[6-9]|2[0-9]|3[0-1])\./, // 172.16.0.0/12
+  /^192\.168\./, // 192.168.0.0/16
+  /^169\.254\./, // 169.254.0.0/16 (link-local)
+  /^100\.(6[4-9]|[7-9]\d|1[0-2]\d)\./, // 100.64.0.0/10 (Carrier-Grade NAT)
+  /^\[?fc[0-9a-f]{2}:/, // fc00::/7 (Unique Local - fc00-fdff)
+  /^\[?fe[89ab][0-9a-f]:/, // fe80::/10 (Link Local - fe80-febf)
 ];
 
 /**
@@ -20,7 +24,10 @@ const PRIVATE_IP_RANGES = [
  * - Cannot target localhost or private IP addresses (SSRF prevention)
  * - Cannot exceed maximum length
  */
-export function validateUrl(urlString: string): { valid: boolean; error?: string } {
+export function validateUrl(urlString: string): {
+  valid: boolean;
+  error?: string;
+} {
   // Check length
   if (urlString.length > MAX_URL_LENGTH) {
     return {
@@ -49,7 +56,11 @@ export function validateUrl(urlString: string): { valid: boolean; error?: string
   }
 
   // Check for localhost
-  if (url.hostname === 'localhost' || url.hostname === '127.0.0.1' || url.hostname === '::1') {
+  if (
+    url.hostname === 'localhost' ||
+    url.hostname === '127.0.0.1' ||
+    url.hostname === '::1'
+  ) {
     return {
       valid: false,
       error: 'Localhost URLs are not allowed',
@@ -89,7 +100,21 @@ export const createBookmarkSchema = z.object({
   url: urlSchema,
   title: z.string().optional(),
   description: z.string().optional(),
-  thumbnail: z.string().url().optional(),
+  thumbnail: z
+    .string()
+    .url()
+    .refine(
+      (url) => {
+        try {
+          const parsed = new URL(url);
+          return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+        } catch {
+          return false;
+        }
+      },
+      { message: 'Thumbnail must be an HTTP or HTTPS URL' }
+    )
+    .optional(),
 });
 
 /**
@@ -99,7 +124,21 @@ export const updateBookmarkSchema = z.object({
   url: urlSchema.optional(),
   title: z.string().optional(),
   description: z.string().optional(),
-  thumbnail: z.string().url().optional(),
+  thumbnail: z
+    .string()
+    .url()
+    .refine(
+      (url) => {
+        try {
+          const parsed = new URL(url);
+          return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+        } catch {
+          return false;
+        }
+      },
+      { message: 'Thumbnail must be an HTTP or HTTPS URL' }
+    )
+    .optional(),
 });
 
 /**

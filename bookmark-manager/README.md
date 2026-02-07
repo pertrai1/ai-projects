@@ -16,7 +16,10 @@ A bookmark manager with superpowers, built with Claude Code using a spec-driven 
 ## Features
 
 - ✅ Email/password authentication with secure sessions
-- 🔜 Save bookmarks with auto-fetched title, description, and thumbnail
+- ✅ Bookmark CRUD (create, read, update, delete) with ownership guards
+- ✅ Auto-fetched link previews (title, description, thumbnail via Open Graph)
+- ✅ Paginated bookmark listing with configurable page size
+- ✅ URL validation with SSRF protection (blocks private IPs, localhost)
 - 🔜 Tagging system with auto-suggestions based on content
 - 🔜 Full-text search across all bookmarks
 - 🔜 Folder organization with drag-and-drop
@@ -132,6 +135,11 @@ The application uses **NextAuth.js v4** with a custom Credentials Provider for e
 - `POST /api/auth/callback/credentials` - Login (handled by NextAuth)
 - `GET/POST /api/auth/signout` - Logout (handled by NextAuth)
 - `GET /api/auth/session` - Get current session (handled by NextAuth)
+- `POST /api/bookmarks` - Create bookmark (auto-fetches link preview metadata)
+- `GET /api/bookmarks` - List user's bookmarks (paginated: `?page=1&limit=20`)
+- `GET /api/bookmarks/[id]` - Get single bookmark by ID
+- `PUT /api/bookmarks/[id]` - Update bookmark metadata or URL
+- `DELETE /api/bookmarks/[id]` - Delete bookmark (returns 204)
 
 ### Client-Side Usage
 
@@ -225,6 +233,13 @@ Note: Integration tests are marked with `describe.skip()` to avoid failures in C
 - ✅ Password hashing and validation (12 tests)
 - ✅ NextAuth configuration (6 tests)
 - ✅ Health endpoint (2 tests)
+- ✅ Link preview: URL validation and metadata extraction (24 tests)
+- ✅ Bookmark create API (9 tests)
+- ✅ Bookmark list API with pagination (8 tests)
+- ✅ Bookmark get by ID API (5 tests)
+- ✅ Bookmark update API (9 tests)
+- ✅ Bookmark delete API (5 tests)
+- ✅ Proxy middleware (6 tests)
 - 🔜 Registration API integration tests (7 tests, manual run)
 - 🔜 Login/logout flows
 - 🔜 Session management
@@ -284,11 +299,14 @@ This approach produces better code quality and catches issues early.
 - ✅ TypeScript type safety
 - ✅ Unit tests for password utilities (12 passing)
 
-### 3. Bookmark CRUD & Preview
+### 3. Bookmark CRUD & Preview ✅
 
-- Design bookmark data model
-- Implement create/read/update/delete for bookmarks
-- Integrate external API for fetching link previews (title, description, thumbnail)
+- ✅ Bookmark data model with Prisma (URL, title, description, thumbnail, user ownership)
+- ✅ CRUD API routes with authentication guards and ownership checks
+- ✅ Link preview service with Open Graph parsing and HTML fallback
+- ✅ URL validation with SSRF protection (private IP blocking)
+- ✅ Paginated listing (configurable page/limit, max 100)
+- ✅ 86 passing unit tests
 
 ### 4. Tagging & Suggestions
 

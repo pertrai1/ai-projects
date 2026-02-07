@@ -9,7 +9,8 @@ const globalForPrisma = globalThis as unknown as {
 
 // Prisma v7 with PostgreSQL adapter
 const pool =
-  globalForPrisma.pool ?? new Pool({ connectionString: process.env.DATABASE_URL });
+  globalForPrisma.pool ??
+  new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter });
