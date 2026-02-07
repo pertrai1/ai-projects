@@ -59,7 +59,7 @@ Each of the subtopics below will have a separate document that will have specifi
 - [N-Shot Learning](./artificial-intelligence/n_shot_learning.md)
 - [Zero-Shot Learning (ZSL)](./artificial-intelligence/zero_shot_learning.md)
 - [One-Shot Learning (OSL)](artificial-intelligence/one_shot_learning.md)
-- Reinforcement Learning with Human Feedback (RLHF)
+- [Reinforcement Learning with Human Feedback (RLHF)](./artificial-intelligence/rlhf.md)
 - [LoRA (Low-Rank Adaptation)](./artificial-intelligence/lora.md)
 - Ensemble Models
 
