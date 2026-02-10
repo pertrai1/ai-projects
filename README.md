@@ -34,6 +34,7 @@ While many of these projects are production-inspired and follow real-world engin
 - [Zero-Shot Task Router](#zero-shot-task-router) - Prompt-conditioned zero-shot task induction experiments
 - [Chain-of-Thought Prompt Comparator](#chain-of-thought-prompt-comparator) - A CLI tool for comparing Chain-of-Thought (CoT) prompting strategies
 - [HireGauge](./research-paper-projects/hire-gauge) - LLM hiring decision evaluation with factorial experiments and bias detection
+- [ExpertProbe](./expert-probe) - Evaluation harness for measuring expertise dilution in multi-agent LLM systems
 
 ### Guide Projects
 
@@ -274,6 +275,28 @@ A CLI tool for comparing Chain-of-Thought (CoT) prompting strategies and analyzi
 - CLI for easy execution and result visualization
 
 **Use Cases**: Research on LLM reasoning, prompt engineering optimization, comparative analysis of CoT techniques, educational tool for understanding advanced prompting
+
+---
+
+### [ExpertProbe](./expert-probe)
+
+An evaluation harness for measuring expertise dilution in multi-agent LLM systems.
+
+**Technology**: OpenAI, TypeScript, Commander.js, Vitest, Zod
+
+**Description**: ExpertProbe measures whether multi-agent LLM teams outperform or dilute their strongest individual agent. The harness runs a designated Expert agent solo to establish a baseline, then runs the full team (Expert + Non-Expert A + Non-Expert B) through a Moderator that produces a consensus answer. By comparing team accuracy against expert accuracy across two conditions (expert-hidden and expert-revealed), ExpertProbe makes the expertise dilution effect observable, measurable, and reproducible. It is test infrastructure, not an agent framework.
+
+**Key Features**:
+
+- Expert-as-baseline evaluation comparing team performance against the strongest individual agent
+- Two experimental conditions: expert-hidden (symmetric) and expert-revealed (expert identified in prompts)
+- Deterministic answer scoring with normalization (case, whitespace, articles, punctuation)
+- Parallel agent execution with moderator-based consensus aggregation
+- Structured JSON output with per-task metrics and accuracy delta computation
+- Interface-based LLM client design enabling fully mocked, deterministic test suite (83 tests)
+- Built-in task fixtures spanning math, logic, trivia, and SAT-style questions
+
+**Use Cases**: Reproducing multi-agent research findings, comparing aggregation strategies (consensus vs authority-driven), stress-testing multi-agent designs before production use, building intuition about when more agents makes results worse
 
 ---
 
