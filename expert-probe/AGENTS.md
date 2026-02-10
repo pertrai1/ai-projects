@@ -79,45 +79,51 @@ For each task:
 ## Implementation Log
 
 ### Task 1: Project Scaffolding
-- **Status**: Not started
-- **Notes**: —
+- **Status**: Complete
+- **Notes**: ESM with `"type": "module"`, NodeNext module, vitest needs `passWithNoTests: true` to exit 0 with no test files
 
 ### Task 2: Task Schema & Fixtures
-- **Status**: Not started
-- **Notes**: —
+- **Status**: Complete (8 tests)
+- **Notes**: Zod enum for task types. Fixtures use `as const` for readonly inference. Always validate fixtures against their own schema in tests.
 
 ### Task 3: Agent & Experiment Config Schemas
-- **Status**: Not started
-- **Notes**: —
+- **Status**: Complete (17 tests)
+- **Notes**: ExperimentConfig uses `.default()` for model and temperature. Agent roles are a closed enum — extend later if needed.
 
 ### Task 4: Answer Scorer
-- **Status**: Not started
-- **Notes**: —
+- **Status**: Complete (17 tests)
+- **Notes**: Normalization: trim, lowercase, strip leading articles, strip trailing punctuation, collapse spaces. Does NOT do word-to-number conversion ("three" !== "3") — keep simple for v0.
 
 ### Task 5: LLM Client
-- **Status**: Not started
-- **Notes**: —
+- **Status**: Complete (6 tests)
+- **Notes**: Interface-based design (`LLMClient`) makes mocking trivial. `response_format: { type: 'json_object' }` forces JSON output from OpenAI. Retry loop with configurable maxRetries.
 
 ### Task 6: Prompt Builder
-- **Status**: Not started
-- **Notes**: —
+- **Status**: Complete (11 tests)
+- **Notes**: Condition logic: `expert-revealed` appends identity markers to expert's systemPrompt and deference notes to non-experts. Moderator gets all agent responses formatted in userPrompt.
 
 ### Task 7: Agent Runner
-- **Status**: Not started
-- **Notes**: —
+- **Status**: Complete (6 tests)
+- **Notes**: `runAgent` and `runModerator` are separate functions — moderator needs different prompt construction (receives other agent responses). Both return `AgentResult` with preserved raw response.
 
 ### Task 8: Experiment Orchestrator
-- **Status**: Not started
-- **Notes**: —
+- **Status**: Complete (6 tests)
+- **Notes**: Expert runs solo first (baseline), then all 3 contributors run in parallel via `Promise.all`, then moderator synthesizes. When mocking for tests, distinguish moderator calls by checking `user.includes('Team responses')` in the user prompt, not by system prompt content.
 
 ### Task 9: Metrics & Result Logging
-- **Status**: Not started
-- **Notes**: —
+- **Status**: Complete (7 tests)
+- **Notes**: `computeMetrics` takes a `ReadonlyMap<taskId, correctAnswer>` for ground truth lookup. Delta = team - expert (negative = dilution). Writer creates timestamped directories under output dir.
 
 ### Task 10: CLI Entry Point
-- **Status**: Not started
-- **Notes**: —
+- **Status**: Complete (5 tests)
+- **Notes**: Commander CLI with `run` command. Runs both conditions by default, or single condition with `--condition`. Results written to `results/` dir. Chalk for colored terminal output.
 
 ## Lessons Learned
 
-_(Updated after each task)_
+1. **ESM imports require `.js` extensions** — even for `.ts` source files when using NodeNext module resolution
+2. **`exactOptionalPropertyTypes`** means you can't assign `undefined` to optional properties without explicit `| undefined` in the type
+3. **Mock LLM clients via interface** — `LLMClient` interface makes the entire test suite fast and deterministic with zero API calls
+4. **Distinguish moderator from agent calls in mocks** by checking for "Team responses" in user prompt, not agent role in system prompt (system prompts may overlap)
+5. **Vitest `passWithNoTests: true`** is needed in vitest.config.ts for clean CI when test files don't exist yet
+6. **`as const` on fixture arrays** provides better type narrowing while still satisfying `readonly Task[]`
+7. **Zod `.default()` values** are applied only when the field is `undefined`, not when explicitly set — good for optional config with sensible defaults
