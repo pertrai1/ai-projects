@@ -65,6 +65,125 @@ ExpertProbe is not:
 - Building intuition about when “more agents” makes results worse
 - Creating reusable evaluation artifacts for agent research
 
+## Developer Setup
+
+### Prerequisites
+
+- Node.js >= 18
+- An OpenAI-compatible API key
+
+### Installation
+
+```bash
+npm install
+```
+
+### Environment
+
+Copy the example and add your API key:
+
+```bash
+cp .env.example .env
+```
+
+`.env` requires:
+
+```
+OPENAI_API_KEY=your_key_here
+```
+
+Optionally set `OPENAI_BASE_URL` if using a gateway or proxy.
+
+### Running Tests
+
+```bash
+npm test            # single run (83 tests)
+npm run test:watch  # watch mode
+npm run typecheck   # type-check without emit
+```
+
+All tests are deterministic — no API calls, no network, no flakiness. LLM interactions are tested through interface mocks.
+
+### Building
+
+```bash
+npm run build       # compiles to dist/
+```
+
+## Running the Experiment
+
+### Quick Start
+
+```bash
+npx tsx src/cli.ts run
+```
+
+This runs both conditions (expert-hidden and expert-revealed) against all 5 built-in tasks using `gpt-4o-mini` at temperature 0.
+
+### CLI Options
+
+```
+expert-probe run [options]
+
+  -c, --condition <condition>  expert-hidden | expert-revealed (default: both)
+  -m, --model <model>          LLM model name (default: gpt-4o-mini)
+  -t, --temperature <temp>     LLM temperature 0–2 (default: 0)
+  -o, --output-dir <dir>       Where to write result JSON (default: results/)
+```
+
+### Examples
+
+Run only the expert-revealed condition:
+
+```bash
+npx tsx src/cli.ts run --condition expert-revealed
+```
+
+Use a different model with higher temperature:
+
+```bash
+npx tsx src/cli.ts run --model gpt-4o --temperature 0.3
+```
+
+### Output
+
+Each run creates a timestamped directory under `results/` containing:
+
+- `metrics.json` — Expert accuracy, team accuracy, accuracy delta, per-task breakdown
+- `raw-results.json` — Full agent responses, reasoning, and scoring details
+
+A negative accuracy delta (team < expert) indicates the expertise dilution effect was reproduced.
+
+### Built-in Tasks
+
+The harness ships with 5 evaluation tasks spanning different domains:
+
+| ID | Type | Question | Answer |
+|----|------|----------|--------|
+| math-001 | Math | What is 17 * 24? | 408 |
+| math-002 | Math | What is the square root of 144? | 12 |
+| logic-001 | Logic | If all roses are flowers and some flowers fade quickly, can we conclude that some roses fade quickly? | No |
+| trivia-001 | Trivia | What is the chemical symbol for gold? | Au |
+| sat-001 | SAT | Architect is to building as author is to: (A) library (B) book (C) reading (D) writing | B |
+
+### Architecture Overview
+
+```
+For each task:
+  1. Expert solo run → baseline answer
+  2. Expert + Non-Expert A + Non-Expert B in parallel → 3 responses
+  3. All 3 responses → Moderator → single team answer
+  4. Score expert answer and team answer against ground truth
+  5. Compute accuracy delta (team − expert)
+```
+
+The four agents are:
+
+1. **Expert** — Precise, methodical domain expert (baseline)
+2. **Non-Expert A** — Confident, fast-thinking generalist
+3. **Non-Expert B** — Skeptical contrarian who challenges assumptions
+4. **Moderator** — Consensus synthesizer who produces the team's final answer
+
 ## Initial Scope
 
 The initial version of ExpertProbe focuses on:
