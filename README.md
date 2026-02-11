@@ -314,6 +314,7 @@ Comprehensive documentation on AI and Machine Learning topics is available in th
 - [Zero-Shot Learning](./docs/artificial-intelligence/zero_shot_learning.md) - Learning new tasks without training examples using semantic knowledge transfer
 - [Emergent Behavior](./docs/artificial-intelligence/emergent_behavior.md) - Complex patterns arising in AI systems
 - [Decision Trees](./docs/machine-learning/decision_trees.md) - Tree-based learning algorithms for classification and regression
+- [Hypothesis Testing](./docs/machine-learning/hypothesis_testing.md) - Statistical methodology for data-driven decision making and model validation
 - [K-Nearest Neighbors](./docs/machine-learning/k_nearest_neighbors.md) - Instance-based learning algorithm for classification and regression
 - [Supervised Learning](./docs/machine-learning/supervised_learning.md) - Fundamentals of learning from labeled data for classification and regression
 
