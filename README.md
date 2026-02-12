@@ -24,6 +24,8 @@ While many of these projects are production-inspired and follow real-world engin
 - [Soil Guard CLI](./soil-guard-cli) - Assistant using parallel input and output validation using LLM Guardrails
 - [Interviewer-as-a-Person](./interviewer-as-a-person) - Realistic mock interview system with voice, video presence, and structured evaluation
 
+![Mindmap](docs/mindmaps/agentic-framework-mindmap.png)
+
 ### Current Project
 
 - [Codebase Q&A](./codebase-qa) - Educational RAG system focused on intent-aware, adaptive retrieval
