@@ -12,7 +12,13 @@ export class QueryRouter {
   private llm: LLMClient;
 
   constructor(llmClient?: LLMClient) {
-    this.llm = llmClient || getLLMClient({ provider: 'mock' });
+    // Use environment-configured LLM or fallback to mock
+    const provider = (process.env.LLM_PROVIDER as any) || 'mock';
+    const apiKey = provider === 'anthropic' ? process.env.ANTHROPIC_API_KEY :
+                   provider === 'openai' ? process.env.OPENAI_API_KEY : undefined;
+    const model = process.env.LLM_MODEL;
+
+    this.llm = llmClient || getLLMClient({ provider, apiKey, model });
   }
 
   /**

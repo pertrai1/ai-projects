@@ -13,9 +13,9 @@
  *   Markdown formatted summary of the paper
  */
 
-import https from 'https';
-import http from 'http';
-import OpenAI from 'openai';
+import https from "https";
+import http from "http";
+import OpenAI from "openai";
 
 const SUMMARY_MAX_TOKENS = 1000;
 const MAX_PDF_TEXT_LENGTH = 50000; // Limit text to avoid token limits
@@ -23,10 +23,22 @@ const MAX_REDIRECTS = 5; // Prevent infinite redirect loops
 const REQUEST_TIMEOUT = 60000; // 60 seconds
 
 /**
+ * Validate if a string is a valid URL
+ */
+function isValidUrl(string) {
+  try {
+    new URL(string);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Convert arXiv abstract URL to PDF URL
  */
 function convertToPdfUrl(url) {
-  return url.replace('/abs/', '/pdf/');
+  return url.replace("/abs/", "/pdf/");
 }
 
 /**
@@ -34,11 +46,11 @@ function convertToPdfUrl(url) {
  */
 async function downloadPdf(url, redirectCount = 0) {
   if (redirectCount >= MAX_REDIRECTS) {
-    throw new Error('Too many redirects');
+    throw new Error("Too many redirects");
   }
 
   return new Promise((resolve, reject) => {
-    const protocol = url.startsWith('https') ? https : http;
+    const protocol = url.startsWith("https") ? https : http;
 
     const request = protocol.get(url, { timeout: REQUEST_TIMEOUT }, (res) => {
       // Handle redirects
@@ -55,14 +67,14 @@ async function downloadPdf(url, redirectCount = 0) {
       }
 
       const chunks = [];
-      res.on('data', (chunk) => chunks.push(chunk));
-      res.on('end', () => resolve(Buffer.concat(chunks)));
+      res.on("data", (chunk) => chunks.push(chunk));
+      res.on("end", () => resolve(Buffer.concat(chunks)));
     });
 
-    request.on('error', reject);
-    request.on('timeout', () => {
+    request.on("error", reject);
+    request.on("timeout", () => {
       request.destroy();
-      reject(new Error('Request timeout'));
+      reject(new Error("Request timeout"));
     });
   });
 }
@@ -77,7 +89,7 @@ async function extractTextFromPdf(pdfBuffer) {
   try {
     // Cache the pdf-parse module after first import
     if (!pdfParseModule) {
-      pdfParseModule = (await import('pdf-parse')).default;
+      pdfParseModule = (await import("pdf-parse")).default;
     }
     const data = await pdfParseModule(pdfBuffer);
     return data.text;
@@ -91,13 +103,13 @@ async function extractTextFromPdf(pdfBuffer) {
  */
 function cleanPdfText(text) {
   // Remove excessive whitespace
-  let cleaned = text.replace(/\s+/g, ' ').trim();
+  let cleaned = text.replace(/\s+/g, " ").trim();
 
   // Truncate if too long
   if (cleaned.length > MAX_PDF_TEXT_LENGTH) {
     cleaned = cleaned.substring(0, MAX_PDF_TEXT_LENGTH);
     // Try to cut at a sentence boundary
-    const lastPeriod = cleaned.lastIndexOf('. ');
+    const lastPeriod = cleaned.lastIndexOf(". ");
     if (lastPeriod > MAX_PDF_TEXT_LENGTH * 0.9) {
       cleaned = cleaned.substring(0, lastPeriod + 1);
     }
@@ -111,11 +123,11 @@ function cleanPdfText(text) {
  */
 async function generateSummary(paperText, paperUrl) {
   if (!process.env.OPENAI_API_KEY) {
-    throw new Error('OPENAI_API_KEY is not set.');
+    throw new Error("OPENAI_API_KEY is not set.");
   }
 
   const client = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
+    apiKey: process.env.OPENAI_API_KEY,
   });
 
   const prompt = `
@@ -138,29 +150,29 @@ ${paperText}
 
   try {
     const response = await client.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: "gpt-4o-mini",
       messages: [
         {
-          role: 'user',
-          content: prompt
-        }
+          role: "user",
+          content: prompt,
+        },
       ],
       max_tokens: SUMMARY_MAX_TOKENS,
-      temperature: 0.3
+      temperature: 0.3,
     });
 
     const summaryText = response.choices[0]?.message?.content?.trim();
 
     if (!summaryText) {
-      throw new Error('LLM returned empty response.');
+      throw new Error("LLM returned empty response.");
     }
 
     return summaryText;
   } catch (err) {
     if (err.status === 429) {
-      throw new Error('Rate limit exceeded. Try again later.');
+      throw new Error("Rate limit exceeded. Try again later.");
     } else if (err.status === 401) {
-      throw new Error('Invalid API key.');
+      throw new Error("Invalid API key.");
     }
     throw new Error(`LLM request failed: ${err.message || err}`);
   }
@@ -172,10 +184,10 @@ ${paperText}
 async function main() {
   try {
     if (process.argv.length < 3 || !isValidUrl(process.argv[2])) {
-      console.error('Error: A valid paper URL must be provided.');
-      console.error('Usage: node summarize-paper.js <paper_url>');
+      console.error("Error: A valid paper URL must be provided.");
+      console.error("Usage: node summarize-paper.js <paper_url>");
       console.error(
-        'Example: node summarize-paper.js http://arxiv.org/abs/2601.00698v1'
+        "Example: node summarize-paper.js http://arxiv.org/abs/2601.00698v1",
       );
       process.exit(1);
     }
@@ -188,12 +200,12 @@ async function main() {
     console.error(`PDF URL: ${pdfUrl}`);
 
     // Download PDF
-    console.error('Downloading PDF...');
+    console.error("Downloading PDF...");
     const pdfBuffer = await downloadPdf(pdfUrl);
     console.error(`Downloaded ${pdfBuffer.length} bytes`);
 
     // Extract text
-    console.error('Extracting text from PDF...');
+    console.error("Extracting text from PDF...");
     const rawText = await extractTextFromPdf(pdfBuffer);
     console.error(`Extracted ${rawText.length} characters`);
 
@@ -202,7 +214,7 @@ async function main() {
     console.error(`Cleaned text: ${cleanedText.length} characters`);
 
     // Generate summary
-    console.error('Generating summary...');
+    console.error("Generating summary...");
     const summary = await generateSummary(cleanedText, paperUrl);
 
     // Output formatted result
@@ -220,7 +232,7 @@ ${summary}
 
     console.log(output);
   } catch (error) {
-    console.error('Error:', error.message);
+    console.error("Error:", error.message);
     process.exit(1);
   }
 }

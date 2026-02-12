@@ -151,6 +151,16 @@ export interface CodeQAResponse {
     chunksUsed: number;
     retrievalTime?: number;
   };
+  validation?: {
+    faithfulnessScore: number; // 0-1, how faithful is the answer to citations?
+    passed: boolean; // Did validation pass?
+    recommendation: 'accept' | 'review' | 'reject';
+    issues: Array<{
+      type: string;
+      severity: 'error' | 'warning' | 'info';
+      message: string;
+    }>;
+  };
 }
 
 /**

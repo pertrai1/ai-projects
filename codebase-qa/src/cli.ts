@@ -4,6 +4,7 @@
  * CLI entry point for Codebase Q&A system
  */
 
+import 'dotenv/config'; // Load .env file
 import { Command } from 'commander';
 import { discoverCodeFiles, getFileStats } from './utils/file-discovery.js';
 import { ASTParser } from './parser/ast-parser.js';
@@ -15,6 +16,8 @@ import { phase3Experiment } from './commands/phase-3-experiment.js';
 import { runPhase3Ablation } from './commands/phase-3-ablation.js';
 import { ingestCodebase } from './scripts/ingest-codebase.js';
 import { runPhase4Demo } from './commands/phase-4-demo.js';
+import { runStage2Demo } from './commands/stage-2-demo.js';
+import { runValidationCatchDemo } from './commands/validation-catch-demo.js';
 
 const program = new Command();
 
@@ -97,9 +100,13 @@ program
         await runPhase3Ablation();
       } else if (phase === 'phase-4') {
         await runPhase4Demo();
+      } else if (phase === 'stage-2') {
+        await runStage2Demo();
+      } else if (phase === 'validation-catch') {
+        await runValidationCatchDemo();
       } else {
         console.error(`✗ Unknown phase: ${phase}`);
-        console.log('Available phases: phase-1, phase-2, phase-3, phase-3-ablation, phase-4');
+        console.log('Available phases: phase-1, phase-2, phase-3, phase-3-ablation, phase-4, stage-2, validation-catch');
         process.exit(1);
       }
     } catch (error) {

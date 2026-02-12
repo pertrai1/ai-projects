@@ -23,7 +23,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.74.0",
     "commander": "^11.1.0",
+    "dotenv": "^17.2.4",
     "hnswlib-node": "^2.0.0",
     "typescript": "^5.3.3",
     "yaml": "^2.8.2"

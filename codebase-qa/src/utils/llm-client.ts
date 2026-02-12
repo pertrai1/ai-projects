@@ -1,11 +1,14 @@
 /**
  * LLM Client abstraction
- * 
+ *
  * Handles interaction with Language Models (Claude, OpenAI, etc.)
  * For Phase 2, we implement a Mock client that simulates intelligent classification
  * using rule-based heuristics, allowing learners to test the system without API keys.
+ *
+ * Phase 4 adds AnthropicClient for real Claude responses with citation discipline.
  */
 
+import Anthropic from '@anthropic-ai/sdk';
 import { QueryIntent, QueryIntentType } from '../types/index.js';
 
 export interface LLMClientConfig {
@@ -107,11 +110,104 @@ export class MockLLMClient implements LLMClient {
   }
 }
 
+/**
+ * Anthropic Claude Client
+ * Uses real Claude API for intent classification and response generation
+ */
+export class AnthropicClient implements LLMClient {
+  private client: Anthropic;
+  private model: string;
+
+  constructor(apiKey: string, model: string = 'claude-3-5-sonnet-20241022') {
+    this.client = new Anthropic({ apiKey });
+    this.model = model;
+  }
+
+  async complete(prompt: string, options?: CompletionOptions): Promise<string> {
+    const systemPrompt = options?.systemPrompt || 'You are a helpful AI assistant analyzing code.';
+    const maxTokens = options?.maxTokens || 1024;
+    const temperature = options?.temperature ?? 0.3;
+
+    const message = await this.client.messages.create({
+      model: this.model,
+      max_tokens: maxTokens,
+      temperature,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: prompt }],
+    });
+
+    const content = message.content[0];
+    if (content.type === 'text') {
+      return content.text;
+    }
+    throw new Error('Unexpected response type from Anthropic API');
+  }
+
+  async classifyQuery(query: string, availableIntents: string[]): Promise<QueryIntent> {
+    const systemPrompt = `You are a query intent classifier for a code Q&A system.
+Classify the user's query into one of these intent types: ${availableIntents.join(', ')}.
+
+Intent definitions:
+- ARCHITECTURE: Questions about high-level system design, how modules interact, overall structure
+- IMPLEMENTATION: Questions about specific code implementation, how a function works
+- DEPENDENCY: Questions about module dependencies, imports, what depends on what
+- USAGE: Questions about how to use an API, class, or function (examples needed)
+- DEBUGGING: Questions about errors, bugs, why something fails
+- COMPARISON: Questions comparing two approaches, functions, or modules
+- LOCATION: Questions about where something is defined or located
+- GENERAL: General questions about the codebase
+
+Return a JSON object with:
+{
+  "type": "INTENT_TYPE",
+  "confidence": 0.0-1.0,
+  "reasoning": "brief explanation",
+  "entities": [{"type": "keyword", "value": "entity_name", "confidence": 0.0-1.0}],
+  "searchStrategy": "focused" or "broad"
+}`;
+
+    const prompt = `Classify this query: "${query}"`;
+
+    const response = await this.complete(prompt, {
+      systemPrompt,
+      maxTokens: 300,
+      temperature: 0,
+    });
+
+    // Parse the JSON response
+    try {
+      const parsed = JSON.parse(response);
+      return {
+        type: parsed.type as QueryIntentType,
+        confidence: parsed.confidence,
+        reasoning: parsed.reasoning,
+        entities: parsed.entities || [],
+        searchStrategy: parsed.searchStrategy || 'broad',
+      };
+    } catch (error) {
+      // Fallback if JSON parsing fails
+      return {
+        type: 'GENERAL',
+        confidence: 0.5,
+        reasoning: 'Failed to parse LLM response, using fallback',
+        entities: [],
+        searchStrategy: 'broad',
+      };
+    }
+  }
+}
+
 // Factory to get client
 export function getLLMClient(config: LLMClientConfig = { provider: 'mock' }): LLMClient {
   if (config.provider === 'mock') {
     return new MockLLMClient();
   }
-  // Real implementation placeholders would go here
+  if (config.provider === 'anthropic') {
+    if (!config.apiKey) {
+      throw new Error('Anthropic API key required. Set ANTHROPIC_API_KEY in .env');
+    }
+    return new AnthropicClient(config.apiKey, config.model);
+  }
+  // Real OpenAI implementation would go here
   throw new Error(`Provider ${config.provider} not implemented yet.`);
 }
