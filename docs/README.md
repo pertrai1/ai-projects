@@ -16,7 +16,7 @@ Each of the subtopics below will have a separate document that will have specifi
 
 - [Supervised Learning](./machine-learning/supervised_learning.md)
 - Unsupervised Learning
-- Hypothesis Testing
+- [Hypothesis Testing](./machine-learning/hypothesis_testing.md)
 - K-means Clustering
 - [K-Nearest Neighbors](./machine-learning/k_nearest_neighbors.md)
 - Logistic Regression
