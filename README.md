@@ -319,6 +319,7 @@ Comprehensive documentation on AI and Machine Learning topics is available in th
 - [Hypothesis Testing](./docs/machine-learning/hypothesis_testing.md) - Statistical methodology for data-driven decision making and model validation
 - [K-Nearest Neighbors](./docs/machine-learning/k_nearest_neighbors.md) - Instance-based learning algorithm for classification and regression
 - [Supervised Learning](./docs/machine-learning/supervised_learning.md) - Fundamentals of learning from labeled data for classification and regression
+- [Backpropagation](./docs/neural-networks/backpropagation.md) - The fundamental algorithm for training neural networks via gradient-based weight updates
 - [Transformers](./docs/deep-learning/transformers.md) - Neural network architecture using self-attention mechanisms for sequence processing and generation
 
 See the full [documentation index](./docs/README.md) for all topics.

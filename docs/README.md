@@ -28,7 +28,7 @@ Each of the subtopics below will have a separate document that will have specifi
 ## Neural Networks - is a tool
 
 - Perceptron
-- Backpropagation
+- [Backpropagation](./neural-networks/backpropagation.md)
 - Feed Forward Networks
 - Hopfield Networks
 - Boltzmann Machines
