@@ -74,6 +74,6 @@ Each of the subtopics below will have a separate document that will have specifi
 - A/B Testing for AI Systems
 - Model Versioning & Management
 - Deployment Strategies
-- Fine-tuning Methodologies
+- [Fine-tuning Methodologies](./ai-ml-engineering-operations/fine_tuning_methodologies.md)
 - Dataset Management
 - Bias Detection & Mitigation
