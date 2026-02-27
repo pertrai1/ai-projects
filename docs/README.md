@@ -71,7 +71,7 @@ Each of the subtopics below will have a separate document that will have specifi
 - Model Testing & Validation
 - AI/ML CI/CD
 - Model Monitoring & Observability
-- A/B Testing for AI Systems
+- [A/B Testing for AI Systems](./ai-ml-engineering-operations/ab_testing_for_ai_systems.md)
 - Model Versioning & Management
 - Deployment Strategies
 - Fine-tuning Methodologies
