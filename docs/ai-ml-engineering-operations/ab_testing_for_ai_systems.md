@@ -19,6 +19,8 @@ Modern A/B testing for AI extends beyond simple model swaps to include **prompt 
 
 A key challenge is balancing **statistical rigor** with **business velocity**, managing the cost of serving multiple model variants, and designing evaluation frameworks that capture both quantitative metrics and qualitative improvements in AI system behavior.
 
+![Mindmap](../mindmaps/a-b-testing-mindmap.png)
+
 ---
 
 ## 2. Core Concepts
