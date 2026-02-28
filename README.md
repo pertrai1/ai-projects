@@ -2,6 +2,8 @@
 
 A collection of machine learning and artificial intelligence projects demonstrating various AI techniques and applications.
 
+![Mindmap](docs/mindmaps/ai-concepts-mindmap.png)
+
 ## Project Intent
 
 These projects are intentionally designed as **learning-through-building exercises** focused on developing a deep, practical understanding of modern AI systems rather than producing polished end-user products.
@@ -23,8 +25,6 @@ While many of these projects are production-inspired and follow real-world engin
 - [Veridex](#veridex) - Governance-first RAG system with auditability and evaluation
 - [Soil Guard CLI](./soil-guard-cli) - Assistant using parallel input and output validation using LLM Guardrails
 - [Interviewer-as-a-Person](./interviewer-as-a-person) - Realistic mock interview system with voice, video presence, and structured evaluation
-
-![Mindmap](docs/mindmaps/ai-concepts-mindmap.png)
 
 ### Current Project
 
