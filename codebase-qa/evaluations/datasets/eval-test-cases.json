@@ -1,0 +1,544 @@
+[
+  {
+    "_comment": "═══════════════════════════════════════════════════════",
+    "_comment2": "ARCHITECTURE intent (5 cases): 'How does system X work?'",
+    "_comment3": "═══════════════════════════════════════════════════════"
+  },
+  {
+    "id": "arch-01",
+    "query": "How does the adaptive retrieval system work?",
+    "expectedIntent": "ARCHITECTURE",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/retrieval/adaptive-retriever.ts" }
+    ],
+    "expectedCitationPaths": ["src/retrieval/adaptive-retriever.ts"],
+    "tags": ["retrieval", "core"],
+    "notes": "Clear architecture query. Should retrieve the main retriever file and strategy config."
+  },
+  {
+    "id": "arch-02",
+    "query": "How is the pipeline structured from query to response?",
+    "expectedIntent": "ARCHITECTURE",
+    "difficulty": "medium",
+    "expectedChunks": [
+      { "filePath": "src/agents/query-router.ts" },
+      { "filePath": "src/retrieval/adaptive-retriever.ts" },
+      { "filePath": "src/agents/response-synthesizer.ts" }
+    ],
+    "expectedCitationPaths": [
+      "src/agents/query-router.ts",
+      "src/retrieval/adaptive-retriever.ts",
+      "src/agents/response-synthesizer.ts"
+    ],
+    "tags": ["pipeline", "multi-file"],
+    "notes": "Multi-file query — needs chunks from router, retriever, AND synthesizer to answer fully."
+  },
+  {
+    "id": "arch-03",
+    "query": "What is the overall design of the vector store?",
+    "expectedIntent": "ARCHITECTURE",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/vector-store/vector-store.ts" }
+    ],
+    "expectedCitationPaths": ["src/vector-store/vector-store.ts"],
+    "tags": ["vector-store", "core"],
+    "notes": "Straightforward architecture question about one component."
+  },
+  {
+    "id": "arch-04",
+    "query": "How does the system decide which retrieval parameters to use for different query types?",
+    "expectedIntent": "ARCHITECTURE",
+    "difficulty": "medium",
+    "expectedChunks": [
+      { "filePath": "src/retrieval/adaptive-retriever.ts" },
+      { "filePath": "specs/retrieval-strategies.yaml" }
+    ],
+    "expectedCitationPaths": [
+      "src/retrieval/adaptive-retriever.ts",
+      "specs/retrieval-strategies.yaml"
+    ],
+    "tags": ["retrieval", "strategy", "multi-file"],
+    "notes": "Needs both the code AND the YAML spec to give a complete answer."
+  },
+  {
+    "id": "arch-05",
+    "query": "How does the hallucination detection system work?",
+    "expectedIntent": "ARCHITECTURE",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/validation/citation-validator.ts" }
+    ],
+    "expectedCitationPaths": ["src/validation/citation-validator.ts"],
+    "tags": ["validation", "core"],
+    "notes": "Should map 'hallucination detection' to the citation validator."
+  },
+
+  {
+    "_comment": "═══════════════════════════════════════════════════════",
+    "_comment2": "IMPLEMENTATION intent (5 cases): 'How is feature Y implemented?'",
+    "_comment3": "═══════════════════════════════════════════════════════"
+  },
+  {
+    "id": "impl-01",
+    "query": "How is the semantic chunking with lookahead implemented?",
+    "expectedIntent": "IMPLEMENTATION",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/retrieval/code-chunker.ts", "scopeName": "SemanticWithLookaheadChunker" }
+    ],
+    "expectedCitationPaths": ["src/retrieval/code-chunker.ts"],
+    "tags": ["chunking", "implementation"],
+    "notes": "Direct implementation question — should find the specific chunker class."
+  },
+  {
+    "id": "impl-02",
+    "query": "How is query expansion implemented in the adaptive retriever?",
+    "expectedIntent": "IMPLEMENTATION",
+    "difficulty": "medium",
+    "expectedChunks": [
+      { "filePath": "src/retrieval/adaptive-retriever.ts", "scopeName": "expandQuery" }
+    ],
+    "expectedCitationPaths": ["src/retrieval/adaptive-retriever.ts"],
+    "tags": ["retrieval", "implementation"],
+    "notes": "Asks about a specific private method inside the retriever."
+  },
+  {
+    "id": "impl-03",
+    "query": "How does the mock LLM client classify queries?",
+    "expectedIntent": "IMPLEMENTATION",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/utils/llm-client.ts" }
+    ],
+    "expectedCitationPaths": ["src/utils/llm-client.ts"],
+    "tags": ["llm", "mock", "implementation"],
+    "notes": "Keyword-based heuristic classification in MockLLMClient."
+  },
+  {
+    "id": "impl-04",
+    "query": "How is the faithfulness score calculated in the citation validator?",
+    "expectedIntent": "IMPLEMENTATION",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/validation/citation-validator.ts", "scopeName": "calculateFaithfulness" }
+    ],
+    "expectedCitationPaths": ["src/validation/citation-validator.ts"],
+    "tags": ["validation", "implementation"],
+    "notes": "Clear implementation question with named function."
+  },
+  {
+    "id": "impl-05",
+    "query": "How does the re-ranking logic work in the adaptive retriever?",
+    "expectedIntent": "IMPLEMENTATION",
+    "difficulty": "medium",
+    "expectedChunks": [
+      { "filePath": "src/retrieval/adaptive-retriever.ts", "scopeName": "rerankAndDedup" }
+    ],
+    "expectedCitationPaths": ["src/retrieval/adaptive-retriever.ts"],
+    "tags": ["retrieval", "ranking"],
+    "notes": "Should find the rerankAndDedup method with its scoring signals."
+  },
+
+  {
+    "_comment": "═══════════════════════════════════════════════════════",
+    "_comment2": "DEPENDENCY intent (5 cases): 'What does module X depend on?'",
+    "_comment3": "═══════════════════════════════════════════════════════"
+  },
+  {
+    "id": "dep-01",
+    "query": "What does the response synthesizer depend on?",
+    "expectedIntent": "DEPENDENCY",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/agents/response-synthesizer.ts" }
+    ],
+    "expectedCitationPaths": ["src/agents/response-synthesizer.ts"],
+    "tags": ["dependency", "synthesizer"],
+    "notes": "Clear dependency question — imports from llm-client, citation-validator, prompt-templates."
+  },
+  {
+    "id": "dep-02",
+    "query": "What modules does the CLI entry point import?",
+    "expectedIntent": "DEPENDENCY",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/cli.ts" }
+    ],
+    "expectedCitationPaths": ["src/cli.ts"],
+    "tags": ["dependency", "cli"],
+    "notes": "Should show all the imports in cli.ts — commander, commands, utils."
+  },
+  {
+    "id": "dep-03",
+    "query": "What are the external npm dependencies of this project?",
+    "expectedIntent": "DEPENDENCY",
+    "difficulty": "medium",
+    "expectedChunks": [
+      { "filePath": "package.json" }
+    ],
+    "expectedCitationPaths": ["package.json"],
+    "tags": ["dependency", "npm"],
+    "notes": "Tricky — package.json might not be ingested as a code file. Tests boundary."
+  },
+  {
+    "id": "dep-04",
+    "query": "What does the adaptive retriever import from the types file?",
+    "expectedIntent": "DEPENDENCY",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/retrieval/adaptive-retriever.ts" }
+    ],
+    "expectedCitationPaths": ["src/retrieval/adaptive-retriever.ts"],
+    "tags": ["dependency", "imports"],
+    "notes": "Specific file-to-file dependency question."
+  },
+  {
+    "id": "dep-05",
+    "query": "Which files import from the types/index module?",
+    "expectedIntent": "DEPENDENCY",
+    "difficulty": "hard",
+    "expectedChunks": [
+      { "filePath": "src/agents/query-router.ts" },
+      { "filePath": "src/agents/response-synthesizer.ts" },
+      { "filePath": "src/retrieval/adaptive-retriever.ts" }
+    ],
+    "expectedCitationPaths": [
+      "src/agents/query-router.ts",
+      "src/agents/response-synthesizer.ts",
+      "src/retrieval/adaptive-retriever.ts"
+    ],
+    "tags": ["dependency", "reverse-dependency", "multi-file"],
+    "notes": "Reverse dependency — needs multiple files. Hard because it's a breadth question."
+  },
+
+  {
+    "_comment": "═══════════════════════════════════════════════════════",
+    "_comment2": "USAGE intent (5 cases): 'How do I use class X?'",
+    "_comment3": "═══════════════════════════════════════════════════════"
+  },
+  {
+    "id": "usage-01",
+    "query": "How do I use the VectorStore to search for similar code?",
+    "expectedIntent": "USAGE",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/vector-store/vector-store.ts" }
+    ],
+    "expectedCitationPaths": ["src/vector-store/vector-store.ts"],
+    "tags": ["usage", "vector-store"],
+    "notes": "Direct usage question — should show search() method signature and usage."
+  },
+  {
+    "id": "usage-02",
+    "query": "How do I create and initialize an AdaptiveRetriever?",
+    "expectedIntent": "USAGE",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/retrieval/adaptive-retriever.ts" }
+    ],
+    "expectedCitationPaths": ["src/retrieval/adaptive-retriever.ts"],
+    "tags": ["usage", "factory-pattern"],
+    "notes": "Should highlight the async factory pattern: AdaptiveRetriever.create()."
+  },
+  {
+    "id": "usage-03",
+    "query": "Show me an example of running a phase experiment",
+    "expectedIntent": "USAGE",
+    "difficulty": "medium",
+    "expectedChunks": [
+      { "filePath": "src/commands/phase-4-demo.ts" }
+    ],
+    "expectedCitationPaths": ["src/commands/phase-4-demo.ts"],
+    "tags": ["usage", "example"],
+    "notes": "Should find demo/experiment files as usage examples."
+  },
+  {
+    "id": "usage-04",
+    "query": "How do I use the Embedder class?",
+    "expectedIntent": "USAGE",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/vector-store/embedding.ts" }
+    ],
+    "expectedCitationPaths": ["src/vector-store/embedding.ts"],
+    "tags": ["usage", "embedding"],
+    "notes": "Direct usage question with named class."
+  },
+  {
+    "id": "usage-05",
+    "query": "How do I ingest a codebase into the vector store?",
+    "expectedIntent": "USAGE",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/scripts/ingest-codebase.ts" }
+    ],
+    "expectedCitationPaths": ["src/scripts/ingest-codebase.ts"],
+    "tags": ["usage", "ingestion"],
+    "notes": "Should point to the ingestCodebase function and its options."
+  },
+
+  {
+    "_comment": "═══════════════════════════════════════════════════════",
+    "_comment2": "DEBUGGING intent (5 cases): 'Why would Z fail?'",
+    "_comment3": "═══════════════════════════════════════════════════════"
+  },
+  {
+    "id": "debug-01",
+    "query": "Why would the ingestion fail with no code files found?",
+    "expectedIntent": "DEBUGGING",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/scripts/ingest-codebase.ts" }
+    ],
+    "expectedCitationPaths": ["src/scripts/ingest-codebase.ts"],
+    "tags": ["debugging", "ingestion"],
+    "notes": "Should find the throw statement in ingestCodebase when files.length === 0."
+  },
+  {
+    "id": "debug-02",
+    "query": "Why might the citation validator reject a good answer?",
+    "expectedIntent": "DEBUGGING",
+    "difficulty": "medium",
+    "expectedChunks": [
+      { "filePath": "src/validation/citation-validator.ts" }
+    ],
+    "expectedCitationPaths": ["src/validation/citation-validator.ts"],
+    "tags": ["debugging", "validation"],
+    "notes": "Should explain the rejection criteria — missing citations, hallucinated references."
+  },
+  {
+    "id": "debug-03",
+    "query": "Why would the query router misclassify a query as GENERAL?",
+    "expectedIntent": "DEBUGGING",
+    "difficulty": "medium",
+    "expectedChunks": [
+      { "filePath": "src/utils/llm-client.ts" },
+      { "filePath": "src/agents/query-router.ts" }
+    ],
+    "expectedCitationPaths": [
+      "src/utils/llm-client.ts",
+      "src/agents/query-router.ts"
+    ],
+    "tags": ["debugging", "classification"],
+    "notes": "Root cause is in MockLLMClient's keyword heuristics — falls through to GENERAL."
+  },
+  {
+    "id": "debug-04",
+    "query": "What happens if the vector store returns no results for a search?",
+    "expectedIntent": "DEBUGGING",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/agents/response-synthesizer.ts" }
+    ],
+    "expectedCitationPaths": ["src/agents/response-synthesizer.ts"],
+    "tags": ["debugging", "empty-results"],
+    "notes": "Should find the empty-chunks guard in synthesize() that returns a refusal."
+  },
+  {
+    "id": "debug-05",
+    "query": "Why would the adaptive retriever filter out all chunks for a LOCATION query?",
+    "expectedIntent": "DEBUGGING",
+    "difficulty": "hard",
+    "expectedChunks": [
+      { "filePath": "src/retrieval/adaptive-retriever.ts", "scopeName": "buildFilter" }
+    ],
+    "expectedCitationPaths": ["src/retrieval/adaptive-retriever.ts"],
+    "tags": ["debugging", "filtering"],
+    "notes": "Hard: exact_name_match filter requires entity names in scopeName. If entities don't match, all chunks are filtered out."
+  },
+
+  {
+    "_comment": "═══════════════════════════════════════════════════════",
+    "_comment2": "COMPARISON intent (5 cases): 'What's the difference between X and Y?'",
+    "_comment3": "═══════════════════════════════════════════════════════"
+  },
+  {
+    "id": "comp-01",
+    "query": "What is the difference between semantic and fixed chunking?",
+    "expectedIntent": "COMPARISON",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/retrieval/code-chunker.ts" }
+    ],
+    "expectedCitationPaths": ["src/retrieval/code-chunker.ts"],
+    "tags": ["comparison", "chunking"],
+    "notes": "Classic comparison — both strategies live in the same file."
+  },
+  {
+    "id": "comp-02",
+    "query": "How does MockLLMClient differ from AnthropicClient?",
+    "expectedIntent": "COMPARISON",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/utils/llm-client.ts" }
+    ],
+    "expectedCitationPaths": ["src/utils/llm-client.ts"],
+    "tags": ["comparison", "llm"],
+    "notes": "Both implementations are in the same file. Should compare heuristic vs API."
+  },
+  {
+    "id": "comp-03",
+    "query": "What's the difference between ARCHITECTURE and IMPLEMENTATION query intents?",
+    "expectedIntent": "COMPARISON",
+    "difficulty": "medium",
+    "expectedChunks": [
+      { "filePath": "src/types/index.ts" },
+      { "filePath": "specs/retrieval-strategies.yaml" }
+    ],
+    "expectedCitationPaths": [
+      "src/types/index.ts",
+      "specs/retrieval-strategies.yaml"
+    ],
+    "tags": ["comparison", "intent"],
+    "notes": "Needs both the type definitions and the strategy differences to explain well."
+  },
+  {
+    "id": "comp-04",
+    "query": "Compare the retrieval strategies for DEBUGGING vs USAGE intents",
+    "expectedIntent": "COMPARISON",
+    "difficulty": "medium",
+    "expectedChunks": [
+      { "filePath": "specs/retrieval-strategies.yaml" }
+    ],
+    "expectedCitationPaths": ["specs/retrieval-strategies.yaml"],
+    "tags": ["comparison", "strategy"],
+    "notes": "Should find the YAML config and compare k values, flags, and descriptions."
+  },
+  {
+    "id": "comp-05",
+    "query": "How does query expansion differ from query filtering in the retriever?",
+    "expectedIntent": "COMPARISON",
+    "difficulty": "hard",
+    "expectedChunks": [
+      { "filePath": "src/retrieval/adaptive-retriever.ts", "scopeName": "expandQuery" },
+      { "filePath": "src/retrieval/adaptive-retriever.ts", "scopeName": "buildFilter" }
+    ],
+    "expectedCitationPaths": ["src/retrieval/adaptive-retriever.ts"],
+    "tags": ["comparison", "retrieval"],
+    "notes": "Hard: needs to find two specific methods and explain the conceptual difference."
+  },
+
+  {
+    "_comment": "═══════════════════════════════════════════════════════",
+    "_comment2": "LOCATION intent (5 cases): 'Where is function X defined?'",
+    "_comment3": "═══════════════════════════════════════════════════════"
+  },
+  {
+    "id": "loc-01",
+    "query": "Where is the QueryRouter class defined?",
+    "expectedIntent": "LOCATION",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/agents/query-router.ts", "scopeName": "QueryRouter" }
+    ],
+    "expectedCitationPaths": ["src/agents/query-router.ts"],
+    "tags": ["location", "class"],
+    "notes": "Direct location query with exact class name."
+  },
+  {
+    "id": "loc-02",
+    "query": "Where is the ingestCodebase function?",
+    "expectedIntent": "LOCATION",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/scripts/ingest-codebase.ts", "scopeName": "ingestCodebase" }
+    ],
+    "expectedCitationPaths": ["src/scripts/ingest-codebase.ts"],
+    "tags": ["location", "function"],
+    "notes": "Direct function location query."
+  },
+  {
+    "id": "loc-03",
+    "query": "Where are the prompt templates defined?",
+    "expectedIntent": "LOCATION",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/prompts/prompt-templates.ts" }
+    ],
+    "expectedCitationPaths": ["src/prompts/prompt-templates.ts"],
+    "tags": ["location", "prompts"],
+    "notes": "Should locate the prompt-templates file."
+  },
+  {
+    "id": "loc-04",
+    "query": "Where is the CodeChunk type defined?",
+    "expectedIntent": "LOCATION",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/types/index.ts" }
+    ],
+    "expectedCitationPaths": ["src/types/index.ts"],
+    "tags": ["location", "type"],
+    "notes": "Type definition location query."
+  },
+  {
+    "id": "loc-05",
+    "query": "Where is the database connection configured?",
+    "expectedIntent": "LOCATION",
+    "difficulty": "hard",
+    "expectedChunks": [],
+    "expectedCitationPaths": [],
+    "tags": ["location", "trick-question"],
+    "notes": "TRICK QUESTION: There is no database in this project! Should gracefully say 'not found'."
+  },
+
+  {
+    "_comment": "═══════════════════════════════════════════════════════",
+    "_comment2": "GENERAL intent (5 cases): General open-ended questions",
+    "_comment3": "═══════════════════════════════════════════════════════"
+  },
+  {
+    "id": "gen-01",
+    "query": "Tell me about this codebase",
+    "expectedIntent": "GENERAL",
+    "difficulty": "easy",
+    "expectedChunks": [
+      { "filePath": "src/cli.ts" }
+    ],
+    "expectedCitationPaths": [],
+    "tags": ["general", "overview"],
+    "notes": "Open-ended overview question. Many chunks could be relevant."
+  },
+  {
+    "id": "gen-02",
+    "query": "What programming language is this project written in?",
+    "expectedIntent": "GENERAL",
+    "difficulty": "easy",
+    "expectedChunks": [],
+    "expectedCitationPaths": [],
+    "tags": ["general", "meta"],
+    "notes": "Meta question — answer is TypeScript, should be inferable from any file."
+  },
+  {
+    "id": "gen-03",
+    "query": "Is this project production-ready?",
+    "expectedIntent": "GENERAL",
+    "difficulty": "medium",
+    "expectedChunks": [],
+    "expectedCitationPaths": [],
+    "tags": ["general", "subjective"],
+    "notes": "Subjective question. Good answer would note mock LLM, in-memory store, etc."
+  },
+  {
+    "id": "gen-04",
+    "query": "What are the main features of this system?",
+    "expectedIntent": "GENERAL",
+    "difficulty": "easy",
+    "expectedChunks": [],
+    "expectedCitationPaths": [],
+    "tags": ["general", "features"],
+    "notes": "Overview question — many valid answers."
+  },
+  {
+    "id": "gen-05",
+    "query": "How many files are in the project?",
+    "expectedIntent": "GENERAL",
+    "difficulty": "hard",
+    "expectedChunks": [],
+    "expectedCitationPaths": [],
+    "tags": ["general", "trick-question", "meta"],
+    "notes": "TRICK QUESTION: This is a meta-data question the RAG system can't directly answer from code chunks."
+  }
+]

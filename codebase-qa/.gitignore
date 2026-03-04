@@ -49,6 +49,9 @@ Thumbs.db
 .stylelintcache
 *.tsbuildinfo
 
+# Evaluation results (generated, track via reports not git)
+evaluations/results/
+
 # Misc
 *.local
 .turbo/

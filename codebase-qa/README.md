@@ -23,7 +23,8 @@ npm start ask "How does authentication work?"
 
 This is an **educational system** demonstrating how to build production-grade code RAG systems. It's structured in 7 learning phases, each teaching specific concepts:
 
-### Phase 0: Foundation (Current)
+### Phase 0: Foundation
+
 - **Goal**: Set up infrastructure
 - **Teaches**: Code parsing, AST basics, metadata preservation
 - **Status**: ✅ Complete
@@ -33,24 +34,28 @@ This is an **educational system** demonstrating how to build production-grade co
   - `src/types/index.ts` - Type definitions
 
 ### Phase 1: Code-Aware Chunking
+
 - **Goal**: Split code intelligently
 - **Teaches**: Chunking strategies, token budgets, trade-offs
 - **Key Learning**: Semantic chunking vs fixed chunking impact
 - **Status**: ✅ Complete
 
 ### Phase 2: Intent Classification
+
 - **Goal**: Understand query types
 - **Teaches**: Query routing, entity extraction, intent types
 - **Key Learning**: Why different queries need different strategies
 - **Status**: ✅ Complete
 
-### Phase 3: Adaptive Retrieval ⭐
+### Phase 3: Adaptive Retrieval
+
 - **Goal**: Adjust parameters per intent
 - **Teaches**: Parameter tuning, ablation studies, trade-off analysis
 - **Key Learning**: Why parameters matter (core learning)
 - **Status**: ✅ Complete
 
 ### Phase 4: Code-Aware Response Generation
+
 - **Goal**: Generate cited answers
 - **Teaches**: Citation accuracy, hallucination prevention, prompt engineering
 - **Status**: ✅ **Core Complete** (Stages 1-3)
@@ -65,28 +70,37 @@ This is an **educational system** demonstrating how to build production-grade co
   - `docs/HALLUCINATION-PATTERNS.md` - Common failure modes
 
 ### Phase 5: Evaluation Framework
-- **Goal**: Systematically measure quality
-- **Teaches**: Metrics design, retrieval vs generation
-- **Status**: Pending
+
+- **Goal**: Systematically measure quality end-to-end
+- **Teaches**: Metrics design, retrieval vs generation metrics, evaluation-driven development
+- **Key Learning**: Measuring at 4 levels (intent → retrieval → citation → overall) pinpoints WHERE the pipeline breaks
+- **Status**: ✅ Complete
+- **Key Files**:
+  - `src/evaluations/metrics.ts` - 4-level metric engine (precision@k, recall, MRR, faithfulness, coverage)
+  - `src/evaluations/eval-runner.ts` - Full pipeline evaluation harness
+  - `evaluations/datasets/eval-test-cases.json` - 40 test cases (5 per intent type)
+  - `src/commands/phase-5-evaluate.ts` - CLI command with filtering
 
 ### Phase 6: Multi-turn Conversations
+
 - **Goal**: Handle follow-ups
 - **Teaches**: Context decay, conversation memory
 - **Status**: Pending
 
 ### Phase 7: Documentation
+
 - **Goal**: Document decisions
 - **Teaches**: Design documentation, transparency
 - **Status**: Pending
 
 ## Why Code RAG is Different
 
-| Aspect | Document RAG | Code RAG |
-|--------|--------------|----------|
-| **Question type** | Content ("What is X?") | Structure ("How does X work?") |
-| **Retrieval unit** | Passages | Code units (functions, classes) |
-| **Dependencies** | Implicit | Explicit (imports, function calls) |
-| **Scope variation** | Similar | Huge (ARCHITECTURE needs 15 results, LOCATION needs 1) |
+| Aspect              | Document RAG           | Code RAG                                               |
+| ------------------- | ---------------------- | ------------------------------------------------------ |
+| **Question type**   | Content ("What is X?") | Structure ("How does X work?")                         |
+| **Retrieval unit**  | Passages               | Code units (functions, classes)                        |
+| **Dependencies**    | Implicit               | Explicit (imports, function calls)                     |
+| **Scope variation** | Similar                | Huge (ARCHITECTURE needs 15 results, LOCATION needs 1) |
 
 **Solution**: Adaptive retrieval that adjusts parameters per query type.
 
@@ -130,6 +144,9 @@ codebase-qa/
 │   ├── vector-store/
 │   │   ├── vector-store.ts
 │   │   └── embedding.ts
+│   ├── evaluations/
+│   │   ├── eval-runner.ts          # Phase 5: full pipeline evaluation harness
+│   │   └── metrics.ts              # Phase 5: 4-level metric calculations
 │   ├── utils/
 │   │   ├── file-discovery.ts
 │   │   ├── logger.ts
@@ -141,9 +158,11 @@ codebase-qa/
 │   ├── agents/
 │   └── retrieval-strategies.yaml
 ├── evaluations/
-│   ├── test-cases.ts
-│   ├── metrics.ts
-│   └── eval-runner.ts
+│   └── datasets/
+│       ├── eval-test-cases.json    # Phase 5: 40 comprehensive test cases
+│       ├── intent-test-cases.json  # Phase 2: intent classification tests
+│       ├── phase3-ablation-queries.json
+│       └── phase4-demo-queries.json
 ├── package.json
 ├── tsconfig.json
 └── README.md
@@ -205,6 +224,7 @@ By the end, you'll understand:
 ## Current Status
 
 **Completed Phases:**
+
 - ✅ **Phase 0**: Foundation (AST parsing, file discovery)
 - ✅ **Phase 1**: Code-Aware Chunking (semantic chunking, vector indexing)
 - ✅ **Phase 2**: Intent Classification (query routing, 8 intent types)
@@ -213,9 +233,11 @@ By the end, you'll understand:
   - Stage 1: Real LLM integration
   - Stage 2: Citation validation & hallucination detection
   - Stage 3: Intent-aware prompt engineering
+- ✅ **Phase 5**: Evaluation Framework (40 test cases, 4-level metrics, CLI harness)
 
 **Next Steps (Choose Your Path):**
-1. **Phase 5**: Build evaluation harness (30-50 test queries, metrics)
+
+1. **Real Embeddings**: Phase 5 eval revealed retrieval is the #1 bottleneck with mock embeddings
 2. **Phase 4 Enhancement**: Add deeper validation (Checks 2-4)
 3. **Phase 6**: Multi-turn conversation support
 4. **Production**: Switch to real Claude API and test with real queries
@@ -223,20 +245,24 @@ By the end, you'll understand:
 ## Resources for Learning
 
 ### Foundation
+
 - [TypeScript Compiler API](https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API)
 - Your existing projects: cortex, plants-fieldguide, veridex
 
 ### Retrieval
+
 - [HNSW Algorithm](https://github.com/nmslib/hnswlib)
 - "Lost in the Middle" paper (position bias)
 - BM25 vs semantic search comparisons
 
 ### RAG Systems
+
 - [Retrieval-Augmented Generation papers](https://arxiv.org/search/?query=retrieval+augmented+generation)
 - [RAGAS Evaluation Framework](https://github.com/explodinggradients/ragas)
 - Your plants-fieldguide evaluation approach
 
 ### Code Understanding
+
 - Abstract Syntax Trees (ASTs)
 - Program synthesis
 - Dependency analysis
@@ -246,13 +272,14 @@ By the end, you'll understand:
 This project is structured specifically for **educational understanding**, not production use. Each phase teaches concepts through implementation and experimentation.
 
 **Key learning principle**: You learn by:
+
 1. Understanding the problem
 2. Implementing solutions
 3. Running experiments
 4. Measuring results
 5. Documenting findings
 
-Rather than just reading about RAG, you'll build it, test it, and understand *why* things work or don't.
+Rather than just reading about RAG, you'll build it, test it, and understand _why_ things work or don't.
 
 ---
 

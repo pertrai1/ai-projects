@@ -256,3 +256,107 @@ export interface EvaluationResult {
   answerCorrectness?: number;
   citationAccuracy?: number;
 }
+
+// ─── Phase 5: Evaluation Framework Types ─────────────────────────────
+//
+// TEACHING MOMENT: Why separate types for evaluation?
+// The basic TestCase/EvaluationResult above works for simple unit tests.
+// But a real evaluation framework needs richer metadata (difficulty, notes,
+// expected citation paths) and multi-level metrics (intent, retrieval,
+// citation, overall). These types capture that distinction.
+
+/**
+ * Extended test case for the Phase 5 evaluation framework.
+ *
+ * Adds difficulty levels, notes, and expected citation paths so we can
+ * measure not just "did it get the right intent?" but "did it find the
+ * right files AND cite them properly?"
+ */
+export interface EvalTestCase extends TestCase {
+  /** How hard is this case? Easy = clear intent, hard = ambiguous or tricky */
+  difficulty: 'easy' | 'medium' | 'hard';
+  /** Human notes explaining what makes this test case interesting */
+  notes: string;
+  /** File paths we expect to see in the citations (not just retrieval) */
+  expectedCitationPaths?: string[];
+}
+
+/**
+ * Per-test-case metrics at 4 distinct levels.
+ *
+ * WHY THIS MATTERS: A system can get the intent right but retrieve the wrong
+ * chunks, or retrieve good chunks but generate a hallucinated answer. Measuring
+ * at each level tells you WHERE the pipeline is breaking.
+ */
+export interface EvalMetrics {
+  /** Level 1: Did QueryRouter classify correctly? (0 or 1) */
+  intentCorrect: boolean;
+  /** The actual intent returned by the router */
+  actualIntent: QueryIntentType;
+
+  /** Level 2: Retrieval quality */
+  retrievalPrecision: number;  // Fraction of retrieved chunks that are relevant
+  retrievalRecall: number;     // Fraction of expected chunks that were retrieved
+  retrievalMRR: number;        // Mean Reciprocal Rank of first relevant result
+
+  /** Level 3: Citation quality (from CitationValidator) */
+  faithfulnessScore: number;   // 0-1, from existing validator
+  citationCoverage: number;    // Do citations reference the expected files?
+
+  /** Level 4: Weighted composite */
+  overallScore: number;
+}
+
+/**
+ * Aggregate report across all test cases.
+ *
+ * This is what gets printed to the console and saved to JSON for
+ * tracking improvement over time.
+ */
+export interface EvalReport {
+  /** When this evaluation was run */
+  timestamp: string;
+  /** Total test cases evaluated */
+  totalCases: number;
+  /** Cases where overall score >= threshold */
+  passed: number;
+  /** Cases where overall score < threshold */
+  failed: number;
+
+  /** Level 1 aggregate: intent accuracy per type and overall */
+  intentAccuracy: {
+    overall: number;
+    byType: Record<string, { correct: number; total: number; accuracy: number }>;
+  };
+
+  /** Level 2 aggregate: retrieval metrics */
+  retrievalQuality: {
+    avgPrecision: number;
+    avgRecall: number;
+    avgMRR: number;
+  };
+
+  /** Level 3 aggregate: citation metrics */
+  citationQuality: {
+    avgFaithfulness: number;
+    avgCoverage: number;
+  };
+
+  /** Level 4 aggregate: overall composite */
+  overallScore: number;
+
+  /** Detailed per-case results */
+  results: Array<{
+    testCase: EvalTestCase;
+    metrics: EvalMetrics;
+    /** Human-readable failure reason, if any */
+    failureReason?: string;
+  }>;
+
+  /** Configuration used for this run */
+  config: {
+    passThreshold: number;
+    weights: { intent: number; retrieval: number; citation: number };
+    filters?: { intent?: string; difficulty?: string; id?: string };
+  };
+}

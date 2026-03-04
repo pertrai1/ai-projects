@@ -18,6 +18,7 @@ import { ingestCodebase } from './scripts/ingest-codebase.js';
 import { runPhase4Demo } from './commands/phase-4-demo.js';
 import { runStage2Demo } from './commands/stage-2-demo.js';
 import { runValidationCatchDemo } from './commands/validation-catch-demo.js';
+import { runPhase5Evaluate } from './commands/phase-5-evaluate.js';
 
 const program = new Command();
 
@@ -121,6 +122,21 @@ program
   .action((query: string) => {
     console.log('\n⚠ Ask command not yet implemented (Phase 2+)');
     console.log(`  Query: "${query}"`);
+  });
+
+program
+  .command('evaluate')
+  .description('Run Phase 5 evaluation framework across the full pipeline')
+  .option('--intent <type>', 'Filter by intent type (e.g., ARCHITECTURE, DEBUGGING)')
+  .option('--difficulty <level>', 'Filter by difficulty (easy, medium, hard)')
+  .option('--id <id>', 'Run a single test case by ID (e.g., arch-01)')
+  .action(async (options: { intent?: string; difficulty?: string; id?: string }) => {
+    try {
+      await runPhase5Evaluate(options);
+    } catch (error) {
+      console.error('✗ Evaluation failed:', error);
+      process.exit(1);
+    }
   });
 
 program.parse(process.argv);

@@ -368,13 +368,84 @@ You wrote HALLUCINATION-PATTERNS.md explaining failure modes.
 
 ---
 
+## 📊 Phase 5: Evaluation Framework (Measuring Quality)
+
+### **What We Built:**
+- `metrics.ts` — Metric calculations at 4 distinct levels
+- `eval-runner.ts` — Full pipeline evaluation harness
+- `eval-test-cases.json` — 40 test cases (5 per intent type)
+- `phase-5-evaluate.ts` — CLI command with filtering (`--intent`, `--difficulty`, `--id`)
+- Results saved as timestamped JSON for tracking improvement over time
+
+### **The Key Insight:**
+**If you can't measure it, you can't improve it.**
+
+Before Phase 5, we had individual experiments for each phase (chunking benchmarks, intent accuracy, ablation studies). But we had no way to ask: "Is the system, *end to end*, actually getting better?" Phase 5 unifies all those measurements into a single framework.
+
+### **The 4 Levels of Metrics (and Why Each Matters):**
+
+Think of it like a relay race. The baton passes through 4 runners:
+
+| Level | Question | Metric | What It Tells You |
+|-------|----------|--------|--------------------|
+| 1. Intent | Did we understand the question? | Accuracy per type | MockLLM's keyword heuristics miss COMPARISON and DEBUGGING queries |
+| 2. Retrieval | Did we find the right code? | Precision@k, Recall, MRR | Mock embeddings can't do semantic matching — this is the bottleneck |
+| 3. Citation | Did we cite faithfully? | Faithfulness, Coverage | Citations are structurally faithful but miss expected files |
+| 4. Overall | Would a user be satisfied? | Weighted composite | Single number to track improvement |
+
+**Why not just one number?** Because the overall score hides WHERE the problem is. If intent accuracy is 100% but retrieval recall is 0%, you know exactly what to fix: the embeddings.
+
+### **The Test Dataset:**
+40 test cases designed to stress-test the full pipeline:
+- **Easy cases:** "Where is the QueryRouter class defined?" (clear intent, exact names)
+- **Ambiguous cases:** "How is the pipeline structured?" (ARCHITECTURE or GENERAL?)
+- **Trick questions:** "Where is the database connection configured?" (doesn't exist!)
+- **Multi-file queries:** Need chunks from 3+ files for a complete answer
+
+### **What the Results Revealed:**
+```
+Intent Accuracy: 60.0% (24/40)
+  DEPENDENCY: 100% | LOCATION: 80% | ARCHITECTURE: 60%
+  DEBUGGING: 20% | COMPARISON: 20%  ← Weak spots!
+
+Retrieval Quality:
+  Avg Precision@k: 0.07 | Avg Recall: 0.29 | Avg MRR: 0.24
+
+Citation Quality:
+  Avg Faithfulness: 1.00 | Avg Coverage: 0.26
+
+Overall Score: 0.43
+```
+
+**What this tells us:**
+1. **Intent:** MockLLMClient's keyword heuristics work great for DEPENDENCY/LOCATION (strong signal words like "depend" and "where"), but fail for DEBUGGING and COMPARISON (too many queries fall through to GENERAL).
+2. **Retrieval:** Mock embeddings (random vectors) produce near-zero precision/recall. This is *expected* — it proves the framework works and tells us the #1 improvement would be real embeddings.
+3. **Citation:** Faithfulness is perfect (1.0) because the mock synthesizer always uses proper `[Source N]` format. Coverage is low because the right files aren't being retrieved.
+4. **The bottleneck is retrieval.** Switch to real embeddings and the overall score should jump significantly.
+
+### **Engineering Pattern: Evaluation-Driven Development**
+This is the code quality version of test-driven development. Instead of writing tests first, you write *evaluation cases* first, then improve the system until the scores go up. It's how production ML teams work:
+
+```
+Write eval cases → Run baseline → Identify weak spots → Fix → Re-run → Compare
+```
+
+The timestamped JSON results let you track this over time, like a dashboard.
+
+### **Bugs We Hit:**
+- **tsconfig rootDir:** Metrics files had to live under `src/evaluations/`, not top-level `evaluations/`, because `rootDir` is `src/`. The JSON datasets stay at the top level since they don't compile.
+- **Set iteration:** TypeScript's `for...of` on Sets needs `downlevelIteration` or ES2015+ target. We used `Array.from()` as a compatible workaround.
+- **Pre-existing build errors:** `validation-catch-demo.ts` had incomplete mock data that broke strict TypeScript. Our new code compiled cleanly alongside it.
+
+---
+
 ## 🚀 What's Next?
 
 If you continue this project:
 
 1. **Add Checks 2-4** (deeper validation)
 2. **Real LLM Integration** (switch from mock to Claude)
-3. **Evaluation Harness** (Phase 5: 30-50 test queries with metrics)
+3. **Real Embeddings** (Phase 5 proves this is the #1 bottleneck)
 4. **Conversation Context** (Phase 6: multi-turn queries)
 5. **Deploy** (web UI, VS Code extension, or API)
 
