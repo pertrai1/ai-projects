@@ -17,6 +17,13 @@ npm start analyze /path/to/file.ts
 
 # Ask a question (phases 2+)
 npm start ask "How does authentication work?"
+
+# Run the evaluation framework (Phase 5)
+npm start evaluate                          # Full evaluation (40 test cases)
+npm start evaluate -- --intent LOCATION     # Filter by intent type
+npm start evaluate -- --difficulty easy      # Filter by difficulty (easy/medium/hard)
+npm start evaluate -- --id arch-01          # Run a single test case
+npm run eval                                # Shortcut: run eval directly
 ```
 
 ## What This Project Teaches
