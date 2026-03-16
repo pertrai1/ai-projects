@@ -43,7 +43,7 @@ Each of the subtopics below will have a separate document that will have specifi
 - Recurrent Neural Networks (RNN)
 - Generative Adversarial Networks (GAN)
 - Long Short-Term Memory Networks (LSTM)
-- Autoencoders
+- [Autoencoders](./deep-learning/autoencoders.md)
 - Deep Belief Networks
 - Deep Reinforcement Learning
 - Epochs and Batches
