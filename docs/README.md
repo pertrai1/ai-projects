@@ -11,11 +11,16 @@ Each of the subtopics below will have a separate document that will have specifi
 - [Agents](./artificial-intelligence/agents.md)
 - [Algorithm Building](./artificial-intelligence/algorithm_building.md)
 - [AI Ethics](./artificial-intelligence/ai_ethics.md)
+- Natural Language Processing (NLP)
+- Computer Vision
+- Multi-modal AI
+- AI Safety & Alignment
 
 ## Machine Learning - is a strategy
 
 - [Supervised Learning](./machine-learning/supervised_learning.md)
 - Unsupervised Learning
+- Semi-supervised Learning
 - [Hypothesis Testing](./machine-learning/hypothesis_testing.md)
 - K-means Clustering
 - [K-Nearest Neighbors](./machine-learning/k_nearest_neighbors.md)
@@ -24,6 +29,12 @@ Each of the subtopics below will have a separate document that will have specifi
 - Principal Component Analysis
 - Support Vector Machines
 - [Decision Trees](./machine-learning/decision_trees.md)
+- Random Forests
+- Gradient Boosting (XGBoost, LightGBM)
+- Naive Bayes
+- Bayesian Methods
+- Feature Engineering
+- Anomaly Detection
 
 ## Neural Networks - is a tool
 
@@ -35,6 +46,10 @@ Each of the subtopics below will have a separate document that will have specifi
 - Liquid State Machines
 - Radial Basis Function Networks
 - Self-Organizing Maps
+- Attention Mechanisms
+- Graph Neural Networks (GNN)
+- Activation Functions
+- Optimization Algorithms (Adam, SGD)
 
 ## Deep Learning - optimization of neural networks
 
@@ -47,13 +62,17 @@ Each of the subtopics below will have a separate document that will have specifi
 - Deep Belief Networks
 - Deep Reinforcement Learning
 - Epochs and Batches
+- Diffusion Models
+- Vision Transformers (ViT)
+- State Space Models (Mamba)
+- Mixture of Experts (MoE)
+- Knowledge Distillation
 
 ## General AI - highly specialized outcome of scale and data
 
 - [Large Language Models (LLM)](./artificial-intelligence/large_language_models.md)
 - Foundation Models
 - [Retrieval-Augmented Generation (RAG)](./artificial-intelligence/retrieval_augmented_generation.md)
-- Generative Adversarial Networks (GAN)
 - BigGAN
 - Transfer Learning
 - [N-Shot Learning](./artificial-intelligence/n_shot_learning.md)
@@ -62,6 +81,11 @@ Each of the subtopics below will have a separate document that will have specifi
 - [Reinforcement Learning with Human Feedback (RLHF)](./artificial-intelligence/rlhf.md)
 - [LoRA (Low-Rank Adaptation)](./artificial-intelligence/lora.md)
 - Ensemble Models
+- Chain-of-Thought & Reasoning
+- Direct Preference Optimization (DPO)
+- Constitutional AI (CAI)
+- Synthetic Data Generation
+- Model Quantization & Compression
 
 ## AI/ML Engineering & Operations - building production AI systems
 
@@ -77,3 +101,9 @@ Each of the subtopics below will have a separate document that will have specifi
 - [Fine-tuning Methodologies](./ai-ml-engineering-operations/fine_tuning_methodologies.md)
 - Dataset Management
 - Bias Detection & Mitigation
+- Vector Databases & Embeddings
+- Tokenization
+- Feature Stores
+- Inference Optimization
+- Edge AI / On-device ML
+- AI Governance & Compliance
