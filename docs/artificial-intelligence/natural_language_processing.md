@@ -8,7 +8,10 @@
 
 NLP matters because language is the dominant medium of human knowledge — it powers documents, conversations, code, medical records, legal contracts, and the web. Systems that can reliably read, classify, extract, translate, or generate text unlock automation at scale across nearly every domain.
 
+![Mindmap](../mindmaps/nlp-mindmap.png)
+
 **Why it matters in practice:**
+
 - Automates high-volume reading tasks (document triage, support ticket routing, content moderation)
 - Extracts structured data from unstructured text (medical NER, financial event extraction)
 - Enables human-computer interaction through search, chatbots, and voice interfaces
@@ -28,13 +31,13 @@ NLP matters because language is the dominant medium of human knowledge — it po
 
 1. **Language is ambiguous by design.** The same word can mean different things ("bank"), the same meaning can be expressed many ways ("big" / "large"), and context determines interpretation. NLP systems must resolve this ambiguity at every level.
 
-2. **Text has layered structure.** Understanding language requires processing at multiple levels: characters → tokens → words → phrases → sentences → documents. Each layer adds meaning that the previous layer cannot express alone. *(Jurafsky & Martin, 2024, Ch. 2)*
+2. **Text has layered structure.** Understanding language requires processing at multiple levels: characters → tokens → words → phrases → sentences → documents. Each layer adds meaning that the previous layer cannot express alone. _(Jurafsky & Martin, 2024, Ch. 2)_
 
 3. **Representation is everything.** Before any model can reason about words, they must be converted into numbers — either sparse (one-hot, TF-IDF) or dense (word embeddings, contextual embeddings). The quality of this representation determines the ceiling of downstream performance.
 
 4. **Tasks fall into four families.** Almost all NLP work maps to: **classification** (what category?), **extraction** (what spans are relevant?), **generation** (what text should be produced?), or **retrieval** (what documents are relevant?). Choosing the right task framing is as important as choosing the right model.
 
-5. **Pre-training changed the game.** Before 2018, most NLP models were trained task-by-task from scratch. Transfer learning — pre-training a large model on massive text, then fine-tuning on small labeled data — made high-quality NLP practical across many domains. *(Devlin et al., 2019)*
+5. **Pre-training changed the game.** Before 2018, most NLP models were trained task-by-task from scratch. Transfer learning — pre-training a large model on massive text, then fine-tuning on small labeled data — made high-quality NLP practical across many domains. _(Devlin et al., 2019)_
 
 ### One Intuition to Remember
 
@@ -67,12 +70,12 @@ Output (label, extracted span, generated text, ranking score)
 
 ### Classic Pipeline Tasks (Bottom-Up)
 
-| Layer | Task | Example |
-|---|---|---|
-| Lexical | **Tokenization**, stemming, lemmatization | `"running"` → `"run"` |
-| Syntactic | **POS tagging**, dependency parsing | `"Apple"` → NOUN |
-| Semantic | **NER**, coreference resolution | `"Apple"` → ORG |
-| Discourse | Sentiment, summarization, translation | Document → label or new text |
+| Layer     | Task                                      | Example                      |
+| --------- | ----------------------------------------- | ---------------------------- |
+| Lexical   | **Tokenization**, stemming, lemmatization | `"running"` → `"run"`        |
+| Syntactic | **POS tagging**, dependency parsing       | `"Apple"` → NOUN             |
+| Semantic  | **NER**, coreference resolution           | `"Apple"` → ORG              |
+| Discourse | Sentiment, summarization, translation     | Document → label or new text |
 
 Each downstream task sits on top of this stack; errors propagate upward.
 
@@ -107,13 +110,13 @@ This two-line pattern (load pre-trained model → call on text) represents how m
 
 ### When NLP Is a Poor Fit
 
-| Situation | Better Alternative |
-|---|---|
-| Data is tabular with no free text | Classical ML (gradient boosting, logistic regression) |
-| Real-time audio transcription needed | Dedicated ASR pipeline (see [Speech Recognition](./speech_recognition.md)) |
-| Task requires strict formal reasoning | Symbolic/rule-based systems, constraint solvers |
-| Language is highly domain-specific and no annotated data exists | Active learning or rule-based extraction first; NLP later |
-| Regulatory context forbids probabilistic outputs | Deterministic parsers, formal grammars |
+| Situation                                                       | Better Alternative                                                         |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Data is tabular with no free text                               | Classical ML (gradient boosting, logistic regression)                      |
+| Real-time audio transcription needed                            | Dedicated ASR pipeline (see [Speech Recognition](./speech_recognition.md)) |
+| Task requires strict formal reasoning                           | Symbolic/rule-based systems, constraint solvers                            |
+| Language is highly domain-specific and no annotated data exists | Active learning or rule-based extraction first; NLP later                  |
+| Regulatory context forbids probabilistic outputs                | Deterministic parsers, formal grammars                                     |
 
 ### Key Trade-offs
 
@@ -129,9 +132,9 @@ This two-line pattern (load pre-trained model → call on text) represents how m
 
 - **Treating text preprocessing as trivial.** Lowercasing, punctuation removal, and stop-word stripping can silently destroy signal (e.g., "U.S." vs. "us", capitalization marking proper nouns). Always examine what the tokenizer produces.
 
-- **Evaluating on non-representative data.** A model trained on news articles and evaluated on tweets will appear artificially poor — or a model trained on one domain will appear artificially strong when tested only on that domain. Distribution shift is the most common cause of production degradation. *(Jurafsky & Martin, 2024, Ch. 4)*
+- **Evaluating on non-representative data.** A model trained on news articles and evaluated on tweets will appear artificially poor — or a model trained on one domain will appear artificially strong when tested only on that domain. Distribution shift is the most common cause of production degradation. _(Jurafsky & Martin, 2024, Ch. 4)_
 
-- **Gaming surface metrics.** BLEU for translation and ROUGE for summarization measure lexical overlap with reference outputs. High scores do not guarantee fluency, factual correctness, or usefulness. *(Papineni et al., 2002; Lin, 2004)* Always pair automated metrics with human evaluation for high-stakes tasks.
+- **Gaming surface metrics.** BLEU for translation and ROUGE for summarization measure lexical overlap with reference outputs. High scores do not guarantee fluency, factual correctness, or usefulness. _(Papineni et al., 2002; Lin, 2004)_ Always pair automated metrics with human evaluation for high-stakes tasks.
 
 - **Ignoring class imbalance.** In tasks like NER or spam detection, accuracy is misleading when negatives dominate. Use macro-F1 or per-class F1.
 
@@ -139,19 +142,19 @@ This two-line pattern (load pre-trained model → call on text) represents how m
 
 ### Key Metrics by Task Family
 
-| Task | Primary Metric | Notes |
-|---|---|---|
-| Classification | **F1 (macro/micro)**, Accuracy | Use macro-F1 for imbalanced classes |
-| NER / Span Extraction | **Entity-level F1** | Partial matches penalized |
-| Machine Translation | **BLEU**, chrF | Supplement with human eval |
-| Summarization | **ROUGE-L**, BERTScore | ROUGE alone insufficient |
-| QA (extractive) | **Exact Match + F1** | SQuAD-style evaluation |
-| Language Modeling | **Perplexity** | Lower is better |
+| Task                  | Primary Metric                 | Notes                               |
+| --------------------- | ------------------------------ | ----------------------------------- |
+| Classification        | **F1 (macro/micro)**, Accuracy | Use macro-F1 for imbalanced classes |
+| NER / Span Extraction | **Entity-level F1**            | Partial matches penalized           |
+| Machine Translation   | **BLEU**, chrF                 | Supplement with human eval          |
+| Summarization         | **ROUGE-L**, BERTScore         | ROUGE alone insufficient            |
+| QA (extractive)       | **Exact Match + F1**           | SQuAD-style evaluation              |
+| Language Modeling     | **Perplexity**                 | Lower is better                     |
 
 ### Good vs. Bad Outcomes
 
 - **Good:** Model performs consistently across demographic groups, generalizes to slightly different data distributions, and errors are predictable and bounded.
-- **Bad:** Model is brittle to minor rephrasing, performs well on benchmark but poorly in production, or exhibits systematic bias against certain dialects or demographic groups. *(Blodgett et al., 2020)*
+- **Bad:** Model is brittle to minor rephrasing, performs well on benchmark but poorly in production, or exhibits systematic bias against certain dialects or demographic groups. _(Blodgett et al., 2020)_
 
 ---
 
@@ -207,13 +210,13 @@ trainer.train()
 Write a Python script (no libraries) that tokenizes a paragraph by splitting on whitespace and punctuation, counts word frequencies, and identifies the top-10 most common tokens. Compare your output to `nltk.word_tokenize`. Note where they differ and why.
 
 **Intermediate — Named Entity Recognition with spaCy**
-Load `en_core_web_sm` and run NER on 50 news article sentences. Compute entity-level precision, recall, and F1 against a manually annotated gold set of 20 sentences. Identify which entity types (PERSON, ORG, GPE) the small model struggles with, then repeat with `en_core_web_trf` (transformer-based). Quantify the accuracy vs. latency trade-off. *(spaCy, 2024)*
+Load `en_core_web_sm` and run NER on 50 news article sentences. Compute entity-level precision, recall, and F1 against a manually annotated gold set of 20 sentences. Identify which entity types (PERSON, ORG, GPE) the small model struggles with, then repeat with `en_core_web_trf` (transformer-based). Quantify the accuracy vs. latency trade-off. _(spaCy, 2024)_
 
 **Intermediate → Advanced — Fine-Tune for a Custom Domain**
 Take a pre-trained NER model (e.g., `dslim/bert-base-NER` on Hugging Face) and fine-tune it on 500 annotated sentences from a domain of your choice (biomedical, legal, or financial). Report entity-level F1 before and after fine-tuning. Investigate the impact of learning rate and training epochs on overfitting.
 
 **Advanced — Evaluate Translation Quality Beyond BLEU**
-Using `Helsinki-NLP/opus-mt-en-de`, translate 200 English sentences to German. Compute BLEU (sacrebleu), chrF, and BERTScore. Recruit two native German speakers to rate 30 outputs on a 1–5 fluency and adequacy scale. Analyze where BLEU and BERTScore diverge from human judgments and write a one-page reflection on metric limitations. *(Papineni et al., 2002; Zhang et al., 2019)*
+Using `Helsinki-NLP/opus-mt-en-de`, translate 200 English sentences to German. Compute BLEU (sacrebleu), chrF, and BERTScore. Recruit two native German speakers to rate 30 outputs on a 1–5 fluency and adequacy scale. Analyze where BLEU and BERTScore diverge from human judgments and write a one-page reflection on metric limitations. _(Papineni et al., 2002; Zhang et al., 2019)_
 
 ---
 
@@ -221,25 +224,25 @@ Using `Helsinki-NLP/opus-mt-en-de`, translate 200 English sentences to German. C
 
 ### Start Here
 
-1. **Jurafsky, D. & Martin, J.H. (2024). *Speech and Language Processing*, 3rd ed. (draft).** [web.stanford.edu/~jurafsky/slp3](https://web.stanford.edu/~jurafsky/slp3/)
-   *The field's definitive textbook — covers every core NLP topic from tokenization to transformers with rigorous but accessible treatment. Free online.*
+1. **Jurafsky, D. & Martin, J.H. (2024). _Speech and Language Processing_, 3rd ed. (draft).** [web.stanford.edu/~jurafsky/slp3](https://web.stanford.edu/~jurafsky/slp3/)
+   _The field's definitive textbook — covers every core NLP topic from tokenization to transformers with rigorous but accessible treatment. Free online._
 
-2. **Devlin, J., Chang, M.-W., Lee, K., & Toutanova, K. (2019). BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. *NAACL*.** [arxiv.org/abs/1810.04805](https://arxiv.org/abs/1810.04805)
-   *Foundational paper for modern NLP. Introduced the fine-tuning paradigm that achieved state-of-the-art on 11 NLP benchmarks; a required read to understand current practice.*
+2. **Devlin, J., Chang, M.-W., Lee, K., & Toutanova, K. (2019). BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. _NAACL_.** [arxiv.org/abs/1810.04805](https://arxiv.org/abs/1810.04805)
+   _Foundational paper for modern NLP. Introduced the fine-tuning paradigm that achieved state-of-the-art on 11 NLP benchmarks; a required read to understand current practice._
 
 3. **Hugging Face Transformers Documentation.** [huggingface.co/docs/transformers](https://huggingface.co/docs/transformers)
-   *The most practical entry point for hands-on NLP. Covers pipelines, fine-tuning, tokenizers, and model hubs with runnable examples.*
+   _The most practical entry point for hands-on NLP. Covers pipelines, fine-tuning, tokenizers, and model hubs with runnable examples._
 
 ### Go Deeper
 
-4. **Vaswani, A., et al. (2017). Attention Is All You Need. *NeurIPS*.** [arxiv.org/abs/1706.03762](https://arxiv.org/abs/1706.03762)
-   *Introduces the Transformer architecture that underlies all modern NLP models. Essential for understanding why and how attention replaced recurrence. See also [Transformers](../deep-learning/transformers.md).*
+4. **Vaswani, A., et al. (2017). Attention Is All You Need. _NeurIPS_.** [arxiv.org/abs/1706.03762](https://arxiv.org/abs/1706.03762)
+   _Introduces the Transformer architecture that underlies all modern NLP models. Essential for understanding why and how attention replaced recurrence. See also [Transformers](../deep-learning/transformers.md)._
 
-5. **Papineni, K., Roukos, S., Ward, T., & Zhu, W.-J. (2002). BLEU: A Method for Automatic Evaluation of Machine Translation. *ACL*.**
-   *The original paper for BLEU. Critical for understanding both how the metric works and its well-documented limitations — important before using it in evaluation.*
+5. **Papineni, K., Roukos, S., Ward, T., & Zhu, W.-J. (2002). BLEU: A Method for Automatic Evaluation of Machine Translation. _ACL_.**
+   _The original paper for BLEU. Critical for understanding both how the metric works and its well-documented limitations — important before using it in evaluation._
 
-6. **Blodgett, S.L., Barocas, S., Daumé III, H., & Wallach, H. (2020). Language (Technology) is Power: A Critical Survey of "Bias" in NLP. *ACL*.**
-   *Systematic review of how NLP systems encode, amplify, and cause harm through biased training data and evaluation. Essential for responsible deployment.*
+6. **Blodgett, S.L., Barocas, S., Daumé III, H., & Wallach, H. (2020). Language (Technology) is Power: A Critical Survey of "Bias" in NLP. _ACL_.**
+   _Systematic review of how NLP systems encode, amplify, and cause harm through biased training data and evaluation. Essential for responsible deployment._
 
 ---
 
@@ -250,11 +253,13 @@ Using `Helsinki-NLP/opus-mt-en-de`, translate 200 English sentences to German. C
 **Scope Notes:** This page covers NLP as a field — pipeline, tasks, metrics, and practice. It intentionally excludes deep architectural details of transformers (see `../deep-learning/transformers.md`), LLM-specific topics such as RLHF and prompt engineering (see `./large_language_models.md`), and audio processing (see `./speech_recognition.md`).
 
 **Key References:**
+
 - Jurafsky & Martin (2024) — Primary textbook for all foundational NLP theory and terminology
 - Devlin et al. (2019) — Defines the modern pre-train/fine-tune paradigm
 - Vaswani et al. (2017) — Architectural foundation; cross-linked to transformers doc
 
 **Assumptions / Limitations:**
+
 - Examples assume Python 3.10+ and familiarity with basic ML concepts (train/val split, loss functions)
 - Code examples use Hugging Face Transformers v4.x; API details may shift across versions
 - Metric guidance reflects community consensus as of mid-2025; BERTScore and LLM-based evaluation are evolving rapidly
