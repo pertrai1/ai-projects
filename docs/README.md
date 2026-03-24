@@ -64,7 +64,7 @@ Each of the subtopics below will have a separate document that will have specifi
 
 > Now that you understand the tools (ML, NNs, deep learning), this section covers the broader AI disciplines and goals they serve. Topics start with the major applied fields (NLP, computer vision, speech), move through principles and ethics, then into advanced concepts like autonomous agents and emergent behavior that require deep understanding of the underlying systems.
 
-- **Natural Language Processing (NLP)** — Build systems that understand and generate language.
+- **[Natural Language Processing (NLP)](./artificial-intelligence/natural_language_processing.md)** — Build systems that understand and generate language.
 - **Computer Vision** — Interpret and reason over image/video content.
 - **[Speech Recognition](./artificial-intelligence/speech_recognition.md)** — Convert spoken audio into text.
 - **[Algorithm Building](./artificial-intelligence/algorithm_building.md)** — Design repeatable problem-solving procedures.
