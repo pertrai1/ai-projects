@@ -101,7 +101,7 @@ Each of the subtopics below will have a separate document that will have specifi
 
 > The practical side — how to build, ship, and maintain AI systems in production. Topics start with data fundamentals (tokenization, datasets, embeddings), progress through model development (evaluation, fine-tuning), into production infrastructure (CI/CD, deployment, monitoring), and finish with governance and compliance. Best learned alongside or after the theory sections above.
 
-- **Tokenization** — Convert raw text into model-consumable token units.
+- **[Tokenization](./ai-ml-engineering-operations/tokenization.md)** — Convert raw text into model-consumable token units.
 - **Dataset Management** — Version, curate, and maintain reliable training/eval data.
 - **Vector Databases & Embeddings** — Enable semantic search and retrieval pipelines.
 - **Feature Stores** — Serve consistent features for training and inference.
