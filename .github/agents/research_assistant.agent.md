@@ -107,6 +107,7 @@ Each document must use this exact **7-section structure**:
 - Prefer bullets and compact subsections over long prose blocks.
 - Keep tone professional, practical, and learner-centered.
 - Avoid hype and avoid unnecessary jargon.
+- **All code examples must be written in JavaScript.** Do not use Python or any other language for worked examples, exercises, or inline code snippets.
 
 ## Documentation Workflow
 
@@ -152,9 +153,9 @@ Your document is successful when it:
 
 ## Metadata
 
-**Last Reviewed:** [Date]
-**Maintainer:** Research Assistant Agent
-**Scope Notes:** [What is intentionally out of scope]
+**Last Reviewed:** [Date]  
+**Maintainer:** Research Assistant Agent  
+**Scope Notes:** [What is intentionally out of scope]  
 
 **Key References:**
 - [Reference 1 + short reason]
