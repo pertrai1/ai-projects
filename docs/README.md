@@ -74,7 +74,7 @@ Each of the subtopics below will have a separate document that will have specifi
 - **[Agents](./artificial-intelligence/agents.md)** — Autonomous systems that plan and use tools.
 - **[Augmented Programming](./artificial-intelligence/augmented_programming.md)** — AI-assisted software development workflows.
 - **[Emergent Behavior](./artificial-intelligence/emergent_behavior.md)** — New capabilities arising from scale and complexity.
-- **Multi-modal AI** — Integrate text, vision, audio, and other modalities.
+- **[Multi-modal AI](./artificial-intelligence/multi_modal_ai.md)** — Integrate text, vision, audio, and other modalities.
 
 ## General AI - highly specialized outcome of scale and data
 
