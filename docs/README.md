@@ -89,7 +89,7 @@ Each of the subtopics below will have a separate document that will have specifi
 - **[One-Shot Learning (OSL)](artificial-intelligence/one_shot_learning.md)** — Adapt from a single labeled example.
 - **BigGAN** — Large-scale GAN variant for high-fidelity generation.
 - **[Retrieval-Augmented Generation (RAG)](./artificial-intelligence/retrieval_augmented_generation.md)** — Ground generation with external knowledge retrieval.
-- **Chain-of-Thought & Reasoning** — Structured reasoning strategies for better outputs.
+- **[Chain-of-Thought & Reasoning](./artificial-intelligence/chain_of_thought_and_reasoning.md)** — Structured reasoning strategies for better outputs.
 - **[Reinforcement Learning with Human Feedback (RLHF)](./artificial-intelligence/rlhf.md)** — Align behavior using human preference signals.
 - **Direct Preference Optimization (DPO)** — Preference-based alignment without explicit reward modeling.
 - **Constitutional AI (CAI)** — Alignment through rule-guided self-critique and revision.
