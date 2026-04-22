@@ -2,6 +2,10 @@
 
 A collection of machine learning and artificial intelligence projects demonstrating various AI techniques and applications.
 
+If you do only one habit, make it this:
+
+> Before accepting any meaningful AI output, ask: “What would make this wrong?”
+
 ![Mindmap](docs/mindmaps/ai-concepts-mindmap.png)
 
 ## Project Intent
