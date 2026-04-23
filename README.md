@@ -8,6 +8,8 @@ If you do only one habit, make it this:
 
 ![Mindmap](docs/mindmaps/ai-concepts-mindmap.png)
 
+![LLM Mindmap](docs/mindmaps/building-llm-agent.png)
+
 ## Project Intent
 
 These projects are intentionally designed as **learning-through-building exercises** focused on developing a deep, practical understanding of modern AI systems rather than producing polished end-user products.
