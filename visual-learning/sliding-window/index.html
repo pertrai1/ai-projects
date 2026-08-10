@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sliding Window Stream Parser: Interactive Simulator</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div class="game-container" id="main-game-container">
+    
+    <!-- Main Interactive Board -->
+    <div class="arena-grid">
+      
+      <!-- Stream Area Viewport -->
+      <div class="stream-viewport" id="canvas-viewport">
+        <div style="background: rgba(0,0,0,0.6); padding: 8px 12px; display: flex; justify-content: space-between; font-size: 0.7rem; border-bottom: 1px solid var(--metal-light); width: 100%; margin-bottom: 20px;">
+          <span style="color: var(--cyber-blue); font-weight: bold;">📊 STREAM VIEWPORT: LLM CONTEXT BUFFER</span>
+          <span style="color: var(--text-secondary);">Expand/Contract pointers to capture unique tokens</span>
+        </div>
+        
+        <div class="stream-track-container">
+          <!-- Token block track -->
+          <div class="token-stream" id="token-track">
+            <!-- Dynamically populated via JS -->
+          </div>
+          
+          <!-- Bracket overlay representing the sliding window -->
+          <div class="window-bracket" id="window-bracket">
+            <div class="bracket-label" id="bracket-label">Window [Size: 0]</div>
+          </div>
+        </div>
+
+        <!-- Stats Overlay display -->
+        <div class="hud-card-overlay">
+          <div class="hud-stat">
+            <span class="stat-label">Left Index (L)</span>
+            <span class="stat-value" id="stat-left">0</span>
+          </div>
+          <div class="hud-stat">
+            <span class="stat-label">Right Index (R)</span>
+            <span class="stat-value" id="stat-right">3</span>
+          </div>
+          <div class="hud-stat" style="border-left: 1px dashed var(--metal-light); padding-left: 20px;">
+            <span class="stat-label">Active Window Size</span>
+            <span class="stat-value" id="stat-size" style="color: var(--cyber-green);">4</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action & Ticker Controls Bottom bar -->
+      <div class="controls-bar">
+        <div class="status-ticker" style="margin-right: auto; display: flex; gap: 8px; font-weight: bold;">
+          <span>SCORE:</span>
+          <span id="score-val">000</span>
+        </div>
+        
+        <!-- Interactive Pointers adjustment buttons -->
+        <div style="display: flex; gap: 6px;">
+          <button class="cyber-btn" id="btn-l-minus">L ◀</button>
+          <button class="cyber-btn" id="btn-l-plus">L ▶</button>
+          <button class="cyber-btn" id="btn-r-minus">R ◀</button>
+          <button class="cyber-btn" id="btn-r-plus">R ▶</button>
+        </div>
+
+        <button class="cyber-btn" id="btn-submit" style="background: var(--cyber-green); color: #000; border-color: #fff;">SUBMIT WINDOW ✅</button>
+        <button class="cyber-btn" id="btn-reset">Reset ⟲</button>
+        <button class="cyber-btn" id="btn-next" style="display: none; background: var(--cyber-blue); color: #000; border-color: #fff;">Next Level ➔</button>
+      </div>
+
+    </div>
+
+    <!-- Right Side Sidebar (Manual, Logs, Lessons) -->
+    <div class="cyber-sidebar">
+      
+      <!-- Instructor Console Box -->
+      <div class="speech-box">
+        <div style="color: var(--cyber-blue); font-weight: bold; font-size: 0.9rem; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">📋 Token Stream Engine</div>
+        <div style="color: var(--text-secondary); margin-bottom: 4px;" id="level-title">Level 1: Fixed Window Stream Parser</div>
+        <div style="font-size: 0.75rem; color: var(--text-primary);" id="level-desc">
+          Align the fixed-size window (size = 4) to capture the structured tool call command sequence.
+        </div>
+      </div>
+
+      <!-- Step-by-Step Algorithm Manual Card -->
+      <div class="module-card">
+        <div class="module-title">💡 Sliding Window Principles</div>
+        <div class="module-content">
+          <ul style="margin: 0; padding-left: 14px; display: flex; flex-direction: column; gap: 6px;">
+            <li><strong>Monotonic State:</strong> As the right pointer <code>R</code> expands, the context increases. If a duplicate enters, the state becomes invalid.</li>
+            <li><strong>Left Shifting <code>L</code>:</strong> Shift the left pointer forward to contract the window and immediately evict older tokens.</li>
+            <li><strong>Context Overlap:</strong> In RAG chunking, sliding the window with overlap ensures text boundaries are preserved across vector database documents.</li>
+            <li><strong>Efficiency:</strong> Moving both pointers forward sequentially guarantees a linear <code>O(N)</code> runtime, bypassing nested-loop <code>O(N^2)</code> computations.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Live Terminal Console Output -->
+      <div class="module-card" style="display: flex; flex-direction: column; flex: 1; padding: 6px; gap: 4px;">
+        <div style="font-size: 0.7rem; color: var(--cyber-orange); font-weight: bold; margin-left: 6px; margin-top: 2px;">⚡ LOG FEED:</div>
+        <div class="terminal-hud" id="terminal-log">
+          <!-- Console lines dynamically populate here -->
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="js/game.js"></script>
+</body>
+</html>

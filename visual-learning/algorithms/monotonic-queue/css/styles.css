@@ -1,0 +1,413 @@
+:root {
+  --bg-color: #0d0d15;
+  --panel-bg: #151522;
+  --cyber-blue: #00e5ff;
+  --cyber-green: #39ff14;
+  --cyber-red: #ff0055;
+  --cyber-orange: #ff9d00;
+  --text-primary: #f0f0f5;
+  --text-secondary: #8c8c9e;
+  --border-glow: rgba(0, 229, 255, 0.2);
+  --metal-dark: #1b1b26;
+  --metal-light: #2d2d3d;
+}
+
+* {
+  box-sizing: border-box;
+  user-select: none;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: 'Courier New', Courier, monospace;
+  overflow: hidden;
+  height: 100vh;
+}
+
+.game-container {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  height: 100vh;
+  padding: 12px;
+  gap: 12px;
+}
+
+@media (max-width: 950px) {
+  .game-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+    height: auto;
+    overflow-y: auto;
+  }
+}
+
+.cyber-panel {
+  background-color: var(--panel-bg);
+  border: 2px solid var(--cyber-blue);
+  box-shadow: 0 0 15px var(--border-glow), inset 0 0 10px rgba(0,0,0,0.8);
+  border-radius: 8px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.panel-header {
+  border-bottom: 2px solid var(--cyber-blue);
+  margin: -15px -15px 15px -15px;
+  padding: 10px 15px;
+  background-color: rgba(0, 229, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.panel-title {
+  color: var(--cyber-blue);
+  font-weight: bold;
+  font-size: 1.1rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-shadow: 0 0 5px rgba(0, 229, 255, 0.5);
+}
+
+.status-ticker {
+  background: #000;
+  border: 1px solid var(--cyber-blue);
+  padding: 4px 10px;
+  color: var(--cyber-green);
+  text-shadow: 0 0 5px var(--cyber-green);
+  font-size: 0.9rem;
+  border-radius: 4px;
+}
+
+.arena-grid {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 10px;
+  height: 100%;
+}
+
+/* Deque / Queue Arena Layout */
+.viewport-split {
+  background: #06060a;
+  border: 2px solid var(--metal-light);
+  border-radius: 6px;
+  position: relative;
+  overflow-y: auto;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  justify-content: center;
+}
+
+/* Linear stream with Window Box */
+.linear-track-container {
+  width: 100%;
+  height: 120px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--metal-light);
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.number-stream {
+  display: flex;
+  position: absolute;
+  left: 50px;
+  gap: 10px;
+  transition: transform 0.25s ease;
+}
+
+.num-block {
+  width: 60px;
+  height: 60px;
+  background: var(--metal-dark);
+  border: 2px solid var(--metal-light);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.num-block.in-win {
+  border-color: var(--cyber-blue);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.15);
+}
+
+.num-block.win-max {
+  border-color: var(--cyber-green);
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+}
+
+.num-value {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.num-index {
+  font-size: 0.55rem;
+  color: var(--text-secondary);
+  position: absolute;
+  bottom: 2px;
+}
+
+/* Floating Sliding Bracket */
+.sliding-bracket {
+  position: absolute;
+  height: 80px;
+  border: 3px solid var(--cyber-blue);
+  border-radius: 6px;
+  pointer-events: none;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.15);
+  transition: all 0.25s ease;
+}
+
+/* Monotonic Deque HUD Card */
+.deque-board {
+  background: rgba(0,0,0,0.6);
+  border: 2px dashed var(--cyber-orange);
+  border-radius: 8px;
+  padding: 12px;
+  position: relative;
+}
+
+.deque-title {
+  color: var(--cyber-orange);
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.deque-slots {
+  display: flex;
+  gap: 12px;
+  background: rgba(0,0,0,0.4);
+  padding: 8px;
+  border-radius: 6px;
+  min-height: 70px;
+  align-items: center;
+}
+
+/* Deque items */
+.deque-item {
+  width: 50px;
+  height: 50px;
+  background: var(--metal-dark);
+  border: 2px solid var(--cyber-orange);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: var(--cyber-orange);
+  font-weight: bold;
+  font-size: 0.9rem;
+  position: relative;
+  animation: scale-up 0.15s ease;
+}
+
+@keyframes scale-up {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.deque-item .item-idx {
+  font-size: 0.5rem;
+  color: var(--text-secondary);
+  position: absolute;
+  bottom: 2px;
+}
+
+/* Expire/Eject action zones */
+.action-zone-overlay {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.zone-btn {
+  flex: 1;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--metal-light);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 0.65rem;
+  padding: 6px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.1s ease;
+}
+
+.zone-btn:hover:not(:disabled) {
+  background: rgba(255, 157, 0, 0.1);
+  color: var(--cyber-orange);
+  border-color: var(--cyber-orange);
+}
+
+.zone-btn.danger-btn:hover:not(:disabled) {
+  background: rgba(255, 0, 85, 0.1);
+  color: var(--cyber-red);
+  border-color: var(--cyber-red);
+}
+
+.zone-btn:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+/* Controls Bar */
+.controls-bar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: rgba(0,0,0,0.3);
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.cyber-btn {
+  background: linear-gradient(to bottom, var(--metal-light), var(--metal-dark));
+  border: 1px solid var(--cyber-blue);
+  color: var(--cyber-blue);
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.15s ease;
+  box-shadow: 0 0 5px rgba(0, 229, 255, 0.1);
+}
+
+.cyber-btn:hover:not(:disabled) {
+  background: var(--cyber-blue);
+  color: #000;
+  box-shadow: 0 0 10px var(--cyber-blue);
+}
+
+.cyber-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.cyber-btn:disabled {
+  opacity: 0.3;
+  border-color: var(--metal-light);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Sidebar structure */
+.cyber-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.speech-box {
+  background: rgba(0, 229, 255, 0.04);
+  border: 1px solid var(--cyber-blue);
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.module-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--metal-light);
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.module-title {
+  color: var(--cyber-orange);
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--metal-light);
+  padding-bottom: 4px;
+  letter-spacing: 0.5px;
+}
+
+.module-content {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.module-content code {
+  color: var(--cyber-blue);
+  background: rgba(0,0,0,0.3);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.terminal-hud {
+  background: #000;
+  border: 1px solid var(--metal-light);
+  border-radius: 4px;
+  height: 90px;
+  font-size: 0.7rem;
+  padding: 8px;
+  overflow-y: auto;
+  color: var(--cyber-green);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.term-line {
+  display: flex;
+  gap: 8px;
+}
+
+.term-tag {
+  color: var(--text-secondary);
+}
+
+/* Flash Effects */
+.flash-blue {
+  animation: flash-blue-anim 0.3s ease;
+}
+
+@keyframes flash-blue-anim {
+  0%, 100% { background-color: var(--panel-bg); }
+  50% { background-color: rgba(0, 229, 255, 0.15); }
+}
+
+.flash-red {
+  animation: flash-red-anim 0.3s ease;
+}
+
+@keyframes flash-red-anim {
+  0%, 100% { background-color: var(--panel-bg); }
+  50% { background-color: rgba(255, 0, 85, 0.15); }
+}
+
+.flash-green {
+  animation: flash-green-anim 0.3s ease;
+}
+
+@keyframes flash-green-anim {
+  0%, 100% { background-color: var(--panel-bg); }
+  50% { background-color: rgba(57, 255, 20, 0.15); }
+}
