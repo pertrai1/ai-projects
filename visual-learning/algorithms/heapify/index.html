@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Heapify Simulator: Sift-Up & Sift-Down Tree balanced</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div class="game-container" id="main-game-container">
+    
+    <!-- Main Interactive Board -->
+    <div class="arena-grid">
+      
+      <!-- Heap Binary Tree Canvas Viewport -->
+      <div class="viewport-tree" id="canvas-viewport">
+        <div style="background: rgba(0,0,0,0.6); padding: 8px 12px; display: flex; justify-content: space-between; font-size: 0.7rem; border-bottom: 1px solid var(--metal-light); width: 100%;">
+          <span style="color: var(--cyber-blue); font-weight: bold;">📊 CONSOLE: HEAPIFY BINARY TREE MODEL</span>
+          <span style="color: var(--text-secondary);">Click out-of-order parent/child nodes to swap values</span>
+        </div>
+        
+        <canvas id="tree-canvas"></canvas>
+        <div class="node-interactive-layer" id="interactive-layer"></div>
+      </div>
+
+      <!-- Action & Ticker Controls Bottom bar -->
+      <div class="controls-bar">
+        <div class="status-ticker" style="margin-right: auto; display: flex; gap: 8px; font-weight: bold;">
+          <span>SCORE:</span>
+          <span id="score-val">000</span>
+        </div>
+        
+        <button class="cyber-btn" id="btn-reset">Reset ⟲</button>
+        <button class="cyber-btn" id="btn-next" style="display: none; background: var(--cyber-blue); color: #000; border-color: #fff;">Next Level ➔</button>
+      </div>
+
+    </div>
+
+    <!-- Right Side Sidebar (Manual, Logs, Lessons) -->
+    <div class="cyber-sidebar">
+      
+      <!-- Instructor Console Box -->
+      <div class="speech-box">
+        <div style="color: var(--cyber-blue); font-weight: bold; font-size: 0.9rem; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">💻 Instructor Simulator</div>
+        <div style="color: var(--text-secondary); margin-bottom: 4px;" id="level-title">Level 1: Sift-Up Insertion</div>
+        <div style="font-size: 0.75rem; color: var(--text-primary);" id="level-desc">
+          A small value was inserted at the very end of the heap. Bubble/Sift it up recursively until parent <= child!
+        </div>
+      </div>
+
+      <!-- Step-by-Step Algorithm Manual Card -->
+      <div class="module-card">
+        <div class="module-title">⚙️ Min-Heap Invariants</div>
+        <div class="module-content">
+          <ul style="margin: 0; padding-left: 14px; display: flex; flex-direction: column; gap: 6px;">
+            <li><strong>Min-Heap Rule:</strong> Every parent node must have a score <strong>less than or equal to</strong> its children: <code>P <= C_left</code> and <code>P <= C_right</code>.</li>
+            <li><strong>Sift-Up (Insertion):</strong> When a new element is appended to the bottom leaf, compare it against its parent. If <code>Child < Parent</code>, swap them and recurse upwards.</li>
+            <li><strong>Sift-Down (Heapify):</strong> When the root violates the rule, compare it against both of its children. Swap the parent with the <strong>smaller</strong> child and recurse downwards.</li>
+            <li><strong>Violated Links:</strong> Edges in <strong style="color:var(--cyber-red);">RED</strong> indicate out-of-order relationships where the parent is larger than the child. Clear all red lines to complete!</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Live Terminal Console Output -->
+      <div class="module-card" style="display: flex; flex-direction: column; flex: 1; padding: 6px; gap: 4px;">
+        <div style="font-size: 0.7rem; color: var(--cyber-orange); font-weight: bold; margin-left: 6px; margin-top: 2px;">⚡ LOG FEED:</div>
+        <div class="terminal-hud" id="terminal-log">
+          <!-- Console lines dynamically populate here -->
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="js/game.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monotonic Queue Simulation: Sliding Window Maximum</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div class="game-container" id="main-game-container">
+    
+    <!-- Main Interactive Board -->
+    <div class="arena-grid">
+      
+      <!-- Split Viewport Board -->
+      <div class="viewport-split" id="canvas-viewport">
+        <div style="background: rgba(0,0,0,0.6); padding: 8px 12px; display: flex; justify-content: space-between; font-size: 0.7rem; border-bottom: 1px solid var(--metal-light); width: 100%;">
+          <span style="color: var(--cyber-blue); font-weight: bold;">📊 CONSOLE: DOUBLE-ENDED QUEUE (DEQUE) CONTROLLER</span>
+          <span style="color: var(--text-secondary);">Manage ejections to maintain strict decreasing order</span>
+        </div>
+        
+        <!-- 1. Linear Track displaying array + sliding window -->
+        <div class="linear-track-container">
+          <div class="number-stream" id="number-track">
+            <!-- Dynamically populated numbers -->
+          </div>
+          <div class="sliding-bracket" id="sliding-bracket"></div>
+        </div>
+
+        <!-- 2. Monotonic Deque visualization -->
+        <div class="deque-board">
+          <div class="deque-title">
+            <span>🗳️ Monotonic Deque (Strictly Decreasing: Left is Max)</span>
+            <span style="color: var(--cyber-green);">FRONT (L) ➔ ➔ ➔ BACK (R)</span>
+          </div>
+          <div class="deque-slots" id="deque-slots">
+            <!-- Deque items insert here -->
+          </div>
+        </div>
+
+        <!-- Action/Decision zone for Deque modifications -->
+        <div class="action-zone-overlay">
+          <button class="zone-btn" id="btn-push">Push Back 📥</button>
+          <button class="zone-btn danger-btn" id="btn-eject">Eject Back ◀</button>
+          <button class="zone-btn danger-btn" id="btn-expire">Expire Front ❌</button>
+        </div>
+
+      </div>
+
+      <!-- Action & Ticker Controls Bottom bar -->
+      <div class="controls-bar">
+        <div class="status-ticker" style="margin-right: auto; display: flex; gap: 8px; font-weight: bold;">
+          <span>SCORE:</span>
+          <span id="score-val">000</span>
+        </div>
+        
+        <button class="cyber-btn" id="btn-declare" style="background: var(--cyber-green); color: #000; border-color: #fff;">DECLARE WINDOW MAX 🏆</button>
+        <button class="cyber-btn" id="btn-reset">Reset ⟲</button>
+        <button class="cyber-btn" id="btn-next" style="display: none; background: var(--cyber-blue); color: #000; border-color: #fff;">Next Level ➔</button>
+      </div>
+
+    </div>
+
+    <!-- Right Side Sidebar (Manual, Logs, Lessons) -->
+    <div class="cyber-sidebar">
+      
+      <!-- Instructor Console Box -->
+      <div class="speech-box">
+        <div style="color: var(--cyber-blue); font-weight: bold; font-size: 0.9rem; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">💻 Instructor Simulator</div>
+        <div style="color: var(--text-secondary); margin-bottom: 4px;" id="level-title">Level 1: Basic Ejection sequence</div>
+        <div style="font-size: 0.75rem; color: var(--text-primary);" id="level-desc">
+          Push items onto the deque. If an incoming value is larger than the back element, eject the back first!
+        </div>
+      </div>
+
+      <!-- Step-by-Step Algorithm Manual Card -->
+      <div class="module-card">
+        <div class="module-title">⚙️ Deque Monotonicity Rules</div>
+        <div class="module-content">
+          <ol style="margin: 0; padding-left: 14px; display: flex; flex-direction: column; gap: 6px;">
+            <li><strong>Monotonic Invariant:</strong> Keep the Deque strictly sorted in decreasing order: <code>V[front] > V[second] > ... > V[back]</code>.</li>
+            <li><strong>Ejecting:</strong> When a new value $X$ arrives, pop elements from the back of the Deque that are $\le X$. They can never become a future maximum.</li>
+            <li><strong>Pushing:</strong> Once all smaller elements are ejected, push $X$'s index onto the back.</li>
+            <li><strong>Expiration:</strong> If the front element's index is out of bounds (<code>index < Left_Window</code>), pop/expire it from the front of the Deque.</li>
+            <li><strong>Querying Maximum:</strong> The absolute maximum value of the sliding window is always found instantly at the <strong>front</strong> of the Deque.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Live Terminal Console Output -->
+      <div class="module-card" style="display: flex; flex-direction: column; flex: 1; padding: 6px; gap: 4px;">
+        <div style="font-size: 0.7rem; color: var(--cyber-orange); font-weight: bold; margin-left: 6px; margin-top: 2px;">⚡ LOG FEED:</div>
+        <div class="terminal-hud" id="terminal-log">
+          <!-- Console lines dynamically populate here -->
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="js/game.js"></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Locker Room Gear-Up: Agent Dependency Planner</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div class="tycoon-container" id="game-container">
+    
+    <!-- Main Game Arena -->
+    <div class="game-arena">
+      
+      <!-- Top Header / Scoreboard -->
+      <div class="wood-panel" style="padding: 0; border-radius: 4px; border-width: 4px;">
+        <div class="panel-header" style="margin: 0; border-top-left-radius: 0; border-top-right-radius: 0;">
+          <div class="panel-title">🏆 Locker Room Gear-Up 🏈</div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <div style="font-size: 0.8rem; color: #aaa;">SCORE:</div>
+            <div class="scoreboard" id="score-val">000</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls and Game Selection -->
+      <div class="controls-row">
+        <button class="tycoon-btn active" id="mode-sports-btn">Sports Mode 🏈</button>
+        <button class="tycoon-btn" id="mode-agent-btn">AI Agent Mode 🤖</button>
+        <button class="tycoon-btn" id="reset-btn">Reset Board ⟲</button>
+        <button class="tycoon-btn" id="topo-run-btn" disabled>Auto Run Solver ▶</button>
+      </div>
+
+      <!-- The Core Board Layout -->
+      <div class="board-layout">
+        
+        <!-- Left Side: Interactive SVG/Canvas Graph & Target -->
+        <div class="graph-viewer">
+          <div style="background: rgba(0,0,0,0.5); padding: 8px 12px; display: flex; justify-content: space-between; font-size: 0.75rem; border-bottom: 2px solid var(--wood-dark);">
+            <span style="color: var(--gold); font-weight: bold;">📊 DEPENDENCY GRAPH (DAG)</span>
+            <span style="color: #aaa;">Click item cards to equip in order!</span>
+          </div>
+          
+          <div class="graph-canvas-container" id="canvas-container">
+            <!-- Canvas for drawing the DAG edges and highlights -->
+            <canvas id="dag-canvas"></canvas>
+            <div id="node-overlay-container" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none;"></div>
+          </div>
+
+          <!-- Bottom Console/Log -->
+          <div class="execution-logger" id="terminal-log">
+            <div class="log-entry"><span class="log-timestamp">[00:00:00]</span><span style="color: #aaa;">System initialized. Click or drag items in the correct order to resolve dependencies!</span></div>
+          </div>
+        </div>
+
+        <!-- Right Side: The Locker Shelves & Avatar Target -->
+        <div class="wood-panel" style="padding: 10px; gap: 10px;">
+          
+          <!-- Wardrobe Drop Target -->
+          <div class="target-locker" id="drop-target">
+            <div class="avatar-wrapper">
+              <div class="avatar-base" id="avatar-sprite">🧍</div>
+            </div>
+            <div style="font-weight: bold; font-size: 0.8rem; color: var(--gold); margin-top: 8px;" id="avatar-label">Player Athlete</div>
+            <div style="font-size: 0.65rem; color: #aaa;" id="drop-subtext">Drop items here to equip</div>
+          </div>
+
+          <!-- Shelves of gear cards -->
+          <div class="locker-room">
+            <div class="locker-header" id="shelf-title">🎒 Locker Shelf</div>
+            <div class="locker-shelf" id="shelf-container">
+              <!-- Cards dynamically inserted here -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Right-Hand Tutorial & Coach Sidebar -->
+    <div class="guide-panel">
+      
+      <!-- Coach Character Speech Bubble -->
+      <div class="coach-bubble">
+        <div class="coach-avatar">
+          <div class="coach-pic" id="coach-emoji">🏈</div>
+          <div>
+            <div class="coach-name" id="coach-title">Coach "Topological" Sam</div>
+            <div style="font-size: 0.6rem; color: #aaa; text-transform: uppercase;">Head CS Coach</div>
+          </div>
+        </div>
+        <div class="coach-text" id="coach-speech">
+          "Alright kid! Welcome to the locker room. Before we can hit the field, we need our player geared up. But there's a catch: you can't put on your cleats until you've put on your socks and pants! This order is a **Topological Sort**!"
+        </div>
+      </div>
+
+      <!-- Tech Explanation -->
+      <div class="tech-panel">
+        <div class="tech-title">🧠 topological sort</div>
+        <div class="tech-content" id="tech-text">
+          A <strong>Topological Sort</strong> is a linear ordering of nodes in a <strong>Directed Acyclic Graph (DAG)</strong> such that for every directed edge <code>U ➔ V</code>, node <code>U</code> comes before <code>V</code>.<br><br>
+          If there is a cycle (e.g. <code>A ➔ B ➔ A</code>), a topological sort is <strong>impossible</strong>! Just like you can't put socks on over cleats, and cleats on over socks at the same time!
+        </div>
+      </div>
+
+      <!-- Real AI Mapping Panel -->
+      <div class="tech-panel" style="background: rgba(33, 150, 243, 0.08); border-color: var(--blue);">
+        <div class="tech-title" style="color: var(--blue);">🤖 how agents use this</div>
+        <div class="tech-content" id="mapping-text">
+          In agent platforms like <strong>LangGraph</strong> or <strong>Hermes Developer</strong>, tasks are structured as graphs. 
+          The agent cannot run the <code>"Run Tests"</code> tool until it has successfully completed <code>"Write Code"</code>, which depends on <code>"Read Files"</code>. 
+          The system runs a topological sort to plan the execution queue!
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="js/game.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Top-K Vector Search: RAG Retrieval Heap</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div class="game-container" id="main-game-container">
+    
+    <!-- Main Interactive Board -->
+    <div class="arena-grid">
+      
+      <!-- Vector Document Stream Board -->
+      <div class="rag-viewport" id="canvas-viewport">
+        <div style="background: rgba(0,0,0,0.6); padding: 8px 12px; display: flex; justify-content: space-between; font-size: 0.7rem; border-bottom: 1px solid var(--metal-light); width: 100%;">
+          <span style="color: var(--cyber-blue); font-weight: bold;">⚡ RAG STREAM: SIMILARITY VECTOR CHUNKS</span>
+          <span style="color: var(--text-secondary);">Sort similarity values to compile relevant agent context</span>
+        </div>
+        
+        <!-- Document chunk track -->
+        <div class="document-stream-track">
+          <div class="chunk-stream" id="chunk-track">
+            <!-- Chunks populating via JS -->
+          </div>
+        </div>
+
+        <!-- RAG Min-Heap Vault Board -->
+        <div class="heap-vault">
+          <div class="heap-vault-title">
+            <span>🛡️ Min-Heap Vault (K=3 Chunks Max)</span>
+            <span style="color: var(--cyber-orange);">Root is the Barrier of Entry (Minimum Score of Top-3)</span>
+          </div>
+          
+          <div class="vault-canvas-container" id="canvas-vault">
+            <canvas id="vault-canvas"></canvas>
+            <div class="node-interactive-layer" id="interactive-layer"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action & Ticker Controls Bottom bar -->
+      <div class="controls-bar">
+        <div class="status-ticker" style="margin-right: auto; display: flex; gap: 8px; font-weight: bold;">
+          <span>SCORE:</span>
+          <span id="score-val">000</span>
+        </div>
+        
+        <!-- Heap Action Buttons -->
+        <div style="display: flex; gap: 6px;">
+          <button class="cyber-btn" id="btn-push">Push to Heap 📥</button>
+          <button class="cyber-btn" id="btn-swap">Swap Root 🔀</button>
+          <button class="cyber-btn" id="btn-ignore">Ignore Chunk ⏭️</button>
+          <button class="cyber-btn" id="btn-sift" style="background: var(--cyber-orange); color: #000; border-color: #fff;" disabled>Sift Down 📥</button>
+        </div>
+
+        <button class="cyber-btn" id="btn-reset">Reset ⟲</button>
+      </div>
+
+    </div>
+
+    <!-- Right Side Sidebar (Manual, Logs, Lessons) -->
+    <div class="cyber-sidebar">
+      
+      <!-- Instructor Console Box -->
+      <div class="speech-box">
+        <div style="color: var(--cyber-blue); font-weight: bold; font-size: 0.9rem; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">💻 Instructor Simulator</div>
+        <div style="color: var(--text-secondary); margin-bottom: 4px;" id="level-title">Level 1: RAG Vector Search Simulator</div>
+        <div style="font-size: 0.75rem; color: var(--text-primary);" id="level-desc">
+          Maintain a Min-Heap of size K=3 to capture the top-3 most similar document chunks. Push incoming items to fill the heap first!
+        </div>
+      </div>
+
+      <!-- Step-by-Step Algorithm Manual Card -->
+      <div class="module-card">
+        <div class="module-title">💡 Min-Heap of Size K logic</div>
+        <div class="module-content">
+          <ul style="margin: 0; padding-left: 14px; display: flex; flex-direction: column; gap: 6px;">
+            <li><strong>The Top-K Problem:</strong> To retrieve the <code>K</code> largest elements from an infinite stream, we maintain a <strong>Min-Heap</strong> of size <code>K</code>.</li>
+            <li><strong>Root is Threshold:</strong> In a Min-Heap, the root node holds the absolute minimum value in the heap. This root acts as the "barrier of entry" for our top-K elements.</li>
+            <li><strong>Ignorability:</strong> Any incoming element with a score $\le$ Root can never be in the top-K list and is instantly ignored in $\mathcal{O}(1)$ time.</li>
+            <li><strong>Swapping:</strong> If an incoming element has a score $>$ Root, it qualifies. We eject the root and put the new element at the root.</li>
+            <li><strong>Sifting Down:</strong> After swapping, the heap property is violated. We sift the root down in $\mathcal{O}(\log K)$ time to restore order.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Live Terminal Console Output -->
+      <div class="module-card" style="display: flex; flex-direction: column; flex: 1; padding: 6px; gap: 4px;">
+        <div style="font-size: 0.7rem; color: var(--cyber-orange); font-weight: bold; margin-left: 6px; margin-top: 2px;">⚡ LOG FEED:</div>
+        <div class="terminal-hud" id="terminal-log">
+          <!-- Console lines dynamically populate here -->
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="js/game.js"></script>
+</body>
+</html>
