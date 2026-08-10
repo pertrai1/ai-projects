@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kahn's Algorithm Simulation: Indegree Dispatcher</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div class="game-container" id="main-game-container">
+    
+    <!-- Main Interactive Board -->
+    <div class="arena-grid">
+      
+      <!-- Upper Queue Slot HUD -->
+      <div class="queue-hud">
+        <div class="queue-label">Queue</div>
+        <div class="queue-slots" id="queue-slots">
+          <!-- Queued items insert here -->
+        </div>
+        <button class="cyber-btn" id="process-btn" style="height: 56px;" disabled>PROCESS FRONT ▶</button>
+      </div>
+
+      <!-- Main Topological Graph Screen -->
+      <div class="network-viewport" id="canvas-viewport">
+        <div style="background: rgba(0,0,0,0.6); padding: 8px 12px; display: flex; justify-content: space-between; font-size: 0.7rem; border-bottom: 1px solid var(--metal-light);">
+          <span style="color: var(--cyber-blue); font-weight: bold;">⚡ CONSOLE: INTERACTIVE DEPENDENCY VIEWPORT</span>
+          <span style="color: var(--text-secondary);">Click nodes with in-degree (0) to queue them</span>
+        </div>
+        
+        <canvas id="viewport-canvas"></canvas>
+        <div class="node-interactive-layer" id="interactive-layer"></div>
+      </div>
+
+      <!-- Action & Ticker Controls Bottom bar -->
+      <div class="controls-bar">
+        <div class="status-ticker" style="margin-right: auto; display: flex; gap: 8px; font-weight: bold;">
+          <span>SCORE:</span>
+          <span id="score-val">000</span>
+        </div>
+        <button class="cyber-btn danger" id="cycle-btn" disabled>Cycle Detected! 🚨</button>
+        <button class="cyber-btn" id="reset-btn">Reset ⟲</button>
+        <button class="cyber-btn" id="next-btn" style="display: none; background: var(--cyber-green); color: #000; border-color: #fff;">Next Level ➔</button>
+      </div>
+
+    </div>
+
+    <!-- Right Side Sidebar (Manual, Logs, Lessons) -->
+    <div class="cyber-sidebar">
+      
+      <!-- Instructor Console Box -->
+      <div class="speech-box">
+        <div style="color: var(--cyber-blue); font-weight: bold; font-size: 0.9rem; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">💻 Instructor Simulator</div>
+        <div style="color: var(--text-secondary); margin-bottom: 4px;" id="level-title">Level 1: Simple Chain Sequence</div>
+        <div style="font-size: 0.75rem; color: var(--text-primary);" id="level-desc">
+          Locate nodes with an in-degree of 0 (glowing blue) to begin queuing. Click them, then click "PROCESS FRONT" to broadcast electrical pulses.
+        </div>
+      </div>
+
+      <!-- Step-by-Step Algorithm Manual Card -->
+      <div class="module-card">
+        <div class="module-title">⚙️ Kahn's Algorithm Steps</div>
+        <div class="module-content">
+          <ol style="margin: 0; padding-left: 14px; display: flex; flex-direction: column; gap: 6px;">
+            <li>Calculate the <strong>In-degree</strong> (number of incoming edges) for every vertex in the graph.</li>
+            <li>Identify all vertices with an <strong>In-degree of 0</strong> and insert them into a <strong>Queue</strong>.</li>
+            <li>Pull a vertex from the front of the queue and append it to our sorted results.</li>
+            <li>For each outgoing edge from this vertex, remove the edge and <strong>decrement</strong> the in-degree of its neighboring node by 1.</li>
+            <li>If a neighbor's in-degree hits <strong>0</strong>, immediately insert it into the queue.</li>
+            <li>Repeat until the queue is empty. If nodes remain on the board but the queue is empty, a <strong>Cycle</strong> has halted execution!</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Live Terminal Console Output -->
+      <div class="module-card" style="display: flex; flex-direction: column; flex: 1; padding: 6px; gap: 4px;">
+        <div style="font-size: 0.7rem; color: var(--cyber-orange); font-weight: bold; margin-left: 6px; margin-top: 2px;">⚡ LOG FEED:</div>
+        <div class="terminal-hud" id="terminal-log">
+          <!-- Console lines dynamically populate here -->
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="js/game.js"></script>
+</body>
+</html>
