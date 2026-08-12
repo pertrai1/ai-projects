@@ -14,6 +14,22 @@ Learn about **Directed Acyclic Graphs (DAGs)**, node dependencies, and **Topolog
 * **🤖 AI Agent Mode:** Act as the orchestrator for an AI coding agent. Ensure the agent schedules its tool calls in a valid topological order—never running a test suite before writing code, or pushing to Git before running tests!
 * **📟 Interactive DFS Auto-Solver:** Watch the system execute a live Depth-First Search (DFS) in real-time, displaying how post-order stack assembly builds a guaranteed dependency-resolved queue.
 
+### 2. 🎚️ Context Stream: Token Parser (`sliding-window`)
+Learn about **Fixed-Size**, **Dynamic-Size**, and **Chunking / Stride Overlap** sliding window configurations:
+* **📥 Level 1 (Fixed-Size Parser):** Slide a fixed viewport to capture structured tool call tags (e.g. `<tool_call> ... </tool_call>`) out of streaming token arrays.
+* **📏 Level 2 (Dynamic Window Optimization):** Adjust Left (L) and Right (R) pointers dynamically to maximize the context window of completely unique instruction tokens, evicting duplicates on-the-fly.
+* **📦 Level 3 (RAG Document Chunking):** Stamp out document segments with a specific window size and overlapping stride, mirroring chunk preparation for Vector Databases.
+
+---
+
+## ⚙️ Standalone Algorithm Simulation Games
+
+### 1. 🔗 Kahn's Algorithm: Indegree Dispatcher (`algorithms/kahns-algorithm`)
+Perform in-degree calculation tracking, queue management, and edge deduction to solve topological sorts. Spot cyclic dependency traps and raise alerts before the agent system crashes!
+
+### 2. 📊 Monotonic Queue: Sliding Window Maximum (`algorithms/monotonic-queue`)
+Maintain a double-ended queue (Deque) in strict decreasing order by manually ejecting smaller items from the back and expiring out-of-bounds nodes from the front, retrieving maximum values in constant $\mathcal{O}(1)$ time.
+
 ---
 
 ## 🚀 How to Run the Games
